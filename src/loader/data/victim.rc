@@ -1,0 +1,2 @@
+#include "../resource.h"
+IDR_VICTIM_PROCEXP RCDATA "PROCEXP152.sys.bin"

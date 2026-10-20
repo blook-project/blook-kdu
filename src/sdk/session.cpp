@@ -209,7 +209,9 @@ Result<MappedImage> Session::map_driver(std::span<const std::uint8_t> image,
         impl_->mapper =
             std::make_unique<ManualMapper>(*impl_->access, *impl_->services);
     }
-    auto result = impl_->mapper->map(image, options);
+    auto result = impl_->exploit ? impl_->exploit->map_driver(image, options,
+                                                              *impl_->mapper)
+                                 : impl_->mapper->map(image, options);
     if (!result) {
         return result;
     }

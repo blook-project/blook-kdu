@@ -143,13 +143,43 @@ target("kdu_exploits")
     add_packages("fmt", "spdlog")
 
 -- ---------------------------------------------------------------------------
+-- kernel stage image (tiny WDK driver mapped into a victim driver's .text)
+-- ---------------------------------------------------------------------------
+if build_payload then
+    target("kdu_stage")
+        set_kind("binary")
+        add_rules("wdk.driver", "wdk.env.wdm")
+        add_files("src/loader/stage/*.cpp")
+        add_includedirs("src", "src/loader")
+        add_defines("UNICODE", "NOMINMAX", "_KERNEL_MODE=1",
+                    "NTDDI_VERSION=0x0A00000C")
+        add_syslinks("ntoskrnl", "wdmsec")
+        add_cxflags("/GS-", "/GR-", "/W4", {force = true})
+        add_ldflags("/ENTRY:kdu_stage_entry", {force = true})
+        after_build(function (target)
+            local script = path.join(os.projectdir(), "scripts",
+                                     "gen-payload-blob.ps1")
+            local output = path.join(os.projectdir(), "build", "generated",
+                                     "stage_blob.h")
+            os.exec('pwsh -NoProfile -ExecutionPolicy Bypass -File "' ..
+                    script .. '" -InputFile "' .. target:targetfile() ..
+                    '" -OutputFile "' .. output ..
+                    '" -Symbol kdu_stage_image')
+        end)
+end
+
+-- ---------------------------------------------------------------------------
 -- manual mapper
 -- ---------------------------------------------------------------------------
 target("kdu_loader")
     set_kind("static")
     kdu_user_defaults()
     add_files("src/loader/*.cpp")
+    add_includedirs(path.join(os.projectdir(), "build", "generated"))
     add_deps("kdu_base")
+    if build_payload then
+        add_deps("kdu_stage")
+    end
     add_packages("fmt", "spdlog")
 
 -- ---------------------------------------------------------------------------
@@ -219,7 +249,8 @@ if has_kchannel_user then
         kdu_user_defaults()
         add_files("src/cli/*.cpp", "src/cli/commands/*.cpp")
         -- embedded vulnerable drivers (Win32 RCDATA resources)
-        add_files(os.files("src/exploits/*/data/*.rc"))
+        add_files(os.files("src/exploits/*/data/*.rc"),
+                  os.files("src/loader/data/*.rc"))
         add_deps("kdu_sdk")
         add_packages("cli11", "fmt", "spdlog", "nlohmann_json")
 end
@@ -251,6 +282,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 
