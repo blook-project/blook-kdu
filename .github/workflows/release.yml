@@ -1,0 +1,74 @@
+# blook-kdu release: tag vX.Y.Z -> canonical zip + sha256, GitHub release and
+# package-registry manifest.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  KCHANNEL_REPO: https://github.com/blook-project/blook-kchannel
+  KCHANNEL_COMMIT: 40a5337a2d69c79fb049361f616aacc58ae75d4d
+  WDK_VERSION: 10.0.26100.6584
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: 3.0.8
+      - name: Install WDK
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\wdk" | Out-Null
+          $url = "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/$env:WDK_VERSION/microsoft.windows.wdk.x64.$env:WDK_VERSION.nupkg"
+          Invoke-WebRequest $url -OutFile "$env:RUNNER_TEMP\wdk\wdk.nupkg"
+          tar.exe -xf "$env:RUNNER_TEMP\wdk\wdk.nupkg" -C "$env:RUNNER_TEMP\wdk"
+          "WDK_ROOT=$env:RUNNER_TEMP\wdk\c" >> $env:GITHUB_ENV
+      - name: Clone pinned blook-kchannel
+        shell: pwsh
+        run: |
+          git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
+          git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
+          "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
+      - name: Version
+        shell: pwsh
+        run: |
+          $version = (Get-Content version.txt -Raw).Trim()
+          if ("v$version" -ne "${{ github.ref_name }}") {
+            throw "tag ${{ github.ref_name }} does not match version.txt ($version)"
+          }
+          "KDU_VERSION=$version" >> $env:GITHUB_ENV
+      - name: Build
+        shell: pwsh
+        run: |
+          xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
+          xmake -y
+          xmake run kdu_tests
+      - name: Package
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/package.ps1 -Configuration release -Version $env:KDU_VERSION
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            artifacts/blook-kdu-${{ env.KDU_VERSION }}-windows-x64.zip
+            artifacts/blook-kdu-${{ env.KDU_VERSION }}-windows-x64.zip.sha256
+      - name: Publish registry manifest (best effort)
+        if: ${{ env.REPO_TOKEN != '' }}
+        shell: pwsh
+        env:
+          REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+        run: |
+          & pwsh -NoProfile -File scripts/publish-registry.ps1 `
+              -Package blook-kdu -Version $env:KDU_VERSION `
+              -Zip "artifacts/blook-kdu-$env:KDU_VERSION-windows-x64.zip"

@@ -1,0 +1,39 @@
+# build system
+build/
+.xmake/
+compile_commands.json
+compile_flags.txt
+
+# build artifacts (release assets are produced by CI)
+*.sys
+*.exe
+*.dll
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.obj
+*.res
+*.zip
+*.sha256
+
+# dumps / vm artifacts
+*.dmp
+*.dump
+minidumps/
+artifacts/
+tests/e2e/out/
+
+# local tooling
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+.cache/
+__pycache__/
+node_modules/
+
+# release packaging output
+artifacts/
+

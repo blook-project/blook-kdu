@@ -1,0 +1,198 @@
+# blook-kdu CI.
+#
+# - build:            user-mode tools + CLI + host unit tests
+# - payload:          kernel payload driver (WDK) with real blook-kchannel sources
+# - format:           clang-format check
+# - exploit-tests:    one independent job per exploit (matrix from the registry)
+#
+# blook-kchannel is pinned: all driver IPC must go through real upstream sources.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  KCHANNEL_REPO: https://github.com/blook-project/blook-kchannel
+  KCHANNEL_COMMIT: 40a5337a2d69c79fb049361f616aacc58ae75d4d
+  WDK_VERSION: 10.0.26100.6584
+
+jobs:
+  exploit-list:
+    name: discover exploits
+    runs-on: windows-latest
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        shell: pwsh
+        run: |
+          $json = & pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/list-exploits.ps1
+          Write-Host "exploit matrix: $json"
+          "matrix=$json" >> $env:GITHUB_OUTPUT
+
+  install-toolchain:
+    name: install WDK
+    runs-on: windows-latest
+    steps:
+      - name: Cache WDK NuGet content
+        id: cache-wdk
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}\wdk\c
+          key: wdk-${{ env.WDK_VERSION }}
+      - name: Download WDK from NuGet
+        if: steps.cache-wdk.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\wdk" | Out-Null
+          $url = "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/$env:WDK_VERSION/microsoft.windows.wdk.x64.$env:WDK_VERSION.nupkg"
+          Invoke-WebRequest $url -OutFile "$env:RUNNER_TEMP\wdk\wdk.nupkg"
+          tar.exe -xf "$env:RUNNER_TEMP\wdk\wdk.nupkg" -C "$env:RUNNER_TEMP\wdk"
+      - name: Verify WDK layout
+        shell: pwsh
+        run: |
+          $root = "$env:RUNNER_TEMP\wdk\c"
+          if (-not (Test-Path "$root\Lib\10.0.26100.0\km\x64")) {
+              throw "WDK km libraries missing under $root"
+          }
+          "WDK_ROOT=$root" >> $env:GITHUB_ENV
+
+  build:
+    name: build + host tests
+    needs: install-toolchain
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: 3.0.8
+      - name: Install WDK
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\wdk" | Out-Null
+          $url = "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/$env:WDK_VERSION/microsoft.windows.wdk.x64.$env:WDK_VERSION.nupkg"
+          Invoke-WebRequest $url -OutFile "$env:RUNNER_TEMP\wdk\wdk.nupkg"
+          tar.exe -xf "$env:RUNNER_TEMP\wdk\wdk.nupkg" -C "$env:RUNNER_TEMP\wdk"
+          "WDK_ROOT=$env:RUNNER_TEMP\wdk\c" >> $env:GITHUB_ENV
+      - name: Clone pinned blook-kchannel
+        shell: pwsh
+        run: |
+          git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
+          git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
+          if (-not (Test-Path "$env:GITHUB_WORKSPACE\..\blook-kchannel\src\user\kc_user.cpp")) {
+              throw "blook-kchannel sources are missing at the pinned commit"
+          }
+          "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
+      - name: Configure
+        shell: pwsh
+        run: xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
+      - name: Build (user + payload)
+        shell: pwsh
+        run: xmake -y
+      - name: Host unit tests
+        shell: pwsh
+        run: |
+          xmake run kdu_tests
+          if ($LASTEXITCODE -ne 0) { throw "host unit tests failed" }
+      - name: Registry + version consistency
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/gen-exploit-registry.ps1
+          & pwsh -NoProfile -File scripts/check-version.ps1
+          git diff --exit-code
+          if ($LASTEXITCODE -ne 0) { throw "generated registry/version files are stale" }
+      - name: Package artifacts
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/package.ps1 -Configuration release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: blook-kdu-${{ github.sha }}
+          path: |
+            artifacts/*.zip
+            artifacts/*.sha256
+            build/windows/x64/release/kdu.exe
+            build/windows/x64/release/kdu_payload.sys
+          if-no-files-found: error
+
+  format:
+    name: clang-format
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Locate clang-format
+        shell: pwsh
+        run: |
+          $candidates = @()
+          $vs = "$env:ProgramFiles\Microsoft Visual Studio"
+          if (Test-Path $vs) {
+            $candidates += Get-ChildItem $vs -Recurse -Filter clang-format.exe -ErrorAction SilentlyContinue |
+                           Select-Object -ExpandProperty FullName
+          }
+          $cls = Get-Command clang-format.exe -ErrorAction SilentlyContinue
+          if ($cls) { $candidates += $cls.Source }
+          $candidate = $candidates | Select-Object -First 1
+          if (-not $candidate) {
+            choco install llvm --yes --no-progress
+            $candidate = (Get-Command clang-format.exe).Source
+          }
+          "CLANG_FORMAT=$candidate" >> $env:GITHUB_ENV
+          & $candidate --version
+      - name: Check formatting
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem include, src, tests -Recurse -File |
+                   Where-Object { $_.Extension -in @('.h', '.hpp', '.cpp', '.cc') } |
+                   ForEach-Object { $_.FullName }
+          $failures = 0
+          foreach ($file in $files) {
+            $result = & $env:CLANG_FORMAT --dry-run --Werror $file 2>&1
+            if ($LASTEXITCODE -ne 0) {
+              Write-Host "not formatted: $file"
+              Write-Host ($result | Out-String)
+              $failures++
+            }
+          }
+          if ($failures -gt 0) { throw "$failures file(s) are not clang-formatted" }
+
+  exploit-tests:
+    name: exploit / ${{ matrix.exploit }}
+    needs: exploit-list
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.exploit-list.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: 3.0.8
+      - name: Install WDK
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\wdk" | Out-Null
+          $url = "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/$env:WDK_VERSION/microsoft.windows.wdk.x64.$env:WDK_VERSION.nupkg"
+          Invoke-WebRequest $url -OutFile "$env:RUNNER_TEMP\wdk\wdk.nupkg"
+          tar.exe -xf "$env:RUNNER_TEMP\wdk\wdk.nupkg" -C "$env:RUNNER_TEMP\wdk"
+          "WDK_ROOT=$env:RUNNER_TEMP\wdk\c" >> $env:GITHUB_ENV
+      - name: Clone pinned blook-kchannel
+        shell: pwsh
+        run: |
+          git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
+          git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
+          "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
+      - name: Build exploit test only
+        shell: pwsh
+        run: |
+          xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
+          xmake -y "kdu_exploit_test_${{ matrix.exploit }}"
+      - name: Run exploit test
+        shell: pwsh
+        run: |
+          xmake run "kdu_exploit_test_${{ matrix.exploit }}"
+          if ($LASTEXITCODE -ne 0) { throw "exploit ${{ matrix.exploit }} tests failed" }

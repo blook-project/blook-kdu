@@ -1,0 +1,25 @@
+---
+Language:        Cpp
+BasedOnStyle:  Google
+
+AccessModifierOffset: -1
+
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortBlocksOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+ColumnLimit:     80
+IndentWidth:     4
+UseTab:          Never
+TabWidth:        4
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# Windows SDK and WDK headers are order sensitive: <windows.h> has to precede
+# <bcrypt.h> (and friends), and the kernel headers have their own dependencies.
+# Sorting them alphabetically breaks the build, so include order stays a manual
+# decision and clang-format never rewrites it (Google's default would).
+SortIncludes: false
