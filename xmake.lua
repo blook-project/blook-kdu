@@ -234,6 +234,24 @@ if build_payload then
 end
 
 -- ---------------------------------------------------------------------------
+-- e2e assets (guest test driver + marker process)
+-- ---------------------------------------------------------------------------
+if build_payload then
+    target("kdu_guest_test_driver")
+        set_kind("binary")
+        add_rules("wdk.driver", "wdk.env.wdm")
+        add_files("tests/guest/*.c")
+        add_defines("UNICODE", "NOMINMAX", "_KERNEL_MODE=1",
+                    "NTDDI_VERSION=0x0A00000C")
+        add_cxflags("/W4", {force = true})
+end
+
+target("kdu_e2e_helper")
+    set_kind("binary")
+    kdu_user_defaults()
+    add_files("tests/e2e/helper.cpp")
+    add_deps("kdu_base")
+-- ---------------------------------------------------------------------------
 -- SDK + CLI (require the IPC adapter, i.e. real kchannel sources)
 -- ---------------------------------------------------------------------------
 if has_kchannel_user then
@@ -282,6 +300,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 
