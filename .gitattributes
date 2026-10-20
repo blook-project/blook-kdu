@@ -1,0 +1,9 @@
+# Normalize line endings for CI stability (Linux-side tooling and the
+# generated-registry consistency check compare byte-for-byte).
+* text=auto eol=lf
+*.ps1 text eol=lf
+*.bat text eol=crlf
+*.bin binary
+*.cer binary
+*.pfx binary
+*.png binary
