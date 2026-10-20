@@ -131,7 +131,7 @@ jobs:
       - name: Install clang-format
         shell: pwsh
         run: |
-          python -m pip install --disable-pip-version-check clang-format
+          python -m pip install --disable-pip-version-check "clang-format==20.1.8"
           clang-format --version
       - name: Check formatting
         shell: pwsh
@@ -174,4 +174,5 @@ jobs:
         run: |
           xmake run "kdu_exploit_test_${{ matrix.exploit }}"
           if ($LASTEXITCODE -ne 0) { throw "exploit ${{ matrix.exploit }} tests failed" }
+
 
