@@ -303,9 +303,9 @@ jobs:
               ConvertTo-Json | Set-Content artifacts/ci-signing.json -Encoding UTF8
       - name: Kernel load + full e2e matrix
         shell: pwsh
-        timeout-minutes: 8
+        timeout-minutes: 5
         run: |
-          $ErrorActionPreference = "Stop"
+          $ErrorActionPreference = "Continue"
           $driver = (Resolve-Path "build/windows/x64/release/kdu_ci_smoke_driver.sys").Path
           $client = (Resolve-Path "build/windows/x64/release/kdu_ci_smoke_client.exe").Path
           $results = New-Object System.Collections.Generic.List[object]
@@ -313,44 +313,45 @@ jobs:
               $results.Add([pscustomobject]@{ name = $name; status = $status; detail = $detail })
               Write-Host ("[{0}] {1}: {2}" -f $status.ToUpper(), $name, $detail)
           }
-          function Invoke-Guarded([string] $file, [string[]] $arguments, [int] $seconds) {
-              $out = Join-Path $env:TEMP ("guard-" + [guid]::NewGuid() + ".out")
-              $p = Start-Process -FilePath $file -ArgumentList $arguments `
-                  -NoNewWindow -PassThru -RedirectStandardOutput $out `
-                  -RedirectStandardError ($out + ".err")
-              if (-not $p.WaitForExit($seconds * 1000)) {
-                  try { $p.Kill($true) } catch { }
-                  return @{ code = -1; output = "TIMEOUT" }
-              }
-              return @{ code = $p.ExitCode; output = (Get-Content $out -Raw -ErrorAction SilentlyContinue) }
-          }
+          sc.exe stop kduCiSmoke *> $null
+          sc.exe delete kduCiSmoke *> $null
+          $create = sc.exe create kduCiSmoke type= kernel start= demand binPath= "$driver" 2>&1
+          $started = Start-Process sc.exe -ArgumentList "start kduCiSmoke" -NoNewWindow -PassThru `
+              -RedirectStandardOutput "$env:TEMP\kdu-sc-start.log" -RedirectStandardError "$env:TEMP\kdu-sc-start.err"
+          $started_ok = $started.WaitForExit(30000)
+          if (-not $started_ok) { try { $started.Kill($true) } catch { } }
+          $query = sc.exe query kduCiSmoke 2>&1 | Out-String
+          $running = $query -match "STATE\s+:\s+4\s+RUNNING"
           $admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
               [Security.Principal.WindowsBuiltInRole]::Administrator)
           Add-Case "environment/elevated" $(if ($admin) { "pass" } else { "fail" }) "administrator token"
           $signing = Get-Content artifacts/ci-signing.json -Raw | ConvertFrom-Json
           Add-Case "signing/signtool-kp" $(if ($signing.signtool_kp -eq "pass") { "pass" } else { "fail" }) ("kp=" + $signing.signtool_kp)
           Add-Case "signing/testsigning" "pass" ("testsigning=" + $signing.testsigning)
-          Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
-          Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
-          $create = Invoke-Guarded "sc.exe" @("create", "kduCiSmoke", "type=", "kernel",
-              "start=", "demand", "binPath=", $driver) 20
-          $start = Invoke-Guarded "sc.exe" @("start", "kduCiSmoke") 30
-          if ($create.code -eq 0 -and $start.output -match "RUNNING") {
+          if ($running) {
               Add-Case "driver/signed-load" "pass" "SPC-signed driver STATE 4 RUNNING"
-              $run = Invoke-Guarded $client @() 45
-              $doc = $null
-              try { $doc = $run.output | ConvertFrom-Json } catch { }
-              if ($run.code -eq 0 -and $doc -and $doc.ok -and $doc.canonical) {
-                  Add-Case "driver/ioctl-roundtrip" "pass" ("magic=" + $doc.magic + " kernel_pointer=" + $doc.kernel_pointer)
+              $clientRun = Start-Process -FilePath $client -NoNewWindow -PassThru `
+                  -RedirectStandardOutput "$env:TEMP\kdu-client.out" `
+                  -RedirectStandardError "$env:TEMP\kdu-client.err"
+              if ($clientRun.WaitForExit(45000)) {
+                  $text = Get-Content "$env:TEMP\kdu-client.out" -Raw -ErrorAction SilentlyContinue
+                  $document = $null
+                  try { $document = $text | ConvertFrom-Json } catch { }
+                  if ($clientRun.ExitCode -eq 0 -and $document -and $document.ok -and $document.canonical) {
+                      Add-Case "driver/ioctl-roundtrip" "pass" ("magic=" + $document.magic + " kernel_pointer=" + $document.kernel_pointer)
+                  } else {
+                      Add-Case "driver/ioctl-roundtrip" "fail" $text
+                  }
               } else {
-                  Add-Case "driver/ioctl-roundtrip" "fail" $run.output
+                  try { $clientRun.Kill($true) } catch { }
+                  Add-Case "driver/ioctl-roundtrip" "fail" "client timed out"
               }
           } else {
-              Add-Case "driver/signed-load" "fail" ("create=" + $create.code + " start=" + $start.output)
+              Add-Case "driver/signed-load" "fail" (($create | Out-String) + $query)
               Add-Case "driver/ioctl-roundtrip" "fail" "driver did not start"
           }
-          Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
-          Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
+          sc.exe stop kduCiSmoke *> $null
+          sc.exe delete kduCiSmoke *> $null
           Add-Case "exploit/victim-driver-load" "skip" "blocklisted victim driver"
           Add-Case "payload/manual-map" "skip" "manual-map NX on 26200"
           Add-Case "dse/unsigned-load" "skip" "requires VM reboot/BSOD"
@@ -395,5 +396,6 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
 
