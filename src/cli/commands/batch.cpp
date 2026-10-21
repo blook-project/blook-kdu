@@ -163,6 +163,51 @@ nlohmann::json execute(const nlohmann::json& operation,
         result["cr3"] = hex(cr3.value());
         return result;
     }
+    if (name == "map_payload") {
+        blook::kdu::MapOptions options;
+        options.name = arguments.value("name", std::string("batch-payload"));
+        auto mapped = session.map_payload(options);
+        if (!mapped) {
+            throw CliError(mapped.error().code, mapped.error().message);
+        }
+        result["base"] = hex(mapped->base);
+        result["size"] = mapped->size;
+        result["entry_status"] = mapped->entry_status;
+        return result;
+    }
+    if (name == "unload_payload") {
+        auto outcome = session.unload_payload();
+        if (!outcome) {
+            throw CliError(outcome.error().code, outcome.error().message);
+        }
+        result["ok"] = true;
+        return result;
+    }
+    if (name == "map_driver") {
+        const auto image = load_file(arguments.at("file").get<std::string>());
+        blook::kdu::MapOptions options;
+        options.name = arguments.value("name", std::string("batch-image"));
+        if (arguments.contains("bootstrap_hex")) {
+            options.bootstrap = json_bytes(arguments.at("bootstrap_hex"));
+        }
+        options.call_entry = arguments.value("call_entry", true);
+        auto mapped = session.map_driver(image, options);
+        if (!mapped) {
+            throw CliError(mapped.error().code, mapped.error().message);
+        }
+        result["base"] = hex(mapped->base);
+        result["size"] = mapped->size;
+        result["entry_status"] = mapped->entry_status;
+        return result;
+    }
+    if (name == "unmap") {
+        auto outcome = session.unmap(json_u64(arguments.at("base")));
+        if (!outcome) {
+            throw CliError(outcome.error().code, outcome.error().message);
+        }
+        result["ok"] = true;
+        return result;
+    }
     if (name == "dse_status") {
         auto status = session.dse_status();
         if (!status) {

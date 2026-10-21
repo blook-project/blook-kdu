@@ -127,11 +127,21 @@ try {
     try { $hex = ($read.output | ConvertFrom-Json).hex } catch { }
     Add-Result 'memory/process-read' ($read.code -eq 0 -and $hex -like '4b44552d453245*') `
         ("pid={0} hex={1}" -f $marker.pid, $hex)
+
     $marker2 = 'KDU-WRITE-TEST'
+    $hexBytes = (@([System.Text.Encoding]::ASCII.GetBytes($marker2)) |
+                 ForEach-Object { '{0:x2}' -f $_ }) -join ''
     $write = Invoke-Kdu @('--json', 'mem', 'process', 'write', '--pid', "$($marker.pid)",
-                          $marker.address, ($marker2 -split '' | Where-Object { $_ } |
-                          ForEach-Object { '{0:x2}' -f [int][char]$_ }) -join '')
+                          $marker.address, $hexBytes)
     Add-Result 'memory/process-write' ($write.code -eq 0) $write.output.Trim()
+    if ($write.code -eq 0) {
+        $readBack = Invoke-Kdu @('--json', 'mem', 'process', 'read', '--pid',
+                                 "$($marker.pid)", $marker.address, '12')
+        $readBackHex = ''
+        try { $readBackHex = ($readBack.output | ConvertFrom-Json).hex } catch { }
+        Add-Result 'memory/process-write-verify' ($readBackHex -like "$hexBytes*") `
+            ("readback=$readBackHex")
+    }
 } finally {
     if ($helperProcess -and -not $helperProcess.HasExited) {
         Stop-Process -Id $helperProcess.Id -Force -ErrorAction SilentlyContinue
@@ -165,6 +175,49 @@ if (Test-Path $guestDriver) {
     Add-Result 'dse/unsigned-load' $false "guest test driver missing: $guestDriver"
 }
 
+# ---------------------------------------------------------------------------
+# Robustness: malformed requests must fail cleanly (no BSOD/hang).
+# ---------------------------------------------------------------------------
+function Invoke-BatchOps([object[]] $ops, [string] $name, [string[]] $extra) {
+    $path = Join-Path $OutDir "$name.json"
+    (@{ ops = $ops } | ConvertTo-Json -Depth 10) |
+        Set-Content -Path $path -Encoding UTF8
+    $arguments = @('--json') + $extra + @('batch', $path)
+    return Invoke-Kdu $arguments
+}
+
+$badPhysical = Invoke-BatchOps @(@{ op = 'read_physical'; address = '0xFFFFFFFFFFFFF000'; size = 8 }) 'bad-physical' @()
+Add-Result 'robustness/invalid-physical' ($badPhysical.code -ne 0) $badPhysical.output.Trim()
+
+$badVirtual = Invoke-BatchOps @(@{ op = 'read_virtual'; address = '0x10'; size = 8 }) 'bad-virtual' @()
+Add-Result 'robustness/invalid-virtual' ($badVirtual.code -ne 0) $badVirtual.output.Trim()
+
+$badOp = Invoke-BatchOps @(@{ op = 'not_a_real_operation' }) 'bad-op' @()
+Add-Result 'robustness/unknown-op' ($badOp.code -ne 0) $badOp.output.Trim()
+
+# One thousand physical reads in a single session (batch = one driver load).
+$readOps = @()
+for ($index = 0; $index -lt 1000; $index++) {
+    $readOps += @{ op = 'read_physical'; address = '0x1000'; size = 16 }
+}
+$stressReadsBatch = Invoke-BatchOps $readOps 'stress-reads' @()
+$stressReadOk = $stressReadsBatch.code -eq 0
+Add-Result 'stress/1000-reads-one-session' $stressReadOk $stressReadsBatch.output.Trim()
+
+# 50 payload map / unload cycles (pool allocation is a documented residual).
+$mapCycles = 0
+$mapFailures = 0
+if ($payloadId) {
+    $cycleOps = @()
+    for ($index = 0; $index -lt 50; $index++) {
+        $cycleOps += @{ op = 'map_payload' }
+        $cycleOps += @{ op = 'unload_payload' }
+    }
+    $cycleResult = Invoke-BatchOps $cycleOps 'stress-map' @('--exploit', $payloadId)
+    if ($cycleResult.code -ne 0) { $mapFailures = 1 }
+    $mapCycles = 50
+}
+Add-Result 'stress/map-unload-cycles' ($mapFailures -eq 0) ("{0} cycles" -f $mapCycles)
 # ---------------------------------------------------------------------------
 # Stress: repeated exploit load/unload and repeated reads.
 # ---------------------------------------------------------------------------
@@ -208,5 +261,6 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
 
 

@@ -98,6 +98,17 @@ jobs:
         run: |
           xmake run kdu_tests
           if ($LASTEXITCODE -ne 0) { throw "host unit tests failed" }
+      - name: CLI smoke (no kernel access)
+        shell: pwsh
+        run: |
+          $kdu = "build/windows/x64/release/kdu.exe"
+          & $kdu --version
+          if ($LASTEXITCODE -ne 0) { throw "kdu --version failed" }
+          $exploits = (& $kdu --json exploits list) | ConvertFrom-Json
+          if ($exploits.Count -lt 3) { throw "unexpected exploit count: $($exploits.Count)" }
+          & $kdu exploits probe
+          if ($LASTEXITCODE -ne 0) { throw "exploits probe failed" }
+          & $kdu --help | Out-Host
       - name: Registry + version consistency
         shell: pwsh
         run: |
@@ -174,6 +185,7 @@ jobs:
         run: |
           xmake run "kdu_exploit_test_${{ matrix.exploit }}"
           if ($LASTEXITCODE -ne 0) { throw "exploit ${{ matrix.exploit }} tests failed" }
+
 
 
 
