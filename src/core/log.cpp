@@ -41,7 +41,7 @@ bool is_valid_log_level(std::string_view level) {
 void init_logging(std::string_view level, std::string_view log_file) {
     std::lock_guard<std::mutex> lock(g_mutex);
     if (!g_logger) {
-        auto sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        auto sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
         g_logger = std::make_shared<spdlog::logger>("kdu", std::move(sink));
         g_logger->set_pattern("[%^%l%$] %v");
         spdlog::register_logger(g_logger);
@@ -63,7 +63,7 @@ void init_logging(std::string_view level, std::string_view log_file) {
 std::shared_ptr<spdlog::logger> logger() {
     std::lock_guard<std::mutex> lock(g_mutex);
     if (!g_logger) {
-        auto sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        auto sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
         g_logger = std::make_shared<spdlog::logger>("kdu", std::move(sink));
         g_logger->set_pattern("[%^%l%$] %v");
         g_logger->set_level(spdlog::level::warn);

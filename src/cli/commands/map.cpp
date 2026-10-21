@@ -12,6 +12,8 @@ struct MapState {
     std::string image;
     std::string name;
     std::string bootstrap_file;
+    bool payload = false;
+    bool no_entry = false;
 };
 
 }  // namespace
@@ -21,27 +23,26 @@ void add_map_command(CLI::App& app, Context& context) {
 
     auto* map = app.add_subcommand(
         "map", "Manual-map a kernel image (.sys) or the embedded payload");
-    bool payload = false;
-    bool no_entry = false;
     map->add_option("image", state->image, "Path to a .sys image");
-    map->add_flag("--payload", payload,
+    map->add_flag("--payload", state->payload,
                   "Map the embedded kernel payload and attach kchannel");
     map->add_option("--name", state->name, "Diagnostic name");
     map->add_option("--bootstrap-file", state->bootstrap_file,
                     "Pass this file's bytes to the entry point");
-    map->add_flag("--no-entry", no_entry, "Only map, do not call the entry");
-    map->callback([&context, state, payload, no_entry] {
+    map->add_flag("--no-entry", state->no_entry,
+                  "Only map, do not call the entry");
+    map->callback([&context, state] {
         auto& session = context.ensure_session();
         blook::kdu::MapOptions options;
         options.name = state->name;
         if (!state->bootstrap_file.empty()) {
             options.bootstrap = load_file(state->bootstrap_file);
         }
-        options.call_entry = !no_entry;
+        options.call_entry = !state->no_entry;
         blook::kdu::Result<blook::kdu::MappedImage> result =
             blook::kdu::Result<blook::kdu::MappedImage>::fail(
                 blook::kdu::Status::invalid_argument, "missing image");
-        if (payload) {
+        if (state->payload) {
             result = session.map_payload(options);
         } else {
             if (state->image.empty()) {

