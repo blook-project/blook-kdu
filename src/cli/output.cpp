@@ -233,6 +233,7 @@ std::string exploits_json() {
             blook::kdu::exploits::capability_names(info.capabilities);
         item["min_build"] = info.min_build;
         item["max_build"] = info.max_build;
+        item["unsafe_physical_holes"] = info.unsafe_physical_holes;
         array.push_back(std::move(item));
     }
     return array.dump(2);

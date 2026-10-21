@@ -149,9 +149,16 @@ $exec.stderr | Set-Content (Join-Path $Out 'guest-exec.err.log')
 
 $guestOut = Join-Path $Out 'guest-out'
 if (Test-Path $guestOut) { Remove-Item $guestOut -Recurse -Force }
-$pulled = Invoke-Bvmenv ("pull {0} {1} `"{2}`"" -f $Vm, $guestOutDir, $guestOut) $StepTimeoutSeconds
-if ($pulled.code -ne 0) {
-    Write-Warning ("bvmenv pull failed: " + $pulled.stdout + $pulled.stderr)
+$pulled = $null
+try {
+    $pulled = Invoke-Bvmenv ("pull {0} {1} `"{2}`"" -f $Vm, $guestOutDir, $guestOut) 600
+    if ($pulled.code -ne 0) {
+        Write-Warning ("bvmenv pull failed: " + $pulled.stdout + $pulled.stderr)
+    }
+} catch {
+    # A hung guest (BSOD) makes pull time out; keep going so the host-side state
+    # observation and summary still capture the failure as evidence.
+    Write-Warning ("bvmenv pull failed: " + $_)
 }
 
 # ---------------------------------------------------------------------------
@@ -191,5 +198,6 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 

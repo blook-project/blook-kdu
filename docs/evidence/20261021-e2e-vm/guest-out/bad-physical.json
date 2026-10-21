@@ -1,9 +1,0 @@
-﻿{
-    "ops":  [
-                {
-                    "size":  8,
-                    "op":  "read_physical",
-                    "address":  "0xFFFFFFFFFFFFF000"
-                }
-            ]
-}

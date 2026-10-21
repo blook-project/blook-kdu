@@ -91,23 +91,40 @@ $payloadId = ''
 if ($exploitIds -contains 'gdrv') { $payloadId = 'gdrv' } elseif ($exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
 
 foreach ($id in $exploitIds) {
-    $result = Invoke-Kdu @('--exploit', $id, '--driver-only', 'exploits', 'test', $id)
-    $ok = $result.code -eq 0 -and $result.output -match 'PASS'
-    Add-Result "exploit/$id" $ok $result.output.Trim()
-
     $capabilities = @()
+    $unsafePhysicalHoles = $false
     if ($exploitInfo.ContainsKey($id)) {
         $capabilities = @($exploitInfo[$id].capabilities)
+        $unsafePhysicalHoles = [bool]$exploitInfo[$id].unsafe_physical_holes
     }
-    # Exercises the manual mapper through this specific physical-write exploit.
-    if ($capabilities -contains 'physical_write') {
-        $mapped = Invoke-Kdu @('--exploit', $id, '--json', 'map', '--payload')
-        $mapOk = $mapped.code -eq 0
-        $mappedBase = ''
-        if ($mapOk) {
-            try { $mappedBase = ($mapped.output | ConvertFrom-Json).base } catch { }
+
+    if ($unsafePhysicalHoles) {
+        # WinRing0-family bug: invalid physical reads bugcheck the machine, so
+        # the SDK disables page-table walks for this driver. Prove the safe path
+        # (valid physical RAM) works and that the guard refuses VA operations.
+        $safeRead = Invoke-Kdu @('--exploit', $id, '--driver-only', '--json',
+                                 'mem', 'phys', 'read', '0x1000', '16')
+        Add-Result "exploit/$id" ($safeRead.code -eq 0) `
+            ("unsafe-physical driver, safe physical read: " + $safeRead.output.Trim())
+        $guarded = Invoke-Kdu @('--exploit', $id, '--driver-only', '--json',
+                                'mem', 'virt', 'read', '0xFFFFF80000000000', '16')
+        Add-Result "exploit/$id/unsafe-guard" ($guarded.code -ne 0) `
+            $guarded.output.Trim()
+    } else {
+        $result = Invoke-Kdu @('--exploit', $id, '--driver-only', 'exploits', 'test', $id)
+        $ok = $result.code -eq 0 -and $result.output -match 'PASS'
+        Add-Result "exploit/$id" $ok $result.output.Trim()
+
+        # Exercises the manual mapper through this specific physical-write exploit.
+        if ($capabilities -contains 'physical_write') {
+            $mapped = Invoke-Kdu @('--exploit', $id, '--json', 'map', '--payload')
+            $mapOk = $mapped.code -eq 0
+            $mappedBase = ''
+            if ($mapOk) {
+                try { $mappedBase = ($mapped.output | ConvertFrom-Json).base } catch { }
+            }
+            Add-Result "exploit/$id/payload-map" ($mapOk -and $mappedBase) $mapped.output.Trim()
         }
-        Add-Result "exploit/$id/payload-map" ($mapOk -and $mappedBase) $mapped.output.Trim()
     }
 
     # Trace scan: service/registry/file leftovers are failures; System event log
