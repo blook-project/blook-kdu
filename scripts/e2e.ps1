@@ -10,7 +10,7 @@ param(
     [string] $Root = (Split-Path -Parent $PSScriptRoot),
     [string] $Vm = '',
     [string] $Out = '',
-    [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\build\windows\x64\release\bvmenv.exe',
+    [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\dist\bvmenv-latest.exe',
     [int] $ExecTimeoutSeconds = 1500,
     [int] $StepTimeoutSeconds = 300,
     [switch] $NoReset,
@@ -121,6 +121,12 @@ if (Test-Path $guestDriverSource) {
         & pwsh -NoProfile -ExecutionPolicy Bypass -File `
             (Join-Path $Root 'scripts/sign.ps1') -Files $signed | Out-Null
         Write-Host "test-signed guest driver: $signed"
+        # Tampered copy: flip one byte inside the signed image so the signature
+        # no longer matches. It must be rejected while code integrity is on.
+        $tampered = Join-Path $bundle 'kdu_guest_test_driver_tampered.sys'
+        $bytes = [System.IO.File]::ReadAllBytes($signed)
+        $bytes[0x400] = $bytes[0x400] -bxor 0xFF
+        [System.IO.File]::WriteAllBytes($tampered, $bytes)
     } catch {
         Write-Warning ("could not test-sign the guest driver: " + $_)
         Remove-Item $signed -Force -ErrorAction SilentlyContinue
@@ -198,6 +204,7 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 
 

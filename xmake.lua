@@ -260,6 +260,12 @@ target("kdu_e2e_helper")
 -- ---------------------------------------------------------------------------
 -- SDK + CLI (require the IPC adapter, i.e. real kchannel sources)
 -- ---------------------------------------------------------------------------
+-- Build-time signing of the embedded driver assets. The generated RCDATA table
+-- is consumed by the CLI target below.
+if not os.isfile(path.join(os.projectdir(), "build", "generated", "assets.rc")) then
+    os.exec('pwsh -NoProfile -ExecutionPolicy Bypass -File "' ..
+            path.join(os.projectdir(), "scripts", "prepare-assets.ps1") .. '"')
+end
 if has_kchannel_user then
     target("kdu_sdk")
         set_kind("static")
@@ -272,9 +278,9 @@ if has_kchannel_user then
         set_kind("binary")
         kdu_user_defaults()
         add_files("src/cli/*.cpp", "src/cli/commands/*.cpp")
-        -- embedded vulnerable drivers (Win32 RCDATA resources)
-        add_files(os.files("src/exploits/*/data/*.rc"),
-                  os.files("src/loader/data/*.rc"))
+        -- embedded vulnerable drivers (signed RCDATA resources)
+        add_files(path.join(os.projectdir(), "build", "generated",
+                            "assets.rc"))
         add_deps("kdu_sdk")
         add_packages("cli11", "fmt", "spdlog", "nlohmann_json")
 end
@@ -306,6 +312,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 

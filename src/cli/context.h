@@ -20,6 +20,7 @@ struct GlobalOptions {
     std::string exploit;
     bool use_payload = true;
     bool driver_only = false;
+    bool keep_dse = false;
     std::string log_level = "warn";
     std::uint32_t timeout_ms = 5000;
 };

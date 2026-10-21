@@ -63,6 +63,11 @@ struct OpenOptions {
     // destroyed or closed.
     bool cleanup_on_close = true;
 
+    // Restore the original g_CiOptions value when the session closes. Disable
+    // this (CLI: --keep-dse) when the DSE change must outlive the process, e.g.
+    // when staging drivers from several short-lived CLI invocations.
+    bool restore_dse_on_close = true;
+
     // spdlog level name: "trace", "debug", "info", "warn", "error", "off".
     std::string log_level = "warn";
 

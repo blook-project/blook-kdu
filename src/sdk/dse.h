@@ -18,6 +18,16 @@
 
 namespace blook::kdu::sdk {
 
+struct CiOptionsCandidate {
+    std::uint64_t address = 0;
+    std::uint32_t value = 0;
+    std::string section;
+};
+
+// All plausible g_CiOptions candidates (for diagnostics / `kdu dse scan`).
+Result<std::vector<CiOptionsCandidate>> scan_ci_options(
+    IKernelAccess& access, const std::vector<core::KernelModuleEntry>& modules);
+
 struct CiOptionsLocation {
     std::uint64_t address = 0;  // kernel VA of g_CiOptions
     std::uint64_t ci_base = 0;  // ci.dll loaded base
@@ -33,5 +43,11 @@ Result<std::uint32_t> read_ci_options(IKernelAccess& access,
                                       std::uint64_t address);
 Result<void> write_ci_options(IKernelAccess& access, std::uint64_t address,
                               std::uint32_t value);
+
+// Persist the original g_CiOptions value across processes so a later
+// `dse restore` (different CLI invocation) puts the exact value back.
+void save_dse_original(std::uint64_t address, std::uint32_t value);
+bool load_dse_original(std::uint64_t* address, std::uint32_t* value);
+void clear_dse_original();
 
 }  // namespace blook::kdu::sdk

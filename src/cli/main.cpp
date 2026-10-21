@@ -119,6 +119,9 @@ int main(int argc, char** argv) {
                      "Do not map the kernel payload; use the driver backend");
         app.add_flag("--driver-only", context.options.driver_only,
                      "Only use driver primitives (implies --no-payload)");
+        app.add_flag("--keep-dse", context.options.keep_dse,
+                     "Do not restore g_CiOptions when the command exits "
+                     "(e2e staging)");
         app.add_option("--log-level", context.options.log_level,
                        "spdlog level: trace|debug|info|warn|error|off");
         app.add_option("--timeout", context.options.timeout_ms,

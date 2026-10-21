@@ -1,14 +1,17 @@
 // blook-kdu: DSE control implementation.
 #include "sdk/dse.h"
 
+#include <cstdlib>
 #include <cstring>
 
 #include "core/log.h"
+#include "core/win32.h"
 
 namespace blook::kdu::sdk {
 namespace {
 
 struct SectionRange {
+    std::string name;
     std::uint64_t virtual_address = 0;  // RVA
     std::uint64_t size = 0;
     std::uint32_t characteristics = 0;
@@ -61,10 +64,12 @@ Result<ImageLayout> parse_layout(IKernelAccess& access,
     layout.base = module.base;
     layout.size_of_image = nt->OptionalHeader.SizeOfImage;
     const auto* section = IMAGE_FIRST_SECTION(nt);
-    for (WORD index = 0; index < nt->FileHeader.NumberOfSections; ++index) {
-        layout.sections.push_back(SectionRange{section[index].VirtualAddress,
-                                               section[index].Misc.VirtualSize,
-                                               section[index].Characteristics});
+    for (USHORT index = 0; index < nt->FileHeader.NumberOfSections; ++index) {
+        char section_name[9] = {};
+        std::memcpy(section_name, section[index].Name, 8);
+        layout.sections.push_back(SectionRange{
+            section_name, section[index].VirtualAddress,
+            section[index].Misc.VirtualSize, section[index].Characteristics});
     }
     return Result<ImageLayout>::ok(std::move(layout));
 }
@@ -134,6 +139,47 @@ std::uint64_t find_ci_options_in(const std::uint8_t* code, std::size_t size,
 }
 
 }  // namespace
+
+namespace {
+
+std::string dse_state_path() {
+    return std::string(std::getenv("TEMP") ? std::getenv("TEMP")
+                                           : "C:\\Windows\\Temp") +
+           "\\blook-kdu-dse.txt";
+}
+
+}  // namespace
+
+void save_dse_original(std::uint64_t address, std::uint32_t value) {
+    const std::string text =
+        std::to_string(address) + " " + std::to_string(value) + "\n";
+    (void)core::write_file(dse_state_path(), text.data(), text.size());
+}
+
+bool load_dse_original(std::uint64_t* address, std::uint32_t* value) {
+    if (!address || !value) {
+        return false;
+    }
+    auto contents = core::read_file(dse_state_path());
+    if (!contents || contents->empty()) {
+        return false;
+    }
+    std::string text(contents->begin(), contents->end());
+    char* end = nullptr;
+    const unsigned long long parsed_address =
+        std::strtoull(text.c_str(), &end, 10);
+    if (end == text.c_str()) {
+        return false;
+    }
+    const auto parsed_value = std::strtoul(end, &end, 10);
+    *address = parsed_address;
+    *value = static_cast<std::uint32_t>(parsed_value);
+    return *address != 0;
+}
+
+void clear_dse_original() {
+    (void)core::remove_file(dse_state_path());
+}
 
 Result<std::uint32_t> read_ci_options(IKernelAccess& access,
                                       std::uint64_t address) {
@@ -264,6 +310,84 @@ Result<CiOptionsLocation> find_ci_options(
     return Result<CiOptionsLocation>::fail(
         Status::dse_not_found,
         "g_CiOptions store instruction not found in ci.dll");
+}
+
+Result<std::vector<CiOptionsCandidate>> scan_ci_options(
+    IKernelAccess& access,
+    const std::vector<core::KernelModuleEntry>& modules) {
+    const core::KernelModuleEntry* ci = nullptr;
+    for (const auto& module : modules) {
+        if (_stricmp(module.name.c_str(), "ci.dll") == 0) {
+            ci = &module;
+            break;
+        }
+    }
+    if (!ci) {
+        return Result<std::vector<CiOptionsCandidate>>::fail(
+            Status::dse_not_found, "ci.dll is not loaded");
+    }
+    auto layout = parse_layout(access, *ci);
+    if (!layout) {
+        return Result<std::vector<CiOptionsCandidate>>::fail(
+            layout.error().code, layout.error().message);
+    }
+    std::vector<std::uint8_t> image(layout->size_of_image, 0);
+    read_image_bytes(access, ci->base, image.data(), image.size());
+
+    std::vector<CiOptionsCandidate> candidates;
+    for (const auto& section : layout->sections) {
+        if ((section.characteristics & IMAGE_SCN_MEM_EXECUTE) == 0) {
+            continue;
+        }
+        const auto start = static_cast<std::size_t>(section.virtual_address);
+        const auto size = static_cast<std::size_t>(
+            std::min<std::uint64_t>(section.size, image.size() - start));
+        for (std::size_t offset = 0; offset + 6 <= size; ++offset) {
+            const auto* code = image.data() + start + offset;
+            if (!(code[0] == 0x89 && code[1] == 0x0D)) {
+                continue;
+            }
+            std::int32_t relative = 0;
+            std::memcpy(&relative, code + 2, sizeof(relative));
+            const std::int64_t target = static_cast<std::int64_t>(start) +
+                                        static_cast<std::int64_t>(offset) + 6 +
+                                        relative;
+            if (target <= 0 ||
+                static_cast<std::uint64_t>(target) >= layout->size_of_image) {
+                continue;
+            }
+            const auto rva = static_cast<std::uint64_t>(target);
+            if (!in_section(*layout, rva, IMAGE_SCN_MEM_WRITE)) {
+                continue;
+            }
+            CiOptionsCandidate candidate;
+            candidate.address = layout->base + rva;
+            auto value =
+                access.read_virtual_value<std::uint32_t>(candidate.address);
+            if (!value) {
+                continue;
+            }
+            candidate.value = value.value();
+            for (const auto& containing : layout->sections) {
+                if (rva >= containing.virtual_address &&
+                    rva < containing.virtual_address + containing.size) {
+                    candidate.section = containing.name;
+                    break;
+                }
+            }
+            bool duplicate = false;
+            for (const auto& existing : candidates) {
+                if (existing.address == candidate.address) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                candidates.push_back(std::move(candidate));
+            }
+        }
+    }
+    return Result<std::vector<CiOptionsCandidate>>::ok(std::move(candidates));
 }
 
 }  // namespace blook::kdu::sdk

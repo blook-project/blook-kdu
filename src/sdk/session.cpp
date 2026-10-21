@@ -80,10 +80,13 @@ struct Session::Impl {
         }
         closed = true;
 
-        // Restore any DSE change before tearing the backends down.
-        if (original_ci_options && ci_options_location && access) {
+        // Restore any DSE change before tearing the backends down (unless the
+        // caller asked the change to outlive the process, e.g. e2e staging).
+        if (options.restore_dse_on_close && original_ci_options &&
+            ci_options_location && access) {
             (void)sdk::write_ci_options(*access, ci_options_location->address,
                                         *original_ci_options);
+            sdk::clear_dse_original();
             original_ci_options.reset();
         }
         if (payload_mapped && payload) {
@@ -471,6 +474,7 @@ Result<void> Session::dse_disable() {
     }
     if (!impl_->original_ci_options) {
         impl_->original_ci_options = status->options;
+        sdk::save_dse_original(status->options_address, status->options);
     }
     return sdk::write_ci_options(*impl_->access, status->options_address, 0);
 }
@@ -480,12 +484,28 @@ Result<void> Session::dse_restore() {
     if (!status) {
         return Result<void>::fail(status.error().code, status.error().message);
     }
-    const std::uint32_t value =
-        impl_->original_ci_options.value_or(6);  // 6 = default DSE on
+    std::uint32_t value = 0;
+    bool have_value = false;
+    if (impl_->original_ci_options) {
+        value = *impl_->original_ci_options;
+        have_value = true;
+    } else {
+        std::uint64_t saved_address = 0;
+        std::uint32_t saved_value = 0;
+        if (sdk::load_dse_original(&saved_address, &saved_value) &&
+            saved_address == status->options_address) {
+            value = saved_value;
+            have_value = true;
+        }
+    }
+    if (!have_value) {
+        value = 6;  // default DSE-on value when the original was not recorded
+    }
     auto result =
         sdk::write_ci_options(*impl_->access, status->options_address, value);
     if (result) {
         impl_->original_ci_options.reset();
+        sdk::clear_dse_original();
     }
     return result;
 }

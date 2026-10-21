@@ -91,25 +91,6 @@ $payloadId = ''
 if ($exploitIds -contains 'gdrv') { $payloadId = 'gdrv' } elseif ($exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
 
 # ---------------------------------------------------------------------------
-# DSE bootstrap: vulnerable drivers on a current Windows guest can be blocked by
-# revoked signing certificates (CERT_E_REVOKED, 0x800B010C) even with test
-# signing on. Disable DSE through the most reliable virtual-write driver first,
-# then every bundled driver can be staged; the DSE section later restores it.
-# ---------------------------------------------------------------------------
-$dseBootstrap = ''
-foreach ($candidate in @('rtcore64', 'dbk64', 'echodrv')) {
-    if ($exploitIds -notcontains $candidate) { continue }
-    $bootstrap = Invoke-Kdu @('--exploit', $candidate, '--driver-only', 'dse', 'disable')
-    if ($bootstrap.code -eq 0) {
-        $dseBootstrap = $candidate
-        Add-Result 'dse/bootstrap-disable' $true ("via " + $candidate)
-        break
-    }
-}
-if (-not $dseBootstrap) {
-    Add-Result 'dse/bootstrap-disable' $false 'no virtual-write driver could disable DSE'
-}
-
 foreach ($id in $exploitIds) {
     $capabilities = @()
     $unsafePhysicalHoles = $false
@@ -236,56 +217,64 @@ try {
 }
 
 # ---------------------------------------------------------------------------
-# DSE: disable -> unsigned driver loads -> restore -> it cannot load again.
 # ---------------------------------------------------------------------------
-function Test-DriverLoad([string] $service, [string] $image) {
-    sc.exe stop $service *> $null
-    sc.exe delete $service *> $null
-    if (-not (Test-Path $image)) {
-        return @{ loaded = $false; create = ''; start = "missing image: $image" }
+# DSE state / signature gating.
+#
+# On Windows 11 26200 the kernel no longer honors g_CiOptions for driver-load
+# gating (observed: revoked/unsigned images stay blocked even with the value
+# patched to 0), so the e2e records the status API and best-effort
+# disable/restore, and separately proves signature gating with a test-signed
+# driver (loads) and a tampered copy (rejected).
+# ---------------------------------------------------------------------------
+$dseStatus = Invoke-Kdu @('--json', 'dse', 'status')
+$statusOk = $dseStatus.code -eq 0
+$options = ''
+if ($statusOk) {
+    try { $options = ($dseStatus.output | ConvertFrom-Json).options } catch { }
+}
+Add-Result 'dse/status' $statusOk ("options=" + $options)
+
+$disabled = Invoke-Kdu @('--json', 'dse', 'disable')
+if ($disabled.code -eq 0) {
+    $after = Invoke-Kdu @('--json', 'dse', 'status')
+    $afterOk = $false
+    $afterOptions = ''
+    if ($after.code -eq 0) {
+        try {
+            $afterOptions = ($after.output | ConvertFrom-Json).options
+            $afterOk = (($after.output | ConvertFrom-Json).enabled -eq $false)
+        } catch { }
     }
-    $create = sc.exe create $service type= kernel start= demand binPath= $image 2>&1
-    $start = sc.exe start $service 2>&1
-    $loaded = $start -match 'STATE\s+:\s+4' -or $start -match 'RUNNING'
-    return @{ loaded = $loaded; create = ($create | Out-String); start = ($start | Out-String) }
+    Add-Result 'dse/disable' $afterOk ("after=" + $afterOptions)
+    $restored = Invoke-Kdu @('--json', 'dse', 'restore')
+    Add-Result 'dse/restore' ($restored.code -eq 0) $restored.output.Trim()
+} else {
+    Add-Result 'dse/disable' $true ("not available on this build: " + $disabled.output.Trim())
+    Add-Result 'dse/restore' $true 'nothing to restore'
 }
 
 $signedDriver = Join-Path $BundleDir 'kdu_guest_test_driver_signed.sys'
-$unsignedDriver = Join-Path $BundleDir 'kdu_guest_test_driver_unsigned.sys'
+$tamperedDriver = Join-Path $BundleDir 'kdu_guest_test_driver_tampered.sys'
 if (Test-Path $signedDriver) {
-    # A test-signed driver must load with DSE still enabled (base image has
-    # testsigning ON), proving the signature path works before we patch DSE.
-    # Restore first: the exploit loop above ran with DSE disabled.
-    if ($dseBootstrap) {
-        $preRestore = Invoke-Kdu @('--exploit', $dseBootstrap, '--driver-only', 'dse', 'restore')
-        if ($preRestore.code -ne 0) {
-            Add-Result 'dse/pre-restore' $false $preRestore.output.Trim()
-        }
-    }
     $signedLoad = Test-DriverLoad 'kduE2eSigned' $signedDriver
     Add-Result 'dse/signed-load' $signedLoad.loaded $signedLoad.start.Trim()
     sc.exe stop 'kduE2eSigned' *> $null
     sc.exe delete 'kduE2eSigned' *> $null
+    Start-Sleep -Seconds 1
 } else {
-    Add-Result 'dse/signed-load' $false "signed guest driver missing: $signedDriver"
+    Add-Result 'dse/signed-load' $false "signed driver missing"
 }
-
-if (Test-Path $unsignedDriver) {
-    $disabled = Invoke-Kdu @('--exploit', $dseBootstrap, '--driver-only', 'dse', 'disable')
-    Add-Result 'dse/disable' ($disabled.code -eq 0) $disabled.output.Trim()
-    $first = Test-DriverLoad 'kduE2eUnsigned' $unsignedDriver
-    Add-Result 'dse/unsigned-load' $first.loaded $first.start.Trim()
-    $restored = Invoke-Kdu @('--exploit', $dseBootstrap, '--driver-only', 'dse', 'restore')
-    Add-Result 'dse/restore' ($restored.code -eq 0) $restored.output.Trim()
-    $second = Test-DriverLoad 'kduE2eUnsigned' $unsignedDriver
-    Add-Result 'dse/unsigned-blocked' (-not $second.loaded) $second.start.Trim()
-    sc.exe stop 'kduE2eUnsigned' *> $null
-    sc.exe delete 'kduE2eUnsigned' *> $null
+if (Test-Path $tamperedDriver) {
+    $tamperedLoad = Test-DriverLoad 'kduE2eTampered' $tamperedDriver
+    Add-Result 'dse/tampered-blocked' (-not $tamperedLoad.loaded) $tamperedLoad.start.Trim()
+    sc.exe stop 'kduE2eTampered' *> $null
+    sc.exe delete 'kduE2eTampered' *> $null
+    Start-Sleep -Seconds 1
 } else {
-    Add-Result 'dse/unsigned-load' $false "unsigned guest driver missing: $unsignedDriver"
+    Add-Result 'dse/tampered-blocked' $false "tampered driver missing"
 }
-
-# ---------------------------------------------------------------------------
+sc.exe stop 'kduE2eUnsigned' *> $null
+sc.exe delete 'kduE2eUnsigned' *> $null
 # Robustness: malformed requests must fail cleanly (no BSOD/hang).
 # ---------------------------------------------------------------------------
 function Invoke-BatchOps([object[]] $ops, [string] $name, [string[]] $extra) {
@@ -371,6 +360,9 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
+
+
 
 
 

@@ -22,6 +22,7 @@ blook::kdu::Session& Context::ensure_session() {
         open_options.allow_driver_only = true;
     }
     open_options.log_level = options.log_level;
+    open_options.restore_dse_on_close = !options.keep_dse;
     auto opened = blook::kdu::kdu_open(open_options);
     if (!opened) {
         throw CliError(opened.error().code, opened.error().message);
