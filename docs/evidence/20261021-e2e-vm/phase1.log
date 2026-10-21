@@ -2,15 +2,24 @@ exit_code    : 0
 [PASS] environment/build
 [PASS] environment/elevated
 [PASS] environment/defender
+[PASS] environment/spc-trust
 [PASS] exploits/list
 [PASS] exploits/count
+[SKIP] exploit/amd/load: not started: blocklisted/revoked or unsafe raw image on this build
 [PASS] exploit/asrock/load
-[PASS] exploit/atszio64/load
-[SKIP] exploit/dbk64/load: driver did not start on this build
-[PASS] exploit/echodrv/load
-[PASS] exploit/gdrv/load
-[PASS] exploit/physmem64/load
+[SKIP] exploit/atszio64/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/dbk64/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/directio64/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/echodrv/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/gdrv/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/gmer/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/kph/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/lha/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/mimidrv/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/msio64/load: not started: blocklisted/revoked or unsafe raw image on this build
+[SKIP] exploit/physmem64/load: not started: blocklisted/revoked or unsafe raw image on this build
 [PASS] exploit/rtcore64/load
+[SKIP] exploit/tpw/load: not started: blocklisted/revoked or unsafe raw image on this build
 [PASS] exploit/winring0/load
 
 

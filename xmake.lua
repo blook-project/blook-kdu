@@ -33,7 +33,7 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = "build"})
 set_encodings("utf-8")
 set_warnings("more")
 set_languages("cxx20")
-set_version("1.0.1")  -- keep in sync with version.txt / include/blook/kdu/version.h
+set_version("1.0.2")  -- keep in sync with version.txt / include/blook/kdu/version.h
 
 option("kchannel_dir")
     set_showmenu(true)
@@ -320,6 +320,24 @@ if build_payload then
         add_cxflags("/W4", {force = true})
 end
 
+-- CI-only: minimal signed driver + client used by the kernel-load-smoke job.
+if is_plat("windows") then
+    target("kdu_ci_smoke_driver")
+        set_kind("binary")
+        add_rules("wdk.driver", "wdk.env.wdm")
+        add_files("tests/ci/kernel_smoke_driver.c")
+        add_defines("UNICODE", "NOMINMAX", "_KERNEL_MODE=1",
+                    "NTDDI_VERSION=0x0A00000C")
+        add_cxflags("/W4", {force = true})
+        add_syslinks("ntoskrnl", "wdmsec")
+        add_ldflags("/ENTRY:DriverEntry", {force = true})
+
+    target("kdu_ci_smoke_client")
+        set_kind("binary")
+        kdu_user_defaults()
+        add_files("tests/ci/kernel_smoke_client.cpp")
+end
+
 target("kdu_api_example")
     set_kind("binary")
     kdu_user_defaults()
@@ -390,6 +408,8 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
+
 
 
 

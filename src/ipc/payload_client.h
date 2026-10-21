@@ -38,6 +38,20 @@ class IPayloadBackend {
         return Result<void>::fail(Status::not_supported);
     }
 
+    // Handle primitives (drv-lite rewrites GrantedAccess). Optional.
+    virtual Result<std::uintptr_t> open_process_handle(std::uint32_t pid,
+                                                       std::uint32_t access) {
+        (void)pid;
+        (void)access;
+        return Result<std::uintptr_t>::fail(Status::not_supported);
+    }
+    virtual Result<void> close_handle(std::uintptr_t handle,
+                                      std::uint32_t pid) {
+        (void)handle;
+        (void)pid;
+        return Result<void>::fail(Status::not_supported);
+    }
+
     // Unload the payload (kchannel detach -> payload exit -> pool freed).
     virtual Result<void> unload() = 0;
 

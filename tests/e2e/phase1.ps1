@@ -73,7 +73,15 @@ function Test-DriverLoad([string] $service, [string] $image) {
 }
 
 $driversDir = Join-Path $BundleDir 'drivers'
+# Only start drivers that are known-safe on a current VM. The others are
+# blocklisted/revoked by policy anyway, and starting an arbitrary raw vendor
+# image can bugcheck the guest (some have unsafe MmMapIoSpace paths).
+$safeToStart = @('asrock', 'rtcore64', 'winring0')
 foreach ($id in $ids) {
+    if ($safeToStart -notcontains $id) {
+        Add-Skip "exploit/$id/load" 'not started: blocklisted/revoked or unsafe raw image on this build'
+        continue
+    }
     $load = Test-DriverLoad ("kduE2e_" + $id) (Join-Path $driversDir ($id + '.sys'))
     if ($load.loaded) {
         Add-Result "exploit/$id/load" $true 'driver staged and started'
@@ -91,4 +99,5 @@ $document = [ordered]@{ suite = 'blook-kdu-e2e'; phase = 1; total = $results.Cou
     failed = $failed; results = $results }
 $document | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutDir 'result-1.json') -Encoding UTF8
 if ($failed -ne 0) { exit 1 }
+
 

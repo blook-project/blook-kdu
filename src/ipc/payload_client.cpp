@@ -360,6 +360,29 @@ class DrvLitePayloadBackend final : public IPayloadBackend {
     Result<DseState> dse_state() override { return access_->dse_state(); }
     Result<void> dse_disable() override { return access_->dse_disable(); }
     Result<void> dse_restore() override { return access_->dse_restore(); }
+    Result<std::uintptr_t> open_process_handle(std::uint32_t pid,
+                                               std::uint32_t access) override {
+        HANDLE handle = nullptr;
+        std::uint32_t granted = 0;
+        const int status =
+            session_->open_process_handle(pid, access, &handle, &granted);
+        if (status != DRVLITE_OK) {
+            return Result<std::uintptr_t>::fail(from_drvlite(status),
+                                                drvlite::status_string(status));
+        }
+        return Result<std::uintptr_t>::ok(
+            reinterpret_cast<std::uintptr_t>(handle));
+    }
+    Result<void> close_handle(std::uintptr_t handle,
+                              std::uint32_t pid) override {
+        const int status =
+            session_->close_handle(reinterpret_cast<HANDLE>(handle), pid);
+        if (status != DRVLITE_OK) {
+            return Result<void>::fail(from_drvlite(status),
+                                      drvlite::status_string(status));
+        }
+        return Result<void>::ok();
+    }
 
     Result<void> unload() override {
         if (!session_) {

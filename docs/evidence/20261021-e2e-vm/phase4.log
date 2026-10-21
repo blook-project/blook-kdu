@@ -1,5 +1,5 @@
 exit_code    : 0
-[SKIP] stress/load-unload: kernel module list unavailable
+[PASS] stress/load-unload
 [PASS] stress/read
 
 

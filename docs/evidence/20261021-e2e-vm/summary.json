@@ -1,81 +1,39 @@
 {
   "suite": "blook-kdu-e2e",
   "schema": "kdu.e2e.v1",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "bvmenv_version": "bvmenv 0.1.12",
   "bvmenv_sha256": "36ae48a8f8949fba0fb81a6dd8584e43a9b43ceade20d094f5fb6587f3745c35",
   "vm": "vm-kdu",
-  "finished": "2026-10-21T17:27:03.2900659+08:00",
+  "finished": "2026-10-21T20:09:36.8163785+08:00",
   "ok": true,
   "phases": [
     {
       "phase": 1,
       "code": 0,
-      "stdout_tail": "[SKIP] exploit/dbk64/load: driver did not start on this build\r\n[PASS] exploit/echodrv/load\r\n[PASS] exploit/gdrv/load\r\n[PASS] exploit/physmem64/load\r\n[PASS] exploit/rtcore64/load\r\n[PASS] exploit/winring0/load\r\n\r\n"
+      "stdout_tail": "[SKIP] exploit/mimidrv/load: not started: blocklisted/revoked or unsafe raw image on this build\r\n[SKIP] exploit/msio64/load: not started: blocklisted/revoked or unsafe raw image on this build\r\n[SKIP] exploit/physmem64/load: not started: blocklisted/revoked or unsafe raw image on this build\r\n[PASS] exploit/rtcore64/load\r\n[SKIP] exploit/tpw/load: not started: blocklisted/revoked or unsafe raw image on this build\r\n[PASS] exploit/winring0/load\r\n\r\n"
     },
     {
       "phase": 2,
       "code": 0,
-      "stdout_tail": "[SKIP] memory/physical-read: WinRing0 driver unavailable/blocked on this build\r\n[PASS] safety/winring0-va-guard\r\n[SKIP] memory/process-read: CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design\r\n[SKIP] memory/process-write: same as process-read\r\n[SKIP] payload/map: manual-map payload cannot execute on this build (kernel executable memory restrictions)\r\n[PASS] cleanup/traces\r\n\r\n"
+      "stdout_tail": "[PASS] safety/winring0-va-guard\r\n[PASS] payload/map\r\n[PASS] payload/service-running\r\n[PASS] memory/process-read\r\n[PASS] memory/process-write\r\n[PASS] cleanup/traces\r\n\r\n"
     },
     {
       "phase": 3,
       "code": 0,
-      "stdout_tail": "exit_code    : 0\r\n[SKIP] dse/status: DSE status unavailable\r\n[SKIP] dse/disable: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)\r\n[SKIP] dse/restore: nothing to restore\r\n[PASS] dse/signed-load\r\n[PASS] dse/tampered-blocked\r\n\r\n"
+      "stdout_tail": "[PASS] dse/status\r\n[SKIP] dse/disable: payload DSE patch unavailable\r\n[SKIP] dse/unsigned-load: payload DSE patch unavailable\r\n[SKIP] dse/restore: nothing to restore\r\n[PASS] dse/signed-load\r\n[PASS] dse/tampered-blocked\r\n\r\n"
     },
     {
       "phase": 4,
       "code": 0,
-      "stdout_tail": "exit_code    : 0\r\n[SKIP] stress/load-unload: kernel module list unavailable\r\n[PASS] stress/read\r\n\r\n"
-    }
-  ],
-  "drivers": [
-    {
-      "id": "asrock",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "atszio64",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "dbk64",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "echodrv",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "gdrv",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "physmem64",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "rtcore64",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
-    },
-    {
-      "id": "winring0",
-      "status": "not-started",
-      "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+      "stdout_tail": "exit_code    : 0\r\n[PASS] stress/load-unload\r\n[PASS] stress/read\r\n\r\n"
     }
   ],
   "guest_result": {
     "suite": "blook-kdu-e2e",
-    "total": 28,
+    "total": 39,
     "failed": 0,
-    "skipped": 10,
+    "skipped": 16,
     "results": [
       {
         "name": "environment/build",
@@ -93,6 +51,11 @@
         "detail": "realtime scanning disabled"
       },
       {
+        "name": "environment/spc-trust",
+        "ok": true,
+        "detail": "root + CA + trusted publisher imported"
+      },
+      {
         "name": "exploits/list",
         "ok": true,
         "detail": "exploit inventory enumerated"
@@ -100,7 +63,13 @@
       {
         "name": "exploits/count",
         "ok": true,
-        "detail": "compiled-in exploits: 8"
+        "detail": "compiled-in exploits: 16"
+      },
+      {
+        "name": "exploit/amd/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/asrock/load",
@@ -110,33 +79,79 @@
       {
         "name": "exploit/atszio64/load",
         "ok": true,
-        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/dbk64/load",
         "ok": true,
         "skipped": true,
-        "detail": "SKIP: driver did not start on this build"
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+      },
+      {
+        "name": "exploit/directio64/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/echodrv/load",
         "ok": true,
-        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/gdrv/load",
         "ok": true,
-        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+      },
+      {
+        "name": "exploit/gmer/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+      },
+      {
+        "name": "exploit/kph/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+      },
+      {
+        "name": "exploit/lha/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+      },
+      {
+        "name": "exploit/mimidrv/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+      },
+      {
+        "name": "exploit/msio64/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/physmem64/load",
         "ok": true,
-        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/rtcore64/load",
         "ok": true,
         "detail": "driver staged and started"
+      },
+      {
+        "name": "exploit/tpw/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
       },
       {
         "name": "exploit/winring0/load",
@@ -151,14 +166,12 @@
       {
         "name": "memory/virtual-read",
         "ok": true,
-        "skipped": true,
-        "detail": "SKIP: ntoskrnl not in module list"
+        "detail": "hex=4d5a90000300000004000000ffff0000"
       },
       {
         "name": "memory/physical-read",
         "ok": true,
-        "skipped": true,
-        "detail": "SKIP: WinRing0 driver unavailable/blocked on this build"
+        "detail": "hex=00000000000000000000000000000000"
       },
       {
         "name": "safety/winring0-va-guard",
@@ -166,22 +179,24 @@
         "detail": "page walk refused"
       },
       {
+        "name": "payload/map",
+        "ok": true,
+        "detail": "base=0xfffff8037dec0000"
+      },
+      {
+        "name": "payload/service-running",
+        "ok": true,
+        "detail": "kduPayload service RUNNING during the client test"
+      },
+      {
         "name": "memory/process-read",
         "ok": true,
-        "skipped": true,
-        "detail": "SKIP: CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design"
+        "detail": "CR3 read of the client process matched the pattern"
       },
       {
         "name": "memory/process-write",
         "ok": true,
-        "skipped": true,
-        "detail": "SKIP: same as process-read"
-      },
-      {
-        "name": "payload/map",
-        "ok": true,
-        "skipped": true,
-        "detail": "SKIP: manual-map payload cannot execute on this build (kernel executable memory restrictions)"
+        "detail": "CR3 write + read-back matched"
       },
       {
         "name": "cleanup/traces",
@@ -191,14 +206,19 @@
       {
         "name": "dse/status",
         "ok": true,
-        "skipped": true,
-        "detail": "SKIP: DSE status unavailable"
+        "detail": "options=0x800"
       },
       {
         "name": "dse/disable",
         "ok": true,
         "skipped": true,
-        "detail": "SKIP: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)"
+        "detail": "SKIP: payload DSE patch unavailable"
+      },
+      {
+        "name": "dse/unsigned-load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: payload DSE patch unavailable"
       },
       {
         "name": "dse/restore",
@@ -219,8 +239,7 @@
       {
         "name": "stress/load-unload",
         "ok": true,
-        "skipped": true,
-        "detail": "SKIP: kernel module list unavailable"
+        "detail": "5x, failures=0"
       },
       {
         "name": "stress/read",
@@ -241,20 +260,20 @@
       "issues": [
         {
           "level": "warning",
-          "message": "2026-10-21T09:16:07.698Z -INFO vmware-vmx.exe 11600 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
+          "message": "2026-10-21T12:06:32.666Z -INFO vmware-vmx.exe 15812 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
           "source": "vmware.log"
         }
       ]
     },
     "power": "on",
-    "sampled_at": "2026-10-21T09:26:49Z",
+    "sampled_at": "2026-10-21T12:09:26Z",
     "schema": "bvmenv.state.v1",
     "screen": {
       "classification": "login",
       "confidence": 0.75,
-      "ocr_text": "| ”无法在此设备上加载驱动程序\r\n\r\n| 驱动秆床physamem64sys\r\nphysmemé4.sys                                                                                                        x\r\n\r\n| 。 某个安全设置将其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设置以jn载\r\n\r\n此驱动程序\r\n\r\n门] 不再显示此消息\r\n\r\nBeBe\r\n\r\n二                      1727\r\n\r\nQ ee       bES&weaga   ~ & BB rio\r\n",
+      "ocr_text": "A\r\n|     无法在此设备上加载驱动程序\r\n\r\n驱动程序:kdu_phymemx64_C6D24293-3D74453D56D996B4.sys\r\nkdu_phymemx64_C6D24293-3D74453D56D996B4.sys\r\n\r\n某个安全设置将其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设置以加载\r\n此驱动程序\r\n\r\n门] 不再显示此消息\r\n\r\n2009\r\n\r\nQ ee       ES@UVe@gea   和^ 外 FS rpep02\r\n",
       "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T092701Z.png",
+      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T120935Z.png",
       "stop_code": null
     },
     "tools": {
@@ -262,7 +281,7 @@
       "state": "running",
       "version": "13313"
     },
-    "uptime_seconds": null,
+    "uptime_seconds": 141,
     "vm": "vm-kdu",
     "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
   }

@@ -7,8 +7,7 @@
                     {
                         "name":  "stress/load-unload",
                         "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: kernel module list unavailable"
+                        "detail":  "5x, failures=0"
                     },
                     {
                         "name":  "stress/read",

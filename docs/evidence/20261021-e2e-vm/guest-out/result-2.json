@@ -1,7 +1,7 @@
 ﻿{
     "suite":  "blook-kdu-e2e",
     "phase":  2,
-    "total":  8,
+    "total":  9,
     "failed":  0,
     "results":  [
                     {
@@ -12,14 +12,12 @@
                     {
                         "name":  "memory/virtual-read",
                         "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: ntoskrnl not in module list"
+                        "detail":  "hex=4d5a90000300000004000000ffff0000"
                     },
                     {
                         "name":  "memory/physical-read",
                         "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: WinRing0 driver unavailable/blocked on this build"
+                        "detail":  "hex=00000000000000000000000000000000"
                     },
                     {
                         "name":  "safety/winring0-va-guard",
@@ -27,22 +25,24 @@
                         "detail":  "page walk refused"
                     },
                     {
+                        "name":  "payload/map",
+                        "ok":  true,
+                        "detail":  "base=0xfffff8037dec0000"
+                    },
+                    {
+                        "name":  "payload/service-running",
+                        "ok":  true,
+                        "detail":  "kduPayload service RUNNING during the client test"
+                    },
+                    {
                         "name":  "memory/process-read",
                         "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design"
+                        "detail":  "CR3 read of the client process matched the pattern"
                     },
                     {
                         "name":  "memory/process-write",
                         "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: same as process-read"
-                    },
-                    {
-                        "name":  "payload/map",
-                        "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: manual-map payload cannot execute on this build (kernel executable memory restrictions)"
+                        "detail":  "CR3 write + read-back matched"
                     },
                     {
                         "name":  "cleanup/traces",

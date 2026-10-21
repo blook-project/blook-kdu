@@ -22,21 +22,21 @@
   {
     "id": "gdrv",
     "status": "not-started",
-    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+    "detail": "exit_code    : -1\r\nerror        : guest did not report an exit code (job.cmd did not finish)"
   },
   {
     "id": "physmem64",
     "status": "not-started",
-    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+    "detail": ""
   },
   {
     "id": "rtcore64",
     "status": "not-started",
-    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+    "detail": ""
   },
   {
     "id": "winring0",
     "status": "not-started",
-    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+    "detail": ""
   }
 ]

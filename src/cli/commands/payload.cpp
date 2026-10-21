@@ -62,6 +62,9 @@ struct SelfTest {
     std::string process_read;
     bool process_ok = false;
     bool process_write_ok = false;
+    std::string physical_read;
+    bool handle_ok = false;
+    std::string dse_error;
     bool service_running = false;
     std::string service_state;
     bool dse_supported = false;
@@ -131,6 +134,21 @@ void run_self_test(const PayloadState& state, SelfTest* out) {
     }
     out->ntoskrnl_head = bytes_to_hex(head, sizeof(head));
 
+    std::uint8_t physical[16] = {};
+    auto physical_bytes =
+        access.read_physical(0x1000, physical, sizeof(physical));
+    if (physical_bytes) {
+        out->physical_read = bytes_to_hex(physical, sizeof(physical));
+    }
+
+    auto handle =
+        backend->open_process_handle(::GetCurrentProcessId(), 0x1FFFFF);
+    if (handle) {
+        out->handle_ok =
+            backend->close_handle(handle.value(), ::GetCurrentProcessId())
+                .has_value();
+    }
+
     std::uint8_t pattern[16] = {0x4B, 0x44, 0x55, 0x2D, 0x50, 0x41, 0x59, 0x4C,
                                 0x4F, 0x41, 0x44, 0x2D, 0x54, 0x45, 0x53, 0x54};
     auto self_read = access.read_process(
@@ -180,6 +198,8 @@ void run_self_test(const PayloadState& state, SelfTest* out) {
         out->dse_supported = true;
         out->dse_enabled = dse->enabled;
         out->dse_options = dse->options;
+    } else {
+        out->dse_error = dse.error().message;
     }
 
     if (!state.unsigned_driver.empty()) {
@@ -248,6 +268,9 @@ void add_payload_command(CLI::App& app, Context& context) {
                 {"process_read", result.process_read},
                 {"process_ok", result.process_ok},
                 {"process_write_ok", result.process_write_ok},
+                {"physical_read", result.physical_read},
+                {"handle_ok", result.handle_ok},
+                {"dse_error", result.dse_error},
                 {"service_running", result.service_running},
                 {"dse_supported", result.dse_supported},
                 {"dse_enabled", result.dse_enabled},
@@ -281,7 +304,8 @@ void add_payload_command(CLI::App& app, Context& context) {
             std::printf("%s", render_table(rows).c_str());
         }
         if (!result.process_ok || !result.process_write_ok ||
-            !result.service_running || result.ntoskrnl_head != "4d5a") {
+            !result.service_running || !result.handle_ok ||
+            result.physical_read.empty() || result.ntoskrnl_head != "4d5a") {
             throw CliError(blook::kdu::Status::io_error,
                            "payload self-test assertions failed");
         }

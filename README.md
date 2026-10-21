@@ -23,9 +23,13 @@ SDK, a manual mapper, an embedded kernel payload and a modern CLI.
   kernel without the service manager, without temp files for the payload and
   without a driver object. Relocations, imports, the entry point and the
   optional bootstrap block (used by blook-kchannel) are handled.
-- **Kernel payload**: a small manually-mapped driver that serves the complete
-  memory/DSE/module API over [blook-kchannel](https://github.com/blook-project/blook-kchannel)
+- **Kernel payload**: [blook-drv-lite](https://github.com/blook-project/blook-drv-lite)
+  compiled into the toolkit, serving the complete memory/process/DSE/handle API
+  over [blook-kchannel](https://github.com/blook-project/blook-kchannel)
   (authenticated, encrypted shared-memory IPC - no device objects, no registry).
+  It loads through the manual mapper or, on builds where mapped images cannot
+  execute, through a signed service (`Parameters\Bootstrap`); `kdu payload load`
+  runs it standalone.
 - **DSE control**: locate `g_CiOptions` in `ci.dll` without symbols, disable /
   restore driver signature enforcement.
 - **Introspection**: kernel module enumeration, driver dumping (from kernel
@@ -38,7 +42,8 @@ SDK, a manual mapper, an embedded kernel payload and a modern CLI.
 ## Quick start
 
 Requirements: Windows 10/11 x64, elevated shell, [xmake](https://xmake.io) 3.x,
-a blook-kchannel checkout and (for the payload) the WDK.
+a blook-kchannel checkout, a blook-drv-lite checkout and (for the payload) the
+WDK.
 
 ```powershell
 # build (payload + CLI + tests)
@@ -155,6 +160,7 @@ reboot.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
 
 
 

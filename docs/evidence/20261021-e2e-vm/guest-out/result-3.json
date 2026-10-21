@@ -1,20 +1,25 @@
 ﻿{
     "suite":  "blook-kdu-e2e",
     "phase":  3,
-    "total":  5,
+    "total":  6,
     "failed":  0,
     "results":  [
                     {
                         "name":  "dse/status",
                         "ok":  true,
-                        "skipped":  true,
-                        "detail":  "SKIP: DSE status unavailable"
+                        "detail":  "options=0x800"
                     },
                     {
                         "name":  "dse/disable",
                         "ok":  true,
                         "skipped":  true,
-                        "detail":  "SKIP: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)"
+                        "detail":  "SKIP: payload DSE patch unavailable"
+                    },
+                    {
+                        "name":  "dse/unsigned-load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: payload DSE patch unavailable"
                     },
                     {
                         "name":  "dse/restore",

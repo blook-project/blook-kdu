@@ -4,6 +4,30 @@ All notable changes to blook-kdu are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-10-21
+
+- Payload backend replaced with **blook-drv-lite** (pinned source drop): kernel
+  VA/physical read-write, CR3 process read/write, module list/dump, handles,
+  DSE and (where supported) InfinityHook. The payload can be loaded through the
+  manual mapper or, on builds where mapped images cannot execute, through the
+  drv-lite **service path** (bootstrap in `Parameters\Bootstrap`). `kdu payload
+  load` loads it standalone and runs a full client self-test (no vulnerable
+  driver needed).
+- 8 more exploits (16 total): `gmer`, `kph`, `mimidrv`, `amd`, `directio64`,
+  `lha`, `tpw`, `msio64`, each with its own mock unit test and per-exploit CI
+  job.
+- Removed the VMware-only execution guard: `kdu_open()` no longer refuses to run
+  outside a VMware guest. The e2e harness still uses a disposable VM.
+- Embedded vendor drivers are shipped **as-is** (no Authenticode stripping and
+  no re-signing in CI); only the toolkit's own payload/test images are signed
+  locally with the SPC signer (SHA-1 + TSA root trust) for service loading.
+- CI now runs real kernel code: `kernel-load-smoke` builds a minimal SPC-signed
+  driver, verifies `/kp`, starts it (`STATE 4 RUNNING`), runs an IOCTL client,
+  then runs the full CI e2e matrix (payload service + kernel/process/handle
+  primitives, DSE gating where supported, repeated load/unload, trace scan,
+  negative fuzz) against the build artifact.
+- `kdu payload load --mode auto|manual|service [--unsigned-driver ...]` and the
+  `MapOptions::PayloadLoadMode` SDK enum.
 ## [1.0.1] - 2026-10-21
 
 - Package the CLI (`bin/kdu.exe`) again: the release workflow now prepares the
@@ -96,6 +120,7 @@ Known limitations on Windows 11 26200 (documented, gated in the e2e suite):
   packaging; per-exploit matrix jobs.
 - Release workflow with canonical `blook-kdu-<version>-windows-x64.zip` +
   `.sha256` assets and a package-registry manifest/publish script.
+
 
 
 

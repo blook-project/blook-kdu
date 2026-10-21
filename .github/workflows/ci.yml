@@ -238,8 +238,8 @@ jobs:
 
 
 
-  kernel-smoke:
-    name: kernel load + payload client (real driver)
+  payload-service-smoke:
+    name: payload service (drv-lite) + client
     needs: install-toolchain
     runs-on: windows-latest
     steps:
@@ -330,4 +330,138 @@ jobs:
           sc.exe delete kduPayload 2>&1 | Out-Null
           sc.exe query kduPayload 2>&1 | Out-Null
 
+
+
+
+  kernel-load-smoke:
+    name: kernel load smoke + full e2e (real driver, SPC signed)
+    needs: [install-toolchain, build]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: 3.0.8
+      - name: Install WDK
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\wdk" | Out-Null
+          $url = "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/$env:WDK_VERSION/microsoft.windows.wdk.x64.$env:WDK_VERSION.nupkg"
+          Invoke-WebRequest $url -OutFile "$env:RUNNER_TEMP\wdk\wdk.nupkg"
+          tar.exe -xf "$env:RUNNER_TEMP\wdk\wdk.nupkg" -C "$env:RUNNER_TEMP\wdk"
+          "WDK_ROOT=$env:RUNNER_TEMP\wdk\c" >> $env:GITHUB_ENV
+      - name: Build minimal smoke driver + client
+        shell: pwsh
+        run: |
+          xmake f -y -m release --wdk="$env:WDK_ROOT"
+          if ($LASTEXITCODE -ne 0) { throw "xmake configure failed" }
+          xmake -y kdu_ci_smoke_driver
+          if ($LASTEXITCODE -ne 0) { throw "smoke driver build failed" }
+          xmake -y kdu_ci_smoke_client
+          if ($LASTEXITCODE -ne 0) { throw "smoke client build failed" }
+      - name: Sign smoke driver with the SPC signer
+        shell: pwsh
+        env:
+          SPC_PFX_BASE64: ${{ secrets.SPC_PFX_BASE64 }}
+          SPC_PFX_PASSWORD: ${{ secrets.SPC_PFX_PASSWORD }}
+        run: |
+          & pwsh -NoProfile -File scripts/sign.ps1 `
+              -Files build/windows/x64/release/kdu_ci_smoke_driver.sys `
+              -ExportLeafCert build/generated/xinda-leaf.cer
+          if ($LASTEXITCODE -ne 0) { throw "driver signing failed" }
+      - name: Trust the SPC chain
+        shell: pwsh
+        run: |
+          certutil -addstore -f root signer/tsa/tsa-root.cer
+          certutil -addstore -f CA signer/certs/verisign-cscs-2010.cer
+          certutil -addstore -f CA signer/certs/verisign-g5-mcvr.cer
+          certutil -addstore -f trustedpublisher build/generated/xinda-leaf.cer
+      - name: Verify the kernel signature policy
+        shell: pwsh
+        run: |
+          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" `
+              -Recurse -Filter signtool.exe |
+              Where-Object { $_.FullName -match "x64" } |
+              Select-Object -Last 1 -ExpandProperty FullName
+          if (-not $signtool) { throw "signtool.exe not found on the runner" }
+          & $signtool verify /pa /kp build/windows/x64/release/kdu_ci_smoke_driver.sys
+          if ($LASTEXITCODE -ne 0) { throw "signtool /kp verification failed" }
+      - name: Load driver + run client
+        shell: pwsh
+        run: |
+          $driver = (Resolve-Path "build/windows/x64/release/kdu_ci_smoke_driver.sys").Path
+          sc.exe stop kduCiSmoke 2>&1 | Out-Null
+          sc.exe delete kduCiSmoke 2>&1 | Out-Null
+          sc.exe create kduCiSmoke type= kernel start= demand binPath= "$driver"
+          if ($LASTEXITCODE -ne 0) { throw "sc create failed" }
+          $started = Start-Process sc.exe -ArgumentList "start kduCiSmoke" `
+              -NoNewWindow -PassThru -RedirectStandardOutput "$env:TEMP\sc-start.log" `
+              -RedirectStandardError "$env:TEMP\sc-start.err"
+          if (-not $started.WaitForExit(30000)) {
+              try { $started.Kill($true) } catch { }
+              throw "sc start hung for 30s"
+          }
+          Get-Content "$env:TEMP\sc-start.log" | Out-Host
+          if ($started.ExitCode -ne 0) { throw "sc start failed ($($started.ExitCode))" }
+          $query = sc.exe query kduCiSmoke | Out-String
+          $query | Out-Host
+          if ($query -notmatch "STATE\s+:\s+4\s+RUNNING") {
+              throw "driver is not RUNNING"
+          }
+          $client = "build/windows/x64/release/kdu_ci_smoke_client.exe"
+          $result = & $client
+          $result | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw "smoke client failed" }
+          $json = $result | ConvertFrom-Json
+          if (-not $json.ok) { throw "smoke client reported failure" }
+      - name: Download toolkit build
+        uses: actions/download-artifact@v4
+        with:
+          name: blook-kdu-${{ github.sha }}
+          path: ci-build
+      - name: Assemble CI e2e build dir
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force ci-build | Out-Null
+          Copy-Item build/windows/x64/release/kdu_ci_smoke_driver.sys ci-build/ -Force
+          Copy-Item build/windows/x64/release/kdu_ci_smoke_client.exe ci-build/ -Force
+          # artifact flattens the paths; kdu.exe/kdu_payload.sys land in ci-build
+          Get-ChildItem ci-build -Recurse -Filter kdu.exe | ForEach-Object {
+              Copy-Item $_.FullName ci-build/kdu.exe -Force
+          }
+          Get-ChildItem ci-build -Recurse -Filter kdu_payload.sys | ForEach-Object {
+              Copy-Item $_.FullName ci-build/kdu_payload.sys -Force
+          }
+          if (-not (Test-Path ci-build/kdu.exe)) { throw "kdu.exe missing from build artifact" }
+          if (-not (Test-Path ci-build/kdu_payload.sys)) { throw "kdu_payload.sys missing from build artifact" }
+      - name: Run full CI e2e matrix
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/ci-e2e.ps1 -BuildDir ci-build
+          if ($LASTEXITCODE -ne 0) { throw "CI e2e matrix failed" }
+      - name: Upload CI e2e result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kdu-ci-e2e-result
+          path: artifacts/ci-e2e-result.json
+          if-no-files-found: warn
+      - name: Capture code integrity events
+        if: always()
+        shell: pwsh
+        run: |
+          Get-WinEvent -LogName "Microsoft-Windows-CodeIntegrity/Operational" `
+              -MaxEvents 20 -ErrorAction SilentlyContinue |
+              Format-Table TimeCreated, Id, LevelDisplayName, Message -AutoSize |
+              Out-String | Out-Host
+      - name: Cleanup kernel service
+        if: always()
+        shell: pwsh
+        run: |
+          sc.exe stop kduCiSmoke 2>&1 | Out-Null
+          sc.exe delete kduCiSmoke 2>&1 | Out-Null
+          sc.exe query kduCiSmoke 2>&1 | Out-Null
 

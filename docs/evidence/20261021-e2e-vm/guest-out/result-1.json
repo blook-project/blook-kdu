@@ -1,7 +1,7 @@
 ﻿{
     "suite":  "blook-kdu-e2e",
     "phase":  1,
-    "total":  13,
+    "total":  22,
     "failed":  0,
     "results":  [
                     {
@@ -20,6 +20,11 @@
                         "detail":  "realtime scanning disabled"
                     },
                     {
+                        "name":  "environment/spc-trust",
+                        "ok":  true,
+                        "detail":  "root + CA + trusted publisher imported"
+                    },
+                    {
                         "name":  "exploits/list",
                         "ok":  true,
                         "detail":  "exploit inventory enumerated"
@@ -27,7 +32,13 @@
                     {
                         "name":  "exploits/count",
                         "ok":  true,
-                        "detail":  "compiled-in exploits: 8"
+                        "detail":  "compiled-in exploits: 16"
+                    },
+                    {
+                        "name":  "exploit/amd/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/asrock/load",
@@ -37,33 +48,79 @@
                     {
                         "name":  "exploit/atszio64/load",
                         "ok":  true,
-                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/dbk64/load",
                         "ok":  true,
                         "skipped":  true,
-                        "detail":  "SKIP: driver did not start on this build"
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+                    },
+                    {
+                        "name":  "exploit/directio64/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/echodrv/load",
                         "ok":  true,
-                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/gdrv/load",
                         "ok":  true,
-                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+                    },
+                    {
+                        "name":  "exploit/gmer/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+                    },
+                    {
+                        "name":  "exploit/kph/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+                    },
+                    {
+                        "name":  "exploit/lha/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+                    },
+                    {
+                        "name":  "exploit/mimidrv/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
+                    },
+                    {
+                        "name":  "exploit/msio64/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/physmem64/load",
                         "ok":  true,
-                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/rtcore64/load",
                         "ok":  true,
                         "detail":  "driver staged and started"
+                    },
+                    {
+                        "name":  "exploit/tpw/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: not started: blocklisted/revoked or unsafe raw image on this build"
                     },
                     {
                         "name":  "exploit/winring0/load",

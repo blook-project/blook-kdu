@@ -52,6 +52,13 @@ pwsh scripts/e2e.ps1 -Vm vm-kdu -Out docs/evidence/$(Get-Date -Format yyyyMMdd)-
 (the harness defaults to that path; it starts a powered-off VM and enforces a
 hard timeout on every call).
 
+CI additionally runs `scripts/ci-e2e.ps1` on a stock Windows runner: the
+SPC-signed payload service is started (STATE 4 RUNNING), a signed test driver is
+loaded and probed with an IOCTL client, then the payload client path (kernel VA,
+physical read, CR3 process read/write, handle rewrite), repeated load/unload,
+trace scan and negative fuzz are asserted machine-readably. The VM suite below
+remains the place for victim-driver cases.
+
 `scripts/e2e.ps1` builds the guest bundle from `build/windows/x64/release`
 (`kdu.exe`, `kdu_payload.sys`, `kdu_e2e_helper.exe`, `kdu_guest_test_driver.sys`,
 `guest-run.ps1`), pushes it to `C:\kdu-e2e`, runs the elevated guest suite and
@@ -66,5 +73,6 @@ The runner is intentionally thin: it builds a bundle, pushes it, invokes the
 in-guest PowerShell runner as an elevated command and copies the artifacts back.
 Results are committed under `docs/evidence/<date>-<slug>/` (JSON + key
 screenshots + log summaries; large logs are stored as hashes/head+tail).
+
 
 
