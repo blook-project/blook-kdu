@@ -87,6 +87,10 @@ jobs:
               throw "blook-kchannel sources are missing at the pinned commit"
           }
           "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
+      - name: Verify embedded driver assets
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/check-assets.ps1
       - name: Configure
         shell: pwsh
         run: xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
@@ -106,6 +110,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "kdu --version failed" }
           $exploits = (& $kdu --json exploits list) | ConvertFrom-Json
           if ($exploits.Count -lt 3) { throw "unexpected exploit count: $($exploits.Count)" }
+          & $kdu assets verify
+          if ($LASTEXITCODE -ne 0) { throw "embedded asset verification failed" }
           & $kdu exploits probe
           if ($LASTEXITCODE -ne 0) { throw "exploits probe failed" }
           & $kdu --help | Out-Host
@@ -185,6 +191,8 @@ jobs:
         run: |
           xmake run "kdu_exploit_test_${{ matrix.exploit }}"
           if ($LASTEXITCODE -ne 0) { throw "exploit ${{ matrix.exploit }} tests failed" }
+
+
 
 
 

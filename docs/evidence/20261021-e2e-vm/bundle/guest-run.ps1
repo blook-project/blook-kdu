@@ -39,8 +39,18 @@ function Add-Result([string] $name, [bool] $ok, [string] $detail) {
 }
 
 function Invoke-Kdu([string[]] $arguments) {
-    $output = & $kdu @arguments 2>&1 | Out-String
-    return @{ code = $LASTEXITCODE; output = $output }
+    # Native commands write diagnostics to stderr; with $ErrorActionPreference
+    # = Stop PowerShell would turn that into a terminating NativeCommandError,
+    # so capture with Continue and restore afterwards.
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = & $kdu @arguments 2>&1 | Out-String
+        $code = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previous
+    }
+    return @{ code = $code; output = $output }
 }
 
 # ---------------------------------------------------------------------------
@@ -67,12 +77,46 @@ try {
 # ---------------------------------------------------------------------------
 # Per-exploit lifecycle: load the driver, read the ntoskrnl header, unload.
 # ---------------------------------------------------------------------------
+$exploitInfo = @{}
+try {
+    ($listed.output | ConvertFrom-Json) | ForEach-Object { $exploitInfo[$_.id] = $_ }
+} catch { }
+$payloadId = ''
+if ($exploitIds -contains 'gdrv') { $payloadId = 'gdrv' } elseif ($exploitIds.Count -gt 0) { $payloadId = $exploitIds[0] }
+
 foreach ($id in $exploitIds) {
     $result = Invoke-Kdu @('--exploit', $id, '--driver-only', 'exploits', 'test', $id)
     $ok = $result.code -eq 0 -and $result.output -match 'PASS'
     Add-Result "exploit/$id" $ok $result.output.Trim()
-    $cleanup = Invoke-Kdu @('--json', 'doctor', '--traces')
-    Add-Result "exploit/$id/traces" ($cleanup.code -eq 0) $cleanup.output.Trim()
+
+    $capabilities = @()
+    if ($exploitInfo.ContainsKey($id)) {
+        $capabilities = @($exploitInfo[$id].capabilities)
+    }
+    # Exercises the manual mapper through this specific physical-write exploit.
+    if ($capabilities -contains 'physical_write') {
+        $mapped = Invoke-Kdu @('--exploit', $id, '--json', 'map', '--payload')
+        $mapOk = $mapped.code -eq 0
+        $mappedBase = ''
+        if ($mapOk) {
+            try { $mappedBase = ($mapped.output | ConvertFrom-Json).base } catch { }
+        }
+        Add-Result "exploit/$id/payload-map" ($mapOk -and $mappedBase) $mapped.output.Trim()
+    }
+
+    # Trace scan: service/registry/file leftovers are failures; System event log
+    # records are documented residuals (Windows cannot delete single events).
+    $traces = Invoke-Kdu @('--json', 'traces')
+    $cleanable = $true
+    if ($traces.code -eq 0) {
+        try {
+            $report = $traces.output | ConvertFrom-Json
+            $bad = @($report.findings | Where-Object {
+                $_.category -in @('service', 'registry', 'file') })
+            if ($bad.Count -gt 0) { $cleanable = $false }
+        } catch { }
+    }
+    Add-Result "exploit/$id/traces" $cleanable $traces.output.Trim()
 }
 
 # ---------------------------------------------------------------------------
@@ -277,6 +321,7 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
 
 
 

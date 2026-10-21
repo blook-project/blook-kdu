@@ -12,6 +12,12 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+# Native tools print UTF-8; make PowerShell decode/encode it as UTF-8 so JSON
+# parsing never trips over the locale code page.
+try {
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    $OutputEncoding = [System.Text.Encoding]::UTF8
+} catch { }
 
 # Hard safety gate: this script loads kernel drivers, maps payloads and patches
 # DSE. It must only ever run inside a bvmenv-managed VMware guest. Refusing on a
@@ -321,6 +327,7 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
 
 
 

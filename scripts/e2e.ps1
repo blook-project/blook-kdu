@@ -76,6 +76,20 @@ if ($list.stdout -notmatch [regex]::Escape($Vm)) {
     }
 }
 
+# Make sure the VM is powered on (the last run leaves it reset/powered off).
+$probe = Invoke-Bvmenv "state $Vm --json --no-ocr" $StepTimeoutSeconds
+$power = ''
+try { $power = ($probe.stdout | ConvertFrom-Json).power } catch { }
+if ($power -ne 'on') {
+    $started = Invoke-Bvmenv "start $Vm" 240
+    if ($started.code -ne 0) {
+        throw ("bvmenv start failed: " + $started.stdout + $started.stderr)
+    }
+    $ready = Invoke-Bvmenv "wait-ready $Vm --timeout 600" 660
+    if ($ready.code -ne 0) {
+        Write-Warning ("wait-ready reported not ready: " + $ready.stdout + $ready.stderr)
+    }
+}
 # ---------------------------------------------------------------------------
 # 1. Build the bundle.
 # ---------------------------------------------------------------------------
@@ -177,3 +191,4 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+

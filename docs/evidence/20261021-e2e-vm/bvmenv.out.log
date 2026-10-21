@@ -1,1 +1,1 @@
-reset vm-kdu: FAILED (failed: VM vm-kdu is powered off; start it first (`bvmenv start vm-kdu`), 249346ms)
+reset vm-kdu: FAILED (failed: VM 'vm-kdu' started but never became ready (see state/screenshot), 248531ms)

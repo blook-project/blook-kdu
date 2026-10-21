@@ -1,0 +1,9 @@
+﻿{
+    "ops":  [
+                {
+                    "size":  8,
+                    "op":  "read_virtual",
+                    "address":  "0x10"
+                }
+            ]
+}

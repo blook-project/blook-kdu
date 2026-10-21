@@ -3,11 +3,237 @@
   "schema": "kdu.e2e.v1",
   "version": "0.1.0",
   "vm": "vm-kdu",
-  "finished": "2026-10-21T12:23:25.7667475+08:00",
+  "finished": "2026-10-21T12:57:42.7009914+08:00",
   "exec_exit_code": 1,
   "ok": false,
-  "guest_result": null,
-  "exec_stdout_tail": "    \"capabilities\": [\r\r\n      \"physical_read\",\r\r\n      \"physical_write\",\r\r\n      \"map_physical\"\r\r\n    ],\r\r\n    \"cve\": \"\",\r\r\n    \"description\": \"Huawei MateBook Manager phymemx64: physical memory map/copy through the PhyMem driver\",\r\r\n    \"device\": \"\\\\\\\\.\\\\PhyMem\",\r\r\n    \"driver\": \"phymemx64.sys\",\r\r\n    \"id\": \"physmem64\",\r\r\n    \"max_build\": 4294967295,\r\r\n    \"min_build\": 7600,\r\r\n    \"name\": \"Huawei PhyMem\",\r\r\n    \"service\": \"phymemx64\",\r\r\n    \"vendor\": \"Huawei Technologies Co.,Ltd.\"\r\r\n  },\r\r\n  {\r\r\n    \"capabilities\": [\r\r\n      \"virtual_read\",\r\r\n      \"virtual_write\",\r\r\n      \"msr\"\r\r\n    ],\r\r\n    \"cve\": \"CVE-2019-16098\",\r\r\n    \"description\": \"MSI Afterburner RTCore64 (CVE-2019-16098): 4-byte arbitrary kernel virtual memory read/write\",\r\r\n    \"device\": \"\\\\\\\\.\\\\RTCore64\",\r\r\n    \"driver\": \"RTCore64.sys\",\r\r\n    \"id\": \"rtcore64\",\r\r\n    \"max_build\": 4294967295,\r\r\n    \"min_build\": 7600,\r\r\n    \"name\": \"MSI RTCore64\",\r\r\n    \"service\": \"RTCore64\",\r\r\n    \"vendor\": \"MSI / Micro-Star\"\r\r\n  },\r\r\n  {\r\r\n    \"capabilities\": [\r\r\n      \"physical_read\",\r\r\n      \"physical_write\"\r\r\n    ],\r\r\n    \"cve\": \"CVE-2017-14311\",\r\r\n    \"description\": \"EVGA Precision X1 WinRing0x64 (CVE-2017-14311): arbitrary physical memory read/write\",\r\r\n    \"device\": \"\\\\\\\\.\\\\WinRing0_1_2_0\",\r\r\n    \"driver\": \"WinRing0x64.sys\",\r\r\n    \"id\": \"winring0\",\r\r\n    \"max_build\": 4294967295,\r\r\n    \"min_build\": 7600,\r\r\n    \"name\": \"EVGA WinRing0\",\r\r\n    \"service\": \"WinRing0x64\",\r\r\n    \"vendor\": \"EVGA\"\r\r\n  }\r\r\n]\r\n--- stderr ---\r\nkdu.exe : error exploit self-test failed\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:42 �ַ�: 15\r\r\n+     $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+               ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\r\n   eption\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\r\n \r\r\n",
+  "guest_result": {
+    "suite": "blook-kdu-e2e",
+    "version": 1,
+    "started": "2026-10-21T12:57:25.8900928+08:00",
+    "host": "BLOOK-BASE",
+    "build": "26200",
+    "elevated": true,
+    "total": 43,
+    "failed": 26,
+    "results": [
+      {
+        "name": "environment/build",
+        "ok": true,
+        "detail": "Windows 10.0.26200 build 26200"
+      },
+      {
+        "name": "environment/elevated",
+        "ok": true,
+        "detail": "administrator token"
+      },
+      {
+        "name": "exploits/list",
+        "ok": true,
+        "detail": "[\r\n  {\r\n    \"capabilities\": [\r\n      \"physical_read\",\r\n      \"physical_write\"\r\n    ],\r\n    \"cve\": \"CVE-2020-15368\",\r\n    \"description\": \"ASRock IO driver AsrDrv107n (CVE-2020-15368): arbitrary physical memory read/write through the RWE dispatch\",\r\n    \"device\": \"\\\\\\\\.\\\\AsrDrv107n\",\r\n    \"driver\": \"AsrDrv107n.sys\",\r\n    \"id\": \"asrock\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"ASRock AsrDrv107n\",\r\n    \"service\": \"AsrDrv107n\",\r\n    \"vendor\": \"ASRock\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"physical_read\",\r\n      \"physical_write\",\r\n      \"map_physical\"\r\n    ],\r\n    \"cve\": \"\",\r\n    \"description\": \"ASUSTeK WinFlash ATSZIO64: physical memory map/copy through \\\\Device\\\\PhysicalMemory\",\r\n    \"device\": \"\\\\\\\\.\\\\ATSZIO\",\r\n    \"driver\": \"ATSZIO.sys\",\r\n    \"id\": \"atszio64\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"ASUS ATSZIO\",\r\n    \"service\": \"ATSZIO\",\r\n    \"vendor\": \"ASUSTeK Computer Inc.\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"virtual_read\",\r\n      \"virtual_write\"\r\n    ],\r\n    \"cve\": \"\",\r\n    \"description\": \"Cheat Engine CEDRIVER73 (dbk64): arbitrary kernel virtual memory read/write through MDL mapping\",\r\n    \"device\": \"\\\\\\\\.\\\\CEDRIVER73\",\r\n    \"driver\": \"CEDRIVER73.sys\",\r\n    \"id\": \"dbk64\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"Cheat Engine DBK64\",\r\n    \"service\": \"CEDRIVER73\",\r\n    \"vendor\": \"Cheat Engine\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"virtual_read\",\r\n      \"virtual_write\"\r\n    ],\r\n    \"cve\": \"\",\r\n    \"description\": \"Inspect Element EchoDrv: kernel virtual memory copy through MmCopyVirtualMemory\",\r\n    \"device\": \"\\\\\\\\.\\\\EchoDrv\",\r\n    \"driver\": \"EchoDrv.sys\",\r\n    \"id\": \"echodrv\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"Echo AntiCheat\",\r\n    \"service\": \"EchoDrv\",\r\n    \"vendor\": \"Inspect Element LTD\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"physical_read\",\r\n      \"physical_write\",\r\n      \"map_physical\"\r\n    ],\r\n    \"cve\": \"CVE-2018-19320\",\r\n    \"description\": \"GIGABYTE GDRV (CVE-2018-19320): arbitrary physical memory map/copy\",\r\n    \"device\": \"\\\\\\\\.\\\\GIO\",\r\n    \"driver\": \"gdrv.sys\",\r\n    \"id\": \"gdrv\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"GIGABYTE GDRV\",\r\n    \"service\": \"GIO\",\r\n    \"vendor\": \"GIGABYTE\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"physical_read\",\r\n      \"physical_write\",\r\n      \"map_physical\"\r\n    ],\r\n    \"cve\": \"\",\r\n    \"description\": \"Huawei MateBook Manager phymemx64: physical memory map/copy through the PhyMem driver\",\r\n    \"device\": \"\\\\\\\\.\\\\PhyMem\",\r\n    \"driver\": \"phymemx64.sys\",\r\n    \"id\": \"physmem64\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"Huawei PhyMem\",\r\n    \"service\": \"phymemx64\",\r\n    \"vendor\": \"Huawei Technologies Co.,Ltd.\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"virtual_read\",\r\n      \"virtual_write\",\r\n      \"msr\"\r\n    ],\r\n    \"cve\": \"CVE-2019-16098\",\r\n    \"description\": \"MSI Afterburner RTCore64 (CVE-2019-16098): 4-byte arbitrary kernel virtual memory read/write\",\r\n    \"device\": \"\\\\\\\\.\\\\RTCore64\",\r\n    \"driver\": \"RTCore64.sys\",\r\n    \"id\": \"rtcore64\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"MSI RTCore64\",\r\n    \"service\": \"RTCore64\",\r\n    \"vendor\": \"MSI / Micro-Star\"\r\n  },\r\n  {\r\n    \"capabilities\": [\r\n      \"physical_read\",\r\n      \"physical_write\"\r\n    ],\r\n    \"cve\": \"CVE-2017-14311\",\r\n    \"description\": \"EVGA Precision X1 WinRing0x64 (CVE-2017-14311): arbitrary physical memory read/write\",\r\n    \"device\": \"\\\\\\\\.\\\\WinRing0_1_2_0\",\r\n    \"driver\": \"WinRing0x64.sys\",\r\n    \"id\": \"winring0\",\r\n    \"max_build\": 4294967295,\r\n    \"min_build\": 7600,\r\n    \"name\": \"EVGA WinRing0\",\r\n    \"service\": \"WinRing0x64\",\r\n    \"vendor\": \"EVGA\"\r\n  }\r\n]"
+      },
+      {
+        "name": "exploit/asrock",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL asrock           asrock: embedded image for asrock has no DOS signature"
+      },
+      {
+        "name": "exploit/asrock/payload-map",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"asrock: embedded image for asrock has no DOS signature\"}}"
+      },
+      {
+        "name": "exploit/asrock/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/atszio64",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL atszio64         atszio64: embedded image for atszio64 has no DOS signature"
+      },
+      {
+        "name": "exploit/atszio64/payload-map",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"atszio64: embedded image for atszio64 has no DOS signature\"}}"
+      },
+      {
+        "name": "exploit/atszio64/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/dbk64",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL dbk64            dbk64: embedded image for dbk64 has no DOS signature"
+      },
+      {
+        "name": "exploit/dbk64/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/echodrv",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL echodrv          echodrv: embedded image for echodrv has no DOS signature"
+      },
+      {
+        "name": "exploit/echodrv/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/gdrv",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL gdrv             gdrv: cannot start service 'GIO': StartService failed: 文件名、目录名或卷标语法不正确。 (0x0000007B)"
+      },
+      {
+        "name": "exploit/gdrv/payload-map",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 56: 0xC4\"}}"
+      },
+      {
+        "name": "exploit/gdrv/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/physmem64",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL physmem64        physmem64: embedded image for physmem64 has no DOS signature"
+      },
+      {
+        "name": "exploit/physmem64/payload-map",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"physmem64: embedded image for physmem64 has no DOS signature\"}}"
+      },
+      {
+        "name": "exploit/physmem64/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/rtcore64",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL rtcore64         rtcore64: embedded image for rtcore64 has no DOS signature"
+      },
+      {
+        "name": "exploit/rtcore64/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "exploit/winring0",
+        "ok": false,
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL winring0         winring0: embedded image for winring0 has no DOS signature"
+      },
+      {
+        "name": "exploit/winring0/payload-map",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "exploit/winring0/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      },
+      {
+        "name": "payload/map",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 56: 0xC4\"}}"
+      },
+      {
+        "name": "memory/physical-read",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "memory/modules",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "memory/virtual-read",
+        "ok": false,
+        "detail": "ntoskrnl.exe not found"
+      },
+      {
+        "name": "memory/process-read",
+        "ok": false,
+        "detail": "pid=7308 hex="
+      },
+      {
+        "name": "memory/process-write",
+        "ok": false,
+        "detail": "kdu.exe : --pid is required\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nRun with --help for more information."
+      },
+      {
+        "name": "dse/signed-load",
+        "ok": true,
+        "detail": "SERVICE_NAME: kduE2eSigned \r\n        TYPE               : 1  KERNEL_DRIVER  \r\n        STATE              : 4  RUNNING \r\n                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)\r\n        WIN32_EXIT_CODE    : 0  (0x0)\r\n        SERVICE_EXIT_CODE  : 0  (0x0)\r\n        CHECKPOINT         : 0x0\r\n        WAIT_HINT          : 0x0\r\n        PID                : 0\r\n        FLAGS              :"
+      },
+      {
+        "name": "dse/disable",
+        "ok": false,
+        "detail": "kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\n   Exception\r\n    + FullyQualifiedErrorId : NativeCommandError"
+      },
+      {
+        "name": "dse/unsigned-load",
+        "ok": false,
+        "detail": "[SC] StartService 失败 577:\r\n\r\nWindows 无法验证此文件的数字签名。某软件或硬件最近有所更改，可能安装了签名错误或损毁的文件，或者安装的文件可能是来路不明的恶意软件。"
+      },
+      {
+        "name": "dse/restore",
+        "ok": false,
+        "detail": "kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\n   Exception\r\n    + FullyQualifiedErrorId : NativeCommandError"
+      },
+      {
+        "name": "dse/unsigned-blocked",
+        "ok": true,
+        "detail": "[SC] StartService 失败 577:\r\n\r\nWindows 无法验证此文件的数字签名。某软件或硬件最近有所更改，可能安装了签名错误或损毁的文件，或者安装的文件可能是来路不明的恶意软件。"
+      },
+      {
+        "name": "robustness/invalid-physical",
+        "ok": true,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "robustness/invalid-virtual",
+        "ok": true,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "robustness/unknown-op",
+        "ok": true,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "stress/1000-reads-one-session",
+        "ok": false,
+        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+      },
+      {
+        "name": "stress/map-unload-cycles",
+        "ok": false,
+        "detail": "50 cycles"
+      },
+      {
+        "name": "stress/load-unload",
+        "ok": false,
+        "detail": "20x, failures=20"
+      },
+      {
+        "name": "stress/read",
+        "ok": false,
+        "detail": "200x, failures=200"
+      },
+      {
+        "name": "cleanup/traces",
+        "ok": true,
+        "detail": "{\r\n  \"clean\": true,\r\n  \"findings\": []\r\n}"
+      }
+    ]
+  },
+  "exec_stdout_tail": "[PASS] exploit/winring0/traces: {\r\r\n  \"clean\": true,\r\r\n  \"findings\": []\r\r\n}\r\n[FAIL] payload/map: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 56: 0xC4\"}}\r\n[FAIL] memory/physical-read: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] memory/modules: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] memory/virtual-read: ntoskrnl.exe not found\r\n[FAIL] memory/process-read: pid=7308 hex=\r\n[FAIL] memory/process-write: kdu.exe : --pid is required\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:48 �ַ�: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\r\n \r\r\nRun with --help for more information.\r\n[PASS] dse/signed-load: SERVICE_NAME: kduE2eSigned \r\r\n        TYPE               : 1  KERNEL_DRIVER  \r\r\n        STATE              : 4  RUNNING \r\r\n                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)\r\r\n        WIN32_EXIT_CODE    : 0  (0x0)\r\r\n        SERVICE_EXIT_CODE  : 0  (0x0)\r\r\n        CHECKPOINT         : 0x0\r\r\n        WAIT_HINT          : 0x0\r\r\n        PID                : 0\r\r\n        FLAGS              :\r\n[FAIL] dse/disable: kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:48 �ַ�: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\r\n   Exception\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n[FAIL] dse/unsigned-load: [SC] StartService ʧ�� 577:\r\r\n\r\r\nWindows �޷���֤���ļ�������ǩ����ĳ������Ӳ������������ģ����ܰ�װ��ǩ���������ٵ��ļ������߰�װ���ļ���������·�����Ķ���������\r\n[FAIL] dse/restore: kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:48 �ַ�: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\r\n   Exception\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n[PASS] dse/unsigned-blocked: [SC] StartService ʧ�� 577:\r\r\n\r\r\nWindows �޷���֤���ļ�������ǩ����ĳ������Ӳ������������ģ����ܰ�װ��ǩ���������ٵ��ļ������߰�װ���ļ���������·�����Ķ���������\r\n[PASS] robustness/invalid-physical: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[PASS] robustness/invalid-virtual: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[PASS] robustness/unknown-op: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] stress/1000-reads-one-session: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] stress/map-unload-cycles: 50 cycles\r\n[FAIL] stress/load-unload: 20x, failures=20\r\n[FAIL] stress/read: 200x, failures=200\r\n[PASS] cleanup/traces: {\r\r\n  \"clean\": true,\r\r\n  \"findings\": []\r\r\n}\r\nresult: C:\\kdu-e2e\\out\\result.json (43 checks, 26 failed)\r\n",
   "exec_stderr_tail": "",
   "state": {
     "guest_queryable": true,
@@ -21,14 +247,14 @@
       "issues": []
     },
     "power": "on",
-    "sampled_at": "2026-10-21T04:23:14Z",
+    "sampled_at": "2026-10-21T04:57:33Z",
     "schema": "bvmenv.state.v1",
     "screen": {
       "classification": "login",
       "confidence": 0.75,
-      "ocr_text": "如\r\n\r\n",
+      "ocr_text": "时加\r\n\r\n",
       "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T042324Z.png",
+      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T045741Z.png",
       "stop_code": null
     },
     "tools": {
@@ -36,7 +262,7 @@
       "state": "unknown",
       "version": "13313"
     },
-    "uptime_seconds": 1216,
+    "uptime_seconds": 1437,
     "vm": "vm-kdu",
     "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
   }

@@ -10,14 +10,14 @@
     "issues": []
   },
   "power": "on",
-  "sampled_at": "2026-10-21T04:23:14Z",
+  "sampled_at": "2026-10-21T04:57:33Z",
   "schema": "bvmenv.state.v1",
   "screen": {
     "classification": "login",
     "confidence": 0.75,
-    "ocr_text": "如\r\n\r\n",
+    "ocr_text": "时加\r\n\r\n",
     "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T042324Z.png",
+    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T045741Z.png",
     "stop_code": null
   },
   "tools": {
@@ -25,7 +25,7 @@
     "state": "unknown",
     "version": "13313"
   },
-  "uptime_seconds": 1216,
+  "uptime_seconds": 1437,
   "vm": "vm-kdu",
   "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
 }
