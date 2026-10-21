@@ -34,6 +34,17 @@ Result<void> clear_system_event_log();
 // (EventID 7045 "service installed"). Read-only.
 Result<std::size_t> count_service_install_events(std::string_view service_name);
 
+// Persistent record of drivers staged by blook-kdu. Used by `kdu traces` /
+// `kdu doctor --traces` in a *later* process (after the session that loaded the
+// driver is gone) so the scan is not blind.
+void remember_staged_driver(std::string_view service, std::string_view path);
+void forget_staged_driver(std::string_view service);
+struct RememberedDriver {
+    std::string service;
+    std::string path;
+};
+std::vector<RememberedDriver> remembered_drivers();
+
 // Scan for every trace left by the given service names and staged files.
 Result<TraceReport> scan_traces(const std::vector<std::string>& services,
                                 const std::vector<std::string>& files);

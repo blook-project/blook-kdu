@@ -74,6 +74,10 @@ uint32_t windows_build_number();
 std::string windows_version_string();
 bool is_windows_64bit();
 bool is_process_elevated();
+
+// True when the CPU reports a hypervisor (VMware, Hyper-V, ...). Used as a
+// safety gate: kernel exploitation must only run inside a test VM.
+bool is_running_under_hypervisor(std::string* vendor = nullptr);
 std::string current_process_path();
 std::string system_root();
 

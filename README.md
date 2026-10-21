@@ -43,8 +43,10 @@ a blook-kchannel checkout and (for the payload) the WDK.
 ```powershell
 # build (payload + CLI + tests)
 git clone https://github.com/blook-project/blook-kchannel ..\blook-kchannel
-xmake f -y -m release --kchannel_dir=..\blook-kchannel --wdk="C:\Program Files (x86)\Windows Kits\10"
-xmake -y
+pwsh scripts/build.ps1 -KchannelDir ..\blook-kchannel
+# equivalent manual steps:
+#   xmake f -y -m release --kchannel_dir=..\blook-kchannel --wdk="<WDK root>"
+#   xmake -y
 
 # list exploits and their target drivers
 kdu.exe exploits list
@@ -120,6 +122,20 @@ binary (`kdu_exploit_test_<name>`). Exploits never share mutable state and are
 testable with mocked `IDeviceIo`/`IServiceHost` objects, so CI needs no kernel,
 driver or VM for them.
 
+## Safety: VM-only kernel execution
+
+Kernel exploitation and manual mapping can hang or bugcheck the machine. blook-kdu
+therefore **refuses to load kernel drivers unless it detects a VMware guest**
+(which is what `bvmenv` manages) and exits with `access_denied` otherwise. This is
+enforced in the SDK (`kdu_open`) and in the guest-side e2e runner, not just in
+scripts. There is no host-mode switch.
+
+- Host-side unit tests only exercise pure user-mode logic (page tables, PE
+  parsing, IOCTL encoding, mocks) and never load a driver.
+- All e2e runs go through `bvmenv` (see `docs/e2e.md`); `scripts/e2e.ps1`
+  requires `-Vm <name>` and every `bvmenv` call has a hard timeout.
+- If you are porting the tool to another hypervisor, the guard is a one-line
+  check in `src/sdk/session.cpp` - do not disable it on a physical host.
 ## Safety / legal
 
 - Loads known-vulnerable signed drivers that may be blocked by HVCI, Memory
@@ -134,3 +150,5 @@ driver or VM for them.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
+

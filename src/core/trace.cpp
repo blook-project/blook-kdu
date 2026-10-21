@@ -151,6 +151,96 @@ Result<std::size_t> count_service_install_events(
     return Result<std::size_t>::ok(matches);
 }
 
+namespace {
+
+std::string state_file_path() {
+    wchar_t temp[MAX_PATH] = {};
+    const DWORD length = ::GetTempPathW(MAX_PATH, temp);
+    if (length == 0) {
+        return {};
+    }
+    return to_utf8(std::wstring(temp, length)) + "blook-kdu-state.txt";
+}
+
+std::vector<RememberedDriver> load_state_file() {
+    std::vector<RememberedDriver> drivers;
+    const std::string path = state_file_path();
+    if (path.empty() || !file_exists(path)) {
+        return drivers;
+    }
+    auto contents = read_file(path);
+    if (!contents) {
+        return drivers;
+    }
+    std::string text(contents->begin(), contents->end());
+    std::size_t cursor = 0;
+    while (cursor < text.size()) {
+        const auto end = text.find('\n', cursor);
+        const auto line =
+            text.substr(cursor, end == std::string::npos ? std::string::npos
+                                                         : end - cursor);
+        const auto separator = line.find('|');
+        if (separator != std::string::npos) {
+            drivers.push_back(RememberedDriver{line.substr(0, separator),
+                                               line.substr(separator + 1)});
+        }
+        if (end == std::string::npos) {
+            break;
+        }
+        cursor = end + 1;
+    }
+    return drivers;
+}
+
+void store_state_file(const std::vector<RememberedDriver>& drivers) {
+    const std::string path = state_file_path();
+    if (path.empty()) {
+        return;
+    }
+    if (drivers.empty()) {
+        (void)remove_file(path);
+        return;
+    }
+    std::string text;
+    for (const auto& driver : drivers) {
+        text += driver.service + "|" + driver.path + "\n";
+    }
+    (void)write_file(path, text.data(), text.size());
+}
+
+}  // namespace
+
+void remember_staged_driver(std::string_view service, std::string_view path) {
+    auto drivers = load_state_file();
+    for (auto& driver : drivers) {
+        if (driver.service == service) {
+            driver.path = std::string(path);
+            store_state_file(drivers);
+            return;
+        }
+    }
+    drivers.push_back(
+        RememberedDriver{std::string(service), std::string(path)});
+    store_state_file(drivers);
+}
+
+void forget_staged_driver(std::string_view service) {
+    auto drivers = load_state_file();
+    const auto before = drivers.size();
+    drivers.erase(std::remove_if(drivers.begin(), drivers.end(),
+                                 [service](const RememberedDriver& driver) {
+                                     return driver.service == service;
+                                 }),
+                  drivers.end());
+    if (drivers.size() != before) {
+        store_state_file(drivers);
+    }
+}
+
+std::vector<RememberedDriver> remembered_drivers() {
+    return load_state_file();
+}
+
 Result<TraceReport> scan_traces(const std::vector<std::string>& services,
                                 const std::vector<std::string>& files) {
     TraceReport report;

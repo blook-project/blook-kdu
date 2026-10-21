@@ -41,11 +41,24 @@ state screenshots and log heads, and resets the VM at the end.
 ## Running it
 
 ```powershell
-# from the repo root, with bvmenv on PATH and the base VM provisioned
+# from the repo root, with the base VM provisioned (bvmenv must not hang;
+# every bvmenv call in the runner has a hard timeout)
+pwsh scripts/build.ps1
 pwsh scripts/e2e.ps1 -Vm vm-kdu -Out docs/evidence/$(Get-Date -Format yyyyMMdd)-e2e
 ```
+
+`scripts/e2e.ps1` builds the guest bundle from `build/windows/x64/release`
+(`kdu.exe`, `kdu_payload.sys`, `kdu_e2e_helper.exe`, `kdu_guest_test_driver.sys`,
+`guest-run.ps1`), pushes it to `C:\kdu-e2e`, runs the elevated guest suite and
+pulls `guest-out/` back. Every `bvmenv` invocation is wrapped in a hard process
+timeout; on timeout the runner fails cleanly instead of wedging the host, and
+`bvmenv reset` is attempted in a `finally` block. The per-check guest logic
+lives in `tests/e2e/guest-run.ps1` (exploits lifecycle, payload map, physical /
+virtual / process memory, DSE gating of an unsigned driver, stress, cleanup and
+trace scan).
 
 The runner is intentionally thin: it builds a bundle, pushes it, invokes the
 in-guest PowerShell runner as an elevated command and copies the artifacts back.
 Results are committed under `docs/evidence/<date>-<slug>/` (JSON + key
 screenshots + log summaries; large logs are stored as hashes/head+tail).
+

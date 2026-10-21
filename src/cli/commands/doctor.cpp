@@ -41,7 +41,13 @@ void add_doctor_command(CLI::App& app, Context& context) {
         }
 
         if (traces) {
-            auto scan = core::scan_traces({}, {});
+            std::vector<std::string> services;
+            std::vector<std::string> files;
+            for (const auto& remembered : core::remembered_drivers()) {
+                services.push_back(remembered.service);
+                files.push_back(remembered.path);
+            }
+            auto scan = core::scan_traces(services, files);
             if (!scan) {
                 rows.push_back({"Trace scan", red(scan.error().message)});
                 ok = false;

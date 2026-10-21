@@ -8,6 +8,8 @@
 #include "core/module_enum.h"
 #include "core/service_host.h"
 #include "core/trace.h"
+#include <cstdlib>
+
 #include "core/win32.h"
 #include "exploits/common/driver_kernel_access.h"
 #include "ipc/payload_client.h"
@@ -78,6 +80,12 @@ struct Session::Impl {
         }
         closed = true;
 
+        // Restore any DSE change before tearing the backends down.
+        if (original_ci_options && ci_options_location && access) {
+            (void)sdk::write_ci_options(*access, ci_options_location->address,
+                                        *original_ci_options);
+            original_ci_options.reset();
+        }
         if (payload_mapped && payload) {
             (void)payload->unload();
             payload_mapped = false;
@@ -639,6 +647,24 @@ Result<TraceReport> Session::scan_traces() {
 // ---------------------------------------------------------------------------
 Result<Session> kdu_open(const OpenOptions& options) {
     core::init_logging(options.log_level, options.log_file);
+
+    // Safety gate: this tool loads kernel drivers, maps payloads and can patch
+    // DSE. Running that on a physical host is unsupported and dangerous (host
+    // hangs/reboots have been observed), so refuse unless we are clearly inside
+    // a VMware guest, which is exactly what bvmenv manages.
+    {
+        std::string vendor;
+        const bool vmware = core::is_running_under_hypervisor(&vendor) &&
+                            vendor.find("VMware") != std::string::npos;
+        if (!vmware) {
+            return Result<Session>::fail(
+                Status::access_denied,
+                "refusing to load kernel exploitation code outside a bvmenv "
+                "VMware guest (hypervisor vendor: " +
+                    (vendor.empty() ? std::string("none") : vendor) +
+                    "). Kernel experiments are VM-only; see docs/e2e.md.");
+        }
+    }
     KDU_LOG_DEBUG("kdu_open: build {} ({}), exploit='{}'",
                   BLOOK_KDU_VERSION_STRING, core::windows_version_string(),
                   options.exploit);

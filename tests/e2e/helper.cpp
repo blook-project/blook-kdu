@@ -1,6 +1,6 @@
 // blook-kdu e2e helper: an ordinary user-mode process whose memory the kernel
-// payload tests read and write through CR3. It allocates a page, fills it with a
-// known pattern, publishes {pid, address, pattern} as JSON and waits.
+// payload tests read and write through CR3. It allocates a page, fills it with
+// a known pattern, publishes {pid, address, pattern} as JSON and waits.
 #include <windows.h>
 
 #include <cstdio>
@@ -8,9 +8,8 @@
 
 int main() {
     constexpr SIZE_T kSize = 0x1000;
-    auto* buffer = static_cast<unsigned char*>(
-        ::VirtualAlloc(nullptr, kSize, MEM_COMMIT | MEM_RESERVE,
-                       PAGE_READWRITE));
+    auto* buffer = static_cast<unsigned char*>(::VirtualAlloc(
+        nullptr, kSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
     if (!buffer) {
         std::fprintf(stderr, "VirtualAlloc failed\n");
         return 1;

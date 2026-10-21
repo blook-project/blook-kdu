@@ -5,11 +5,11 @@
 // longer be loaded once kdu dse restore put the original g_CiOptions back.
 #include <ntddk.h>
 
-extern "C" NTSTATUS DriverEntry(PDRIVER_OBJECT driver_object,
-                                PUNICODE_STRING registry_path) {
+NTSTATUS DriverEntry(PDRIVER_OBJECT driver_object,
+                     PUNICODE_STRING registry_path) {
     UNREFERENCED_PARAMETER(registry_path);
     // No device, no registry, no threads: just enough to prove the loader ran.
-    driver_object->DriverUnload = nullptr;
+    driver_object->DriverUnload = NULL;
     DbgPrint("[kdu-e2e] guest test driver loaded\n");
     return STATUS_SUCCESS;
 }

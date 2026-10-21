@@ -19,7 +19,13 @@ void add_cleanup_command(CLI::App& app, Context& context) {
         if (!context.session) {
             // Nothing was opened by this invocation; cleanup only makes sense
             // for a live session, so just scan.
-            auto report = core::scan_traces({}, {});
+            std::vector<std::string> services;
+            std::vector<std::string> files;
+            for (const auto& remembered : core::remembered_drivers()) {
+                services.push_back(remembered.service);
+                files.push_back(remembered.path);
+            }
+            auto report = core::scan_traces(services, files);
             if (!report) {
                 throw CliError(report.error().code, report.error().message);
             }
@@ -64,7 +70,13 @@ void add_cleanup_command(CLI::App& app, Context& context) {
     auto* traces = app.add_subcommand(
         "traces", "Scan for leftover driver traces (read-only)");
     traces->callback([&context] {
-        auto result = core::scan_traces({}, {});
+        std::vector<std::string> services;
+        std::vector<std::string> files;
+        for (const auto& remembered : core::remembered_drivers()) {
+            services.push_back(remembered.service);
+            files.push_back(remembered.path);
+        }
+        auto result = core::scan_traces(services, files);
         if (!result) {
             throw CliError(result.error().code, result.error().message);
         }

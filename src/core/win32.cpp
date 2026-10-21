@@ -12,6 +12,7 @@
 #include <array>
 #include <cstdio>
 #include <cstring>
+#include <cstring>
 #include <vector>
 
 namespace blook::kdu::core {
@@ -206,6 +207,24 @@ bool is_windows_64bit() {
     SYSTEM_INFO info{};
     ::GetNativeSystemInfo(&info);
     return info.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64;
+}
+
+bool is_running_under_hypervisor(std::string* vendor) {
+    int registers[4] = {0, 0, 0, 0};
+    __cpuid(registers, 1);
+    const bool hypervisor_bit = (registers[2] & (1 << 31)) != 0;
+    if (!hypervisor_bit) {
+        return false;
+    }
+    __cpuid(registers, 0x40000000);
+    char name[13] = {};
+    std::memcpy(name, &registers[1], 4);
+    std::memcpy(name + 4, &registers[2], 4);
+    std::memcpy(name + 8, &registers[3], 4);
+    if (vendor) {
+        *vendor = name;
+    }
+    return true;
 }
 
 bool is_process_elevated() {

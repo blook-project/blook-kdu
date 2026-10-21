@@ -7,7 +7,7 @@
 [CmdletBinding()]
 param(
     [string] $Root = (Split-Path -Parent $PSScriptRoot),
-    [string] $Vm = 'vm-kdu',
+    [string] $Vm = '',
     [string] $Out = '',
     [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\build\windows\x64\releasedbg\bvmenv.exe',
     [int] $ExecTimeoutSeconds = 1200,
@@ -18,6 +18,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Set-Location $Root
+if (-not $Vm) {
+    throw "refusing to run kernel e2e on the host: pass -Vm <bvmenv guest name> (e.g. -Vm vm-kdu)"
+}
 $version = (Get-Content (Join-Path $Root 'version.txt') -Raw).Trim()
 if (-not $Out) {
     $Out = Join-Path $Root ("docs/evidence/{0}-e2e" -f (Get-Date -Format 'yyyyMMdd'))
@@ -135,3 +138,4 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+

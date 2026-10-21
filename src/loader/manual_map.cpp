@@ -158,7 +158,10 @@ Result<std::uint64_t> find_victim_base(IKernelAccess& access,
     }
     std::uint8_t header[0x1000];
     for (const auto& module : modules.value()) {
-        if (module.size != identity.size_of_image || module.base == 0) {
+        if (module.base == 0) {
+            continue;
+        }
+        if (module.size != 0 && module.size != identity.size_of_image) {
             continue;
         }
         auto read = access.read_virtual(module.base, header, sizeof(header));
@@ -342,9 +345,11 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
         return Result<PreparedImage>::fail(Status::invalid_image,
                                            "image is not PE32+");
     }
-    if ((nt->FileHeader.Characteristics & IMAGE_FILE_DLL) == 0) {
-        return Result<PreparedImage>::fail(Status::invalid_image,
-                                           "kernel image must be a DLL (.sys)");
+    // Kernel drivers are linked without IMAGE_FILE_DLL on some WDK versions, so
+    // only require a valid executable image.
+    if ((nt->FileHeader.Characteristics & IMAGE_FILE_EXECUTABLE_IMAGE) == 0) {
+        return Result<PreparedImage>::fail(
+            Status::invalid_image, "image is not an executable image (.sys)");
     }
     if (nt->OptionalHeader.SizeOfImage == 0 ||
         nt->OptionalHeader.SizeOfImage > 0x4000000) {
@@ -458,6 +463,7 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
     }
     auto& export_map = exports.value();
 
+    std::size_t patched_imports = 0;
     if (nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]
             .VirtualAddress != 0) {
         std::size_t cursor =
@@ -503,11 +509,14 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
                             module_name);
                 }
                 iat[index] = ntos.value() + found->second;
+                ++patched_imports;
             }
             cursor += sizeof(IMAGE_IMPORT_DESCRIPTOR);
         }
     }
 
+    KDU_LOG_WARN("prepare_image patched {} imports (ntos base 0x{:x})",
+                 patched_imports, ntos.value());
     if (nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION]
             .Size != 0) {
         KDU_LOG_DEBUG(

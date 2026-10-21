@@ -147,6 +147,7 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
             std::string(info.driver_file), false, false});
         history_.push_back(std::string(info.service_name));
     }
+    remember_staged_driver(info.service_name, driver_path);
     KDU_LOG_INFO("exploit driver '{}' running as service '{}'", info.id,
                  info.service_name);
     return Result<std::unique_ptr<exploits::IDeviceIo>>::ok(
@@ -176,6 +177,7 @@ Result<void> ServiceHost::stop(const exploits::ExploitInfo& info) {
     }
     if (!driver_path.empty()) {
         (void)remove_file(driver_path);
+        forget_staged_driver(info.service_name);
         std::lock_guard<std::mutex> lock(mutex_);
         for (auto& artifact : staged_) {
             if (artifact.driver_path == driver_path) {

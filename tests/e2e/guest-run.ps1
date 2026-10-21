@@ -12,6 +12,20 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Hard safety gate: this script loads kernel drivers, maps payloads and patches
+# DSE. It must only ever run inside a bvmenv-managed VMware guest. Refusing on a
+# physical host protects against host hangs/reboots caused by kernel testing.
+$vmSystem = $null
+try { $vmSystem = Get-CimInstance Win32_ComputerSystem -ErrorAction Stop } catch { }
+$vmModel = if ($vmSystem) { $vmSystem.Model } else { '' }
+$vmManufacturer = if ($vmSystem) { $vmSystem.Manufacturer } else { '' }
+if ($vmModel -notmatch 'VMware' -and $vmManufacturer -notmatch 'VMware') {
+    throw ("refusing to run kernel e2e outside a bvmenv VMware guest " +
+           "(model='{0}', manufacturer='{1}'); use bvmenv e2e/exec" -f `
+           $vmModel, $vmManufacturer)
+}
+
 New-Item -ItemType Directory -Force $OutDir | Out-Null
 $kdu = Join-Path $BundleDir 'kdu.exe'
 $helper = Join-Path $BundleDir 'kdu_e2e_helper.exe'
@@ -194,4 +208,5 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
 

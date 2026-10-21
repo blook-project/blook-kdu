@@ -2,6 +2,7 @@
 #include "core/module_enum.h"
 
 #include <windows.h>
+#include <psapi.h>
 #include <winternl.h>
 
 #include <algorithm>
@@ -91,6 +92,52 @@ Result<std::vector<KernelModuleEntry>> enum_kernel_modules() {
         entry.base = reinterpret_cast<std::uint64_t>(module.image_base);
         entry.size = module.image_size;
         modules.push_back(std::move(entry));
+    }
+    // Windows 11 26100 zeroes ImageBase for unprivileged
+    // SystemModuleInformation callers on some configurations; EnumDeviceDrivers
+    // still reports the loaded base, so use it as a fallback.
+    bool any_base = false;
+    for (const auto& module : modules) {
+        if (module.base != 0) {
+            any_base = true;
+            break;
+        }
+    }
+    if (!any_base) {
+        std::vector<KernelModuleEntry> fallback;
+        DWORD needed = 0;
+        ::EnumDeviceDrivers(nullptr, 0, &needed);
+        if (needed != 0) {
+            std::vector<LPVOID> drivers(needed / sizeof(LPVOID) + 1);
+            if (::EnumDeviceDrivers(
+                    drivers.data(),
+                    static_cast<DWORD>(drivers.size() * sizeof(LPVOID)),
+                    &needed)) {
+                const auto count = needed / sizeof(LPVOID);
+                char name[MAX_PATH] = {};
+                char path[MAX_PATH] = {};
+                for (std::size_t index = 0; index < count; ++index) {
+                    KernelModuleEntry entry;
+                    if (!::GetDeviceDriverBaseNameA(drivers[index], name,
+                                                    MAX_PATH)) {
+                        continue;
+                    }
+                    entry.name = name;
+                    if (::GetDeviceDriverFileNameA(drivers[index], path,
+                                                   MAX_PATH)) {
+                        entry.path = path;
+                    }
+                    entry.base =
+                        reinterpret_cast<std::uint64_t>(drivers[index]);
+                    entry.size = 0;
+                    fallback.push_back(std::move(entry));
+                }
+            }
+        }
+        if (!fallback.empty()) {
+            return Result<std::vector<KernelModuleEntry>>::ok(
+                std::move(fallback));
+        }
     }
     return Result<std::vector<KernelModuleEntry>>::ok(std::move(modules));
 }
