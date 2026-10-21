@@ -60,3 +60,4 @@ failure, and is recorded per exploit.
 
 These are recorded as `skipped: true` with explicit reasons in the result JSON,
 not as passing features.
+

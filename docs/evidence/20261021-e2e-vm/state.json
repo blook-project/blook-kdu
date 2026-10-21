@@ -10,20 +10,20 @@
     "issues": [
       {
         "level": "warning",
-        "message": "2026-10-21T08:48:46.626Z -INFO vmware-vmx.exe 23344 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
+        "message": "2026-10-21T09:16:07.698Z -INFO vmware-vmx.exe 11600 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
         "source": "vmware.log"
       }
     ]
   },
   "power": "on",
-  "sampled_at": "2026-10-21T08:59:22Z",
+  "sampled_at": "2026-10-21T09:26:49Z",
   "schema": "bvmenv.state.v1",
   "screen": {
     "classification": "login",
     "confidence": 0.75,
-    "ocr_text": "| ”无法在此设备上加载驱动程序\r\n\r\n| 驱动秆床physamem64sys\r\nphysmemé4.sys                                                                                                        x\r\n\r\n| 。 某个安全设置将其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设置以jn载\r\n\r\n此驱动程序\r\n\r\n门] 不再显示此消息\r\n\r\nBeBe\r\n\r\n二                           1659\r\n\r\nQ ee       bES&weaga   ~ & BBS rior\r\n",
+    "ocr_text": "| ”无法在此设备上加载驱动程序\r\n\r\n| 驱动秆床physamem64sys\r\nphysmemé4.sys                                                                                                        x\r\n\r\n| 。 某个安全设置将其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设置以jn载\r\n\r\n此驱动程序\r\n\r\n门] 不再显示此消息\r\n\r\nBeBe\r\n\r\n二                      1727\r\n\r\nQ ee       bES&weaga   ~ & BB rio\r\n",
     "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T085932Z.png",
+    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T092701Z.png",
     "stop_code": null
   },
   "tools": {
@@ -31,7 +31,7 @@
     "state": "running",
     "version": "13313"
   },
-  "uptime_seconds": 598,
+  "uptime_seconds": null,
   "vm": "vm-kdu",
   "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
 }

@@ -44,6 +44,10 @@ jobs:
             throw "tag ${{ github.ref_name }} does not match version.txt ($version)"
           }
           "KDU_VERSION=$version" >> $env:GITHUB_ENV
+      - name: Prepare signed embedded driver assets
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/prepare-assets.ps1
       - name: Build
         shell: pwsh
         run: |
@@ -72,3 +76,4 @@ jobs:
           & pwsh -NoProfile -File scripts/publish-registry.ps1 `
               -Package blook-kdu -Version $env:KDU_VERSION `
               -Zip "artifacts/blook-kdu-$env:KDU_VERSION-windows-x64.zip"
+

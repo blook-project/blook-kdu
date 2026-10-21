@@ -28,6 +28,7 @@ if (-not (Test-Path $Bvmenv)) {
 $version = (Get-Content (Join-Path $Root 'version.txt') -Raw).Trim()
 $bvmenvVersion = 'unknown'
 try { $bvmenvVersion = ((& $Bvmenv version) | Out-String).Trim() } catch { }
+$bvmenvSha256 = (Get-FileHash $Bvmenv -Algorithm SHA256).Hash.ToLower()
 if (-not $Out) {
     $Out = Join-Path $Root ("docs/evidence/{0}-e2e" -f (Get-Date -Format 'yyyyMMdd'))
 }
@@ -300,6 +301,7 @@ $summary = [ordered]@{
     schema = 'kdu.e2e.v1'
     version = $version
     bvmenv_version = $bvmenvVersion
+    bvmenv_sha256 = $bvmenvSha256
     vm = $Vm
     finished = (Get-Date).ToString('o')
     ok = $ok
@@ -319,6 +321,7 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 
 

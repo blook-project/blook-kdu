@@ -4,6 +4,18 @@ All notable changes to blook-kdu are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-10-21
+
+- Package the CLI (`bin/kdu.exe`) again: the release workflow now prepares the
+  signed embedded-driver assets before building, so the `kdu` target cannot be
+  silently skipped after a clean configure (the 1.0.0 zip only contained
+  `kdu_payload.sys`).
+- Reproducible clean builds: `scripts/prepare-assets.ps1` runs in the `kdu`
+  target's `before_build`, so `xmake f -c -y -m release && xmake -y` works from a
+  fresh clone without a separate prepare step.
+- VM e2e provenance: `summary.json` records `bvmenv_version` and
+  `bvmenv_sha256` (safe bvmenv build), and evidence was regenerated with the
+  v1.0.1 binaries.
 ## [1.0.0] - 2026-10-21
 
 First release. Highlights:
@@ -84,5 +96,6 @@ Known limitations on Windows 11 26200 (documented, gated in the e2e suite):
   packaging; per-exploit matrix jobs.
 - Release workflow with canonical `blook-kdu-<version>-windows-x64.zip` +
   `.sha256` assets and a package-registry manifest/publish script.
+
 
 
