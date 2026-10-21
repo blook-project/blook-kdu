@@ -1,0 +1,19 @@
+﻿{
+    "suite":  "blook-kdu-e2e",
+    "phase":  4,
+    "total":  2,
+    "failed":  0,
+    "results":  [
+                    {
+                        "name":  "stress/load-unload",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: kernel module list unavailable"
+                    },
+                    {
+                        "name":  "stress/read",
+                        "ok":  true,
+                        "detail":  "20x, failures=0"
+                    }
+                ]
+}

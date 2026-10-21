@@ -182,19 +182,33 @@ jobs:
       - name: Clone pinned blook-kchannel
         shell: pwsh
         run: |
-          git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            Remove-Item "$env:GITHUB_WORKSPACE\..\blook-kchannel" -Recurse -Force -ErrorAction SilentlyContinue
+            git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
+            if ($LASTEXITCODE -eq 0) { break }
+            Write-Warning "clone attempt $attempt failed; retrying"
+            Start-Sleep -Seconds (10 * $attempt)
+          }
+          if ($LASTEXITCODE -ne 0) { throw "cannot clone blook-kchannel" }
           git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
           "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
       - name: Build exploit test only
         shell: pwsh
         run: |
-          xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
+            if ($LASTEXITCODE -eq 0) { break }
+            Write-Warning "xmake configure attempt $attempt failed; retrying"
+            Start-Sleep -Seconds (10 * $attempt)
+          }
+          if ($LASTEXITCODE -ne 0) { throw "xmake configure failed after retries" }
           xmake -y "kdu_exploit_test_${{ matrix.exploit }}"
       - name: Run exploit test
         shell: pwsh
         run: |
           xmake run "kdu_exploit_test_${{ matrix.exploit }}"
           if ($LASTEXITCODE -ne 0) { throw "exploit ${{ matrix.exploit }} tests failed" }
+
 
 
 

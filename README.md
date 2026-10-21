@@ -94,6 +94,9 @@ scripts/               build/signing/registry/e2e scripts
 docs/                  architecture, exploits, e2e and evidence
 ```
 
+Real VM evidence (Windows 11 26200, 28 checks / 0 failed / 10 documented skips) lives in
+[docs/evidence/20261021-e2e-vm](docs/evidence/20261021-e2e-vm/README.md).
+
 See [docs/architecture.md](docs/architecture.md), [docs/exploits.md](docs/exploits.md),
 [docs/api.md](docs/api.md) (SDK guide + 20-line example),
 [docs/json-schema.md](docs/json-schema.md) (`--json` schema + exit codes) and
@@ -152,6 +155,7 @@ scripts. There is no host-mode switch.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
 
 
 

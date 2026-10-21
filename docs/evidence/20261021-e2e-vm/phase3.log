@@ -1,0 +1,8 @@
+exit_code    : 0
+[SKIP] dse/status: DSE status unavailable
+[SKIP] dse/disable: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)
+[SKIP] dse/restore: nothing to restore
+[PASS] dse/signed-load
+[PASS] dse/tampered-blocked
+
+

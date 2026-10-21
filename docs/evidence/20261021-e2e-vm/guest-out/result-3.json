@@ -1,0 +1,36 @@
+﻿{
+    "suite":  "blook-kdu-e2e",
+    "phase":  3,
+    "total":  5,
+    "failed":  0,
+    "results":  [
+                    {
+                        "name":  "dse/status",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: DSE status unavailable"
+                    },
+                    {
+                        "name":  "dse/disable",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)"
+                    },
+                    {
+                        "name":  "dse/restore",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: nothing to restore"
+                    },
+                    {
+                        "name":  "dse/signed-load",
+                        "ok":  true,
+                        "detail":  "[SC] CreateService SUCCESS SERVICE_NAME: kduE2eSigned          TYPE               : 1  KERNEL_DRIVER           STATE              : 4  RUNNING                                  (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)         WIN32_EXIT_CODE    : 0  (0x0)         SERVICE_EXIT_CODE  : 0  (0x0)         CHECKPOINT         : 0x0         WAIT_HINT          : 0x0         PID                : 0         FLAGS              :"
+                    },
+                    {
+                        "name":  "dse/tampered-blocked",
+                        "ok":  true,
+                        "detail":  "[SC] CreateService SUCCESS[SC] StartService FAILED 577:  Windows cannot verify the digital signature for this file. A recent hardware or software change might have installed a file that is signed incorrectly or damaged, or that might be malicious software from an unknown source."
+                    }
+                ]
+}

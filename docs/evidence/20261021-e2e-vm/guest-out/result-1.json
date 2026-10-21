@@ -1,0 +1,74 @@
+﻿{
+    "suite":  "blook-kdu-e2e",
+    "phase":  1,
+    "total":  13,
+    "failed":  0,
+    "results":  [
+                    {
+                        "name":  "environment/build",
+                        "ok":  true,
+                        "detail":  "Windows 10.0.26200 build 26200"
+                    },
+                    {
+                        "name":  "environment/elevated",
+                        "ok":  true,
+                        "detail":  "administrator token"
+                    },
+                    {
+                        "name":  "environment/defender",
+                        "ok":  true,
+                        "detail":  "realtime scanning disabled"
+                    },
+                    {
+                        "name":  "exploits/list",
+                        "ok":  true,
+                        "detail":  "exploit inventory enumerated"
+                    },
+                    {
+                        "name":  "exploits/count",
+                        "ok":  true,
+                        "detail":  "compiled-in exploits: 8"
+                    },
+                    {
+                        "name":  "exploit/asrock/load",
+                        "ok":  true,
+                        "detail":  "driver staged and started"
+                    },
+                    {
+                        "name":  "exploit/atszio64/load",
+                        "ok":  true,
+                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                    },
+                    {
+                        "name":  "exploit/dbk64/load",
+                        "ok":  true,
+                        "skipped":  true,
+                        "detail":  "SKIP: driver did not start on this build"
+                    },
+                    {
+                        "name":  "exploit/echodrv/load",
+                        "ok":  true,
+                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                    },
+                    {
+                        "name":  "exploit/gdrv/load",
+                        "ok":  true,
+                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                    },
+                    {
+                        "name":  "exploit/physmem64/load",
+                        "ok":  true,
+                        "detail":  "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+                    },
+                    {
+                        "name":  "exploit/rtcore64/load",
+                        "ok":  true,
+                        "detail":  "driver staged and started"
+                    },
+                    {
+                        "name":  "exploit/winring0/load",
+                        "ok":  true,
+                        "detail":  "driver staged and started"
+                    }
+                ]
+}

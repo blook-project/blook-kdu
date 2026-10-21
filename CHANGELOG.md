@@ -4,6 +4,36 @@ All notable changes to blook-kdu are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-10-21
+
+First release. Highlights:
+
+- Self-contained user-mode CLI + SDK that stages bundled vulnerable drivers,
+  optionally follows up with a manual-mapped kernel payload over blook-kchannel
+  (pinned `40a5337`), and cleans up the driver/service/registry at exit.
+- 8 exploits with per-exploit mock unit tests and independent CI jobs:
+  `asrock`, `atszio64`, `dbk64`, `echodrv`, `gdrv`, `physmem64`, `rtcore64`,
+  `winring0` (decompressed, Authenticode-stripped and re-signed at build time
+  with the bundled test signer).
+- Memory: physical and kernel-VA read/write, translation, CR3 process memory
+  (mref.cc technique), module enumeration, driver dumping, JSON batch runner.
+- DSE status/disable/restore API via `g_CiOptions`, ACPI-style victim-driver
+  manual mapper for the payload, blook-kchannel IPC, trace scanning and cleanup.
+- Safety: the SDK refuses kernel operations outside a VMware guest; the e2e
+  harness refuses non-VMware guests and hard-times every bvmenv call.
+- Real VM evidence committed under `docs/evidence/20261021-e2e-vm/`
+  (Windows 11 26200): 28 checks, 0 failed, 10 documented skips.
+
+Known limitations on Windows 11 26200 (documented, gated in the e2e suite):
+
+- The mapped payload image cannot execute from kernel pool
+  (`ATTEMPTED_EXECUTE_OF_NOEXECUTE_MEMORY`); the mapper stage runs but the
+  payload needs a PTE-NX-clear pass or a service+kchannel loading mode.
+- Four bundled driver images (`atszio64`, `echodrv`, `gdrv`, `physmem64`) are
+  rejected by Microsoft's vulnerable-driver blocklist (CERT_E_REVOKED); they are
+  recorded per exploit as platform-blocked.
+- `dse/disable` is not exercised by the automated suite on this build (patching
+  `g_CiOptions` no longer gates driver loads there).
 ## [Unreleased]
 
 ### Added
@@ -54,4 +84,5 @@ All notable changes to blook-kdu are documented here. The format follows
   packaging; per-exploit matrix jobs.
 - Release workflow with canonical `blook-kdu-<version>-windows-x64.zip` +
   `.sha256` assets and a package-registry manifest/publish script.
+
 

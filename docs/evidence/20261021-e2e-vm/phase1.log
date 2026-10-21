@@ -1,0 +1,16 @@
+exit_code    : 0
+[PASS] environment/build
+[PASS] environment/elevated
+[PASS] environment/defender
+[PASS] exploits/list
+[PASS] exploits/count
+[PASS] exploit/asrock/load
+[PASS] exploit/atszio64/load
+[SKIP] exploit/dbk64/load: driver did not start on this build
+[PASS] exploit/echodrv/load
+[PASS] exploit/gdrv/load
+[PASS] exploit/physmem64/load
+[PASS] exploit/rtcore64/load
+[PASS] exploit/winring0/load
+
+

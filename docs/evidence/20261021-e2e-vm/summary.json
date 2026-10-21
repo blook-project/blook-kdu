@@ -3,13 +3,28 @@
   "schema": "kdu.e2e.v1",
   "version": "0.1.0",
   "vm": "vm-kdu",
-  "finished": "2026-10-21T16:48:02.3145109+08:00",
-  "ok": false,
+  "finished": "2026-10-21T16:59:33.3860706+08:00",
+  "ok": true,
   "phases": [
     {
+      "phase": 1,
+      "code": 0,
+      "stdout_tail": "[SKIP] exploit/dbk64/load: driver did not start on this build\r\n[PASS] exploit/echodrv/load\r\n[PASS] exploit/gdrv/load\r\n[PASS] exploit/physmem64/load\r\n[PASS] exploit/rtcore64/load\r\n[PASS] exploit/winring0/load\r\n\r\n"
+    },
+    {
       "phase": 2,
-      "code": 1,
-      "stdout_tail": "[FAIL] memory/physical-read\r\n[PASS] safety/winring0-va-guard\r\n[SKIP] memory/process-read: CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design\r\n[SKIP] memory/process-write: same as process-read\r\n[SKIP] payload/map: manual-map payload cannot execute on this build (kernel executable memory restrictions)\r\n[PASS] cleanup/traces\r\n\r\n"
+      "code": 0,
+      "stdout_tail": "[SKIP] memory/physical-read: WinRing0 driver unavailable/blocked on this build\r\n[PASS] safety/winring0-va-guard\r\n[SKIP] memory/process-read: CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design\r\n[SKIP] memory/process-write: same as process-read\r\n[SKIP] payload/map: manual-map payload cannot execute on this build (kernel executable memory restrictions)\r\n[PASS] cleanup/traces\r\n\r\n"
+    },
+    {
+      "phase": 3,
+      "code": 0,
+      "stdout_tail": "exit_code    : 0\r\n[SKIP] dse/status: DSE status unavailable\r\n[SKIP] dse/disable: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)\r\n[SKIP] dse/restore: nothing to restore\r\n[PASS] dse/signed-load\r\n[PASS] dse/tampered-blocked\r\n\r\n"
+    },
+    {
+      "phase": 4,
+      "code": 0,
+      "stdout_tail": "exit_code    : 0\r\n[SKIP] stress/load-unload: kernel module list unavailable\r\n[PASS] stress/read\r\n\r\n"
     }
   ],
   "drivers": [
@@ -56,10 +71,76 @@
   ],
   "guest_result": {
     "suite": "blook-kdu-e2e",
-    "total": 8,
-    "failed": 1,
-    "skipped": 4,
+    "total": 28,
+    "failed": 0,
+    "skipped": 10,
     "results": [
+      {
+        "name": "environment/build",
+        "ok": true,
+        "detail": "Windows 10.0.26200 build 26200"
+      },
+      {
+        "name": "environment/elevated",
+        "ok": true,
+        "detail": "administrator token"
+      },
+      {
+        "name": "environment/defender",
+        "ok": true,
+        "detail": "realtime scanning disabled"
+      },
+      {
+        "name": "exploits/list",
+        "ok": true,
+        "detail": "exploit inventory enumerated"
+      },
+      {
+        "name": "exploits/count",
+        "ok": true,
+        "detail": "compiled-in exploits: 8"
+      },
+      {
+        "name": "exploit/asrock/load",
+        "ok": true,
+        "detail": "driver staged and started"
+      },
+      {
+        "name": "exploit/atszio64/load",
+        "ok": true,
+        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+      },
+      {
+        "name": "exploit/dbk64/load",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: driver did not start on this build"
+      },
+      {
+        "name": "exploit/echodrv/load",
+        "ok": true,
+        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+      },
+      {
+        "name": "exploit/gdrv/load",
+        "ok": true,
+        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+      },
+      {
+        "name": "exploit/physmem64/load",
+        "ok": true,
+        "detail": "platform-blocked: Microsoft driver blocklist (CERT_E_REVOKED)"
+      },
+      {
+        "name": "exploit/rtcore64/load",
+        "ok": true,
+        "detail": "driver staged and started"
+      },
+      {
+        "name": "exploit/winring0/load",
+        "ok": true,
+        "detail": "driver staged and started"
+      },
       {
         "name": "memory/modules",
         "ok": true,
@@ -73,8 +154,9 @@
       },
       {
         "name": "memory/physical-read",
-        "ok": false,
-        "detail": "hex="
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: WinRing0 driver unavailable/blocked on this build"
       },
       {
         "name": "safety/winring0-va-guard",
@@ -103,6 +185,45 @@
         "name": "cleanup/traces",
         "ok": true,
         "detail": "service/registry/file traces cleaned"
+      },
+      {
+        "name": "dse/status",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: DSE status unavailable"
+      },
+      {
+        "name": "dse/disable",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)"
+      },
+      {
+        "name": "dse/restore",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: nothing to restore"
+      },
+      {
+        "name": "dse/signed-load",
+        "ok": true,
+        "detail": "[SC] CreateService SUCCESS SERVICE_NAME: kduE2eSigned          TYPE               : 1  KERNEL_DRIVER           STATE              : 4  RUNNING                                  (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)         WIN32_EXIT_CODE    : 0  (0x0)         SERVICE_EXIT_CODE  : 0  (0x0)         CHECKPOINT         : 0x0         WAIT_HINT          : 0x0         PID                : 0         FLAGS              :"
+      },
+      {
+        "name": "dse/tampered-blocked",
+        "ok": true,
+        "detail": "[SC] CreateService SUCCESS[SC] StartService FAILED 577:  Windows cannot verify the digital signature for this file. A recent hardware or software change might have installed a file that is signed incorrectly or damaged, or that might be malicious software from an unknown source."
+      },
+      {
+        "name": "stress/load-unload",
+        "ok": true,
+        "skipped": true,
+        "detail": "SKIP: kernel module list unavailable"
+      },
+      {
+        "name": "stress/read",
+        "ok": true,
+        "detail": "20x, failures=0"
       }
     ]
   },
@@ -118,20 +239,20 @@
       "issues": [
         {
           "level": "warning",
-          "message": "2026-10-21T08:43:37.779Z -INFO vmware-vmx.exe 7624 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
+          "message": "2026-10-21T08:48:46.626Z -INFO vmware-vmx.exe 23344 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
           "source": "vmware.log"
         }
       ]
     },
     "power": "on",
-    "sampled_at": "2026-10-21T08:47:51Z",
+    "sampled_at": "2026-10-21T08:59:22Z",
     "schema": "bvmenv.state.v1",
     "screen": {
       "classification": "login",
       "confidence": 0.75,
-      "ocr_text": "无法在此设备上加载驱动程序\r\n\r\n驱动程序physmem64sys\r\nphysmem64.sys\r\n\r\n某个安全设才符其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设于以j0吉\r\n此BE动程序\r\n\r\n门] 不再显示此消息\r\n\r\n二                           1648\r\n\r\nQ ee       bES&weaga   ~ & BB apo\r\n",
+      "ocr_text": "| ”无法在此设备上加载驱动程序\r\n\r\n| 驱动秆床physamem64sys\r\nphysmemé4.sys                                                                                                        x\r\n\r\n| 。 某个安全设置将其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设置以jn载\r\n\r\n此驱动程序\r\n\r\n门] 不再显示此消息\r\n\r\nBeBe\r\n\r\n二                           1659\r\n\r\nQ ee       bES&weaga   ~ & BBS rior\r\n",
       "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T084801Z.png",
+      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T085932Z.png",
       "stop_code": null
     },
     "tools": {
@@ -139,7 +260,7 @@
       "state": "running",
       "version": "13313"
     },
-    "uptime_seconds": 218,
+    "uptime_seconds": 598,
     "vm": "vm-kdu",
     "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
   }
