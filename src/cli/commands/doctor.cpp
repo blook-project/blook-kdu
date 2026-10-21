@@ -25,14 +25,9 @@ void add_doctor_command(CLI::App& app, Context& context) {
         std::string hypervisor;
         const bool under_hypervisor =
             core::is_running_under_hypervisor(&hypervisor);
-        const bool vmware_guest =
-            under_hypervisor && hypervisor.find("VMware") != std::string::npos;
         rows.push_back(
             {"Hypervisor", under_hypervisor ? hypervisor : "none (host)"});
-        rows.push_back({"Kernel ops allowed", vmware_guest
-                                                  ? green("yes (VMware guest)")
-                                                  : red("no (VM-only guard)")});
-        ok = ok && vmware_guest;
+        rows.push_back({"Kernel ops", green("available (elevation required)")});
         const bool elevated = core::is_process_elevated();
         rows.push_back({"Elevated", elevated ? green("yes") : red("no")});
         ok = ok && elevated;

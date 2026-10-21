@@ -50,6 +50,9 @@ jobs:
           & pwsh -NoProfile -File scripts/prepare-assets.ps1
       - name: Build
         shell: pwsh
+        env:
+          SPC_PFX_BASE64: ${{ secrets.SPC_PFX_BASE64 }}
+          SPC_PFX_PASSWORD: ${{ secrets.SPC_PFX_PASSWORD }}
         run: |
           xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
           xmake -y
@@ -76,4 +79,5 @@ jobs:
           & pwsh -NoProfile -File scripts/publish-registry.ps1 `
               -Package blook-kdu -Version $env:KDU_VERSION `
               -Zip "artifacts/blook-kdu-$env:KDU_VERSION-windows-x64.zip"
+
 

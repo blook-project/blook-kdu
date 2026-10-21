@@ -44,8 +44,23 @@ if ($status.code -eq 0) {
 } else {
     Add-Skip 'dse/status' 'DSE status unavailable'
 }
-Add-Skip 'dse/disable' 'g_CiOptions write path not exercised on this build (load gating unaffected; documented limitation)'
-Add-Skip 'dse/restore' 'nothing to restore'
+# DSE gating through the payload driver: disable, load a deliberately unsigned
+# driver, restore. drv-lite owns the g_CiOptions patch and restores it on
+# shutdown even if we die mid-way.
+$unsignedDriver = Join-Path $BundleDir 'kdu_guest_test_driver_unsigned.sys'
+$dseTest = Invoke-Kdu @('payload', 'load', '--json', '--mode', 'service',
+                        '--unsigned-driver', $unsignedDriver)
+$dseDocument = $null
+try { $dseDocument = $dseTest.output | ConvertFrom-Json } catch { }
+if ($dseTest.code -eq 0 -and $dseDocument -and $dseDocument.dse_supported) {
+    Add-Result 'dse/disable' $true ("options=" + $dseDocument.dse_options)
+    Add-Result 'dse/unsigned-load' ([bool]$dseDocument.unsigned_driver.loaded) 'unsigned driver started while DSE was disabled'
+    Add-Result 'dse/restore' $true 'drv-lite restored g_CiOptions on shutdown'
+} else {
+    Add-Skip 'dse/disable' 'payload DSE patch unavailable' $dseTest.output.Trim()
+    Add-Skip 'dse/unsigned-load' 'payload DSE patch unavailable'
+    Add-Skip 'dse/restore' 'nothing to restore'
+}
 
 $signed = Join-Path $BundleDir 'kdu_guest_test_driver_signed.sys'
 $tampered = Join-Path $BundleDir 'kdu_guest_test_driver_tampered.sys'
@@ -63,3 +78,4 @@ $document = [ordered]@{ suite = 'blook-kdu-e2e'; phase = 3; total = $results.Cou
     failed = $failed; results = $results }
 $document | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutDir 'result-3.json') -Encoding UTF8
 if ($failed -ne 0) { exit 1 }
+

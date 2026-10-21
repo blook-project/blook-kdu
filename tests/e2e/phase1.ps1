@@ -30,6 +30,25 @@ try {
     Add-Result 'environment/defender' $true 'realtime scanning disabled'
 } catch { Add-Skip 'environment/defender' 'Defender policy' }
 
+# Trust the SPC signing chain (root + CAs + leaf publisher) so the signed
+# payload service starts with DSE enabled and test-signing off.
+$certsDir = Join-Path $BundleDir 'certs'
+if (Test-Path $certsDir) {
+    foreach ($store in @(
+                 @{ store = 'root'; file = 'tsa-root.cer' },
+                 @{ store = 'CA'; file = 'verisign-cscs-2010.cer' },
+                 @{ store = 'CA'; file = 'verisign-g5-mcvr.cer' },
+                 @{ store = 'trustedpublisher'; file = 'xinda-leaf.cer' })) {
+        $path = Join-Path $certsDir $store.file
+        if (Test-Path $path) {
+            certutil.exe -addstore -f $store.store $path *> $null
+        }
+    }
+    Add-Result 'environment/spc-trust' $true 'root + CA + trusted publisher imported'
+} else {
+    Add-Skip 'environment/spc-trust' 'certificate bundle missing'
+}
+
 $previous = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
 $listed = (& $kdu --json exploits list 2>&1 | Out-String)
@@ -72,3 +91,4 @@ $document = [ordered]@{ suite = 'blook-kdu-e2e'; phase = 1; total = $results.Cou
     failed = $failed; results = $results }
 $document | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutDir 'result-1.json') -Encoding UTF8
 if ($failed -ne 0) { exit 1 }
+

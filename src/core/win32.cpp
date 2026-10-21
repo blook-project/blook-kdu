@@ -532,6 +532,36 @@ Result<bool> ServiceControl::exists(std::wstring_view name) {
     return Result<bool>::fail(service.error().code, service.error().message);
 }
 
+Result<void> ServiceControl::set_parameters_binary(std::wstring_view name,
+                                                   std::wstring_view value_name,
+                                                   const void* data,
+                                                   std::size_t size) {
+    std::wstring path = L"SYSTEM\\CurrentControlSet\\Services\\";
+    path.append(name);
+    path.append(L"\\Parameters");
+    HKEY key = nullptr;
+    const LSTATUS created =
+        ::RegCreateKeyExW(HKEY_LOCAL_MACHINE, path.c_str(), 0, nullptr, 0,
+                          KEY_SET_VALUE, nullptr, &key, nullptr);
+    if (created != ERROR_SUCCESS) {
+        return Result<void>::fail(
+            win32_status(static_cast<DWORD>(created)),
+            "RegCreateKeyEx failed: " +
+                format_win32_error(static_cast<DWORD>(created)));
+    }
+    const LSTATUS written = ::RegSetValueExW(
+        key, std::wstring(value_name).c_str(), 0, REG_BINARY,
+        static_cast<const BYTE*>(data), static_cast<DWORD>(size));
+    ::RegCloseKey(key);
+    if (written != ERROR_SUCCESS) {
+        return Result<void>::fail(
+            win32_status(static_cast<DWORD>(written)),
+            "RegSetValueEx failed: " +
+                format_win32_error(static_cast<DWORD>(written)));
+    }
+    return Result<void>::ok();
+}
+
 // ---------------------------------------------------------------------------
 // Filesystem helpers
 // ---------------------------------------------------------------------------

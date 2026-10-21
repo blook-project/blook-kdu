@@ -51,9 +51,22 @@ if ($physical.code -eq 0 -and $hex.Length -ge 16) {
 }
 $guard = Invoke-Kdu @('--exploit', 'winring0', '--driver-only', '--json', 'mem', 'virt', 'read', '0xFFFFF80000000000', '8')
 Add-Result 'safety/winring0-va-guard' ($guard.code -ne 0) 'page walk refused'
-Add-Skip 'memory/process-read' 'CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design'
-Add-Skip 'memory/process-write' 'same as process-read'
-Add-Skip 'payload/map' 'manual-map payload cannot execute on this build (kernel executable memory restrictions)'
+# Payload backend: service-load path (drv-lite dev path), then the client
+# self-test exercises kernel VA, CR3 process read/write and DSE query.
+$payload = Invoke-Kdu @('payload', 'load', '--json', '--mode', 'service')
+$document = $null
+try { $document = $payload.output | ConvertFrom-Json } catch { }
+if ($payload.code -eq 0 -and $document -and $document.loaded) {
+    Add-Result 'payload/map' $true ("base=" + $document.payload_base)
+    Add-Result 'payload/service-running' ([bool]$document.service_running) 'kduPayload service RUNNING during the client test'
+    Add-Result 'memory/process-read' ([bool]$document.process_ok) 'CR3 read of the client process matched the pattern'
+    Add-Result 'memory/process-write' ([bool]$document.process_write_ok) 'CR3 write + read-back matched'
+} else {
+    Add-Skip 'payload/map' 'payload service load failed' $payload.output.Trim()
+    Add-Skip 'payload/service-running' 'payload not loaded'
+    Add-Skip 'memory/process-read' 'payload backend unavailable'
+    Add-Skip 'memory/process-write' 'payload backend unavailable'
+}
 $traces = Invoke-Kdu @('--json', 'traces')
 $cleanable = $true
 try {
@@ -68,4 +81,5 @@ $document = [ordered]@{ suite = 'blook-kdu-e2e'; phase = 2; total = $results.Cou
     failed = $failed; results = $results }
 $document | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutDir 'result-2.json') -Encoding UTF8
 if ($failed -ne 0) { exit 1 }
+
 

@@ -63,6 +63,11 @@ struct OpenOptions {
     // destroyed or closed.
     bool cleanup_on_close = true;
 
+    // Map the payload automatically when the session opens (legacy behaviour).
+    // Off by default: explicit map_payload() / `kdu map --payload` is the
+    // supported path, and it keeps plain CLI commands from loading a service.
+    bool auto_map_payload = false;
+
     // Restore the original g_CiOptions value when the session closes. Disable
     // this (CLI: --keep-dse) when the DSE change must outlive the process, e.g.
     // when staging drivers from several short-lived CLI invocations.
@@ -88,10 +93,20 @@ struct SessionInfo {
     std::vector<std::string> capabilities;
 };
 
+// How the embedded payload backend should be brought up.
+enum class PayloadLoadMode {
+    automatic,   // try the manual mapper, then the SCM service path
+    manual_map,  // only the manual mapper
+    service,     // only the SCM service path
+};
+
 // Parameters for the manual-mapper.
 struct MapOptions {
     // Diagnostics only; shown in logs and returned in MappedImage.
     std::string name;
+
+    // Payload backend load strategy (ignored for plain image mapping).
+    PayloadLoadMode payload_load_mode = PayloadLoadMode::automatic;
 
     // Ask the kernel allocator for a specific base. Zero lets the kernel
     // choose the allocation, which is the normal case.

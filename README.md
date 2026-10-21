@@ -127,20 +127,20 @@ binary (`kdu_exploit_test_<name>`). Exploits never share mutable state and are
 testable with mocked `IDeviceIo`/`IServiceHost` objects, so CI needs no kernel,
 driver or VM for them.
 
-## Safety: VM-only kernel execution
+## Safety
 
-Kernel exploitation and manual mapping can hang or bugcheck the machine. blook-kdu
-therefore **refuses to load kernel drivers unless it detects a VMware guest**
-(which is what `bvmenv` manages) and exits with `access_denied` otherwise. This is
-enforced in the SDK (`kdu_open`) and in the guest-side e2e runner, not just in
-scripts. There is no host-mode switch.
+Kernel exploitation and manual mapping can hang or bugcheck the machine they run
+on. blook-kdu does **not** restrict where it runs: `kdu_open()` only requires the
+privileges needed to load a kernel driver. There is no host-mode switch and no
+hypervisor check — run it on a disposable VM or a machine you own and can
+reboot.
 
 - Host-side unit tests only exercise pure user-mode logic (page tables, PE
   parsing, IOCTL encoding, mocks) and never load a driver.
-- All e2e runs go through `bvmenv` (see `docs/e2e.md`); `scripts/e2e.ps1`
-  requires `-Vm <name>` and every `bvmenv` call has a hard timeout.
-- If you are porting the tool to another hypervisor, the guard is a one-line
-  check in `src/sdk/session.cpp` - do not disable it on a physical host.
+- The committed e2e evidence is produced through `bvmenv` (see
+  `docs/e2e.md`); `scripts/e2e.ps1` takes `-Vm <name>` and every `bvmenv` call
+  has a hard timeout. That harness choice does not gate the SDK.
+- `kdu doctor` reports the detected hypervisor for information only.
 ## Safety / legal
 
 - Loads known-vulnerable signed drivers that may be blocked by HVCI, Memory

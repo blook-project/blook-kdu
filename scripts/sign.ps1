@@ -10,11 +10,35 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string[]] $Files,
-    [string] $Root = (Split-Path -Parent $PSScriptRoot)
+    [string] $Root = (Split-Path -Parent $PSScriptRoot),
+    # Export the signing (XINDA) leaf certificate from the first signed image,
+    # e.g. for `certutil -addstore trustedpublisher` on a test guest/runner.
+    [string] $ExportLeafCert = ''
 )
 
 $ErrorActionPreference = 'Stop'
 $signerExe = Join-Path $Root 'signer/spcsign/spcsign.exe'
+
+# CI path: the SPC signing key ships as a PFX secret, and the local TSA root is
+# imported as a trusted root. Locally these stores are already populated, so the
+# block is a no-op.
+if ($env:SPC_PFX_BASE64) {
+    $pfxPath = Join-Path ([System.IO.Path]::GetTempPath()) "kdu-spc-$PID.pfx"
+    try {
+        [System.IO.File]::WriteAllBytes(
+            $pfxPath, [Convert]::FromBase64String($env:SPC_PFX_BASE64))
+        $password = ConvertTo-SecureString -String $env:SPC_PFX_PASSWORD `
+            -AsPlainText -Force
+        Import-PfxCertificate -FilePath $pfxPath -Password $password `
+            -CertStoreLocation Cert:\CurrentUser\My | Out-Null
+    } finally {
+        Remove-Item $pfxPath -Force -ErrorAction SilentlyContinue
+    }
+    $tsaRoot = Join-Path $Root 'signer/tsa/tsa-root.cer'
+    if (Test-Path $tsaRoot) {
+        certutil.exe -addstore -f root $tsaRoot | Out-Null
+    }
+}
 if (-not (Test-Path -LiteralPath $signerExe)) {
     throw "signer not found: $signerExe"
 }
@@ -37,3 +61,16 @@ foreach ($file in $Files) {
     }
     Write-Host "signed: $file"
 }
+
+if ($ExportLeafCert) {
+    $leaf = (Get-AuthenticodeSignature $Files[0]).SignerCertificate
+    if (-not $leaf) { throw "cannot read the signer certificate from $($Files[0])" }
+    $directory = Split-Path -Parent $ExportLeafCert
+    if ($directory -and -not (Test-Path $directory)) {
+        New-Item -ItemType Directory -Force $directory | Out-Null
+    }
+    [System.IO.File]::WriteAllBytes($ExportLeafCert, $leaf.Export('Cert'))
+    Write-Host "exported signer leaf: $ExportLeafCert"
+}
+
+

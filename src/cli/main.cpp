@@ -137,6 +137,7 @@ int main(int argc, char** argv) {
         blook::kdu::cli::add_cleanup_command(app, context);
         blook::kdu::cli::add_batch_command(app, context);
         blook::kdu::cli::add_assets_command(app, context);
+        blook::kdu::cli::add_payload_command(app, context);
 
         // Allow the global switches before or after the subcommand: strip them
         // from argv and apply them ourselves so `kdu doctor --json` works too.

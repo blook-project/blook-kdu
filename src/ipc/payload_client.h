@@ -22,9 +22,21 @@ class IPayloadBackend {
 
     // Map the embedded payload and attach to it. On success returns the
     // payload-backed kernel access object and fills `mapping`.
+    // `mapper` may be null for a service-only load (no vulnerable driver).
     virtual Result<std::unique_ptr<IKernelAccess>> map(
-        IManualMapper& mapper, const MapOptions& options,
+        IManualMapper* mapper, const MapOptions& options,
         MappedImage* mapping) = 0;
+
+    // DSE control forwarded to the payload driver (service or mapped).
+    virtual Result<DseState> dse_state() {
+        return Result<DseState>::fail(Status::not_supported);
+    }
+    virtual Result<void> dse_disable() {
+        return Result<void>::fail(Status::not_supported);
+    }
+    virtual Result<void> dse_restore() {
+        return Result<void>::fail(Status::not_supported);
+    }
 
     // Unload the payload (kchannel detach -> payload exit -> pool freed).
     virtual Result<void> unload() = 0;

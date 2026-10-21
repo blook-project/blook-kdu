@@ -44,6 +44,10 @@ option("build_tests")
     set_default(true)
     set_description("Build host unit tests")
 option_end()
+option("drvlite_dir")
+    set_showmenu(true)
+    set_description("blook-drv-lite checkout (payload backend source drop)")
+option_end()
 
 local kchannel_dir = get_config("kchannel_dir")
 if not kchannel_dir then
@@ -52,6 +56,20 @@ if not kchannel_dir then
         kchannel_dir = local_kchannel
     end
 end
+local drvlite_dir = get_config("drvlite_dir")
+if not drvlite_dir or drvlite_dir == "" then
+    local local_drvlite = path.join(os.projectdir(), "..", "blook-drv-lite")
+    if os.isfile(path.join(local_drvlite, "include", "blook", "drvlite",
+                           "sdk.h")) then
+        drvlite_dir = local_drvlite
+    end
+end
+print("kdu: drvlite_dir=" .. tostring(drvlite_dir))
+local has_drvlite = drvlite_dir ~= nil and
+                    os.isfile(path.join(drvlite_dir, "include", "blook",
+                                        "drvlite", "sdk.h")) and
+                    #os.files(path.join(drvlite_dir, "src", "driver",
+                                       "*.cpp")) > 0
 local has_kchannel = kchannel_dir ~= nil and
                      os.isfile(path.join(kchannel_dir, "include", "blook",
                                          "kchannel.h"))
@@ -61,12 +79,17 @@ local has_kchannel_user = has_kchannel and
 local has_kchannel_kernel = has_kchannel and
                             #os.files(path.join(kchannel_dir, "src", "kernel",
                                                 "*.cpp")) > 0
-local build_payload = has_kchannel_kernel and is_plat("windows")
+local has_ipc = has_kchannel_user and has_drvlite
+local build_payload = has_kchannel_kernel and has_drvlite and
+                      is_plat("windows")
 local build_tests = get_config("build_tests") ~= false
 
 if not has_kchannel then
     print("warning: blook-kchannel sources not found; the payload, IPC, SDK " ..
           "and CLI targets are skipped (pass --kchannel_dir=<checkout>)")
+elseif not has_drvlite then
+    print("warning: blook-drv-lite sources not found; the payload backend is " ..
+          "skipped (pass --drvlite_dir=<checkout>)")
 elseif not has_kchannel_user or not has_kchannel_kernel then
     print("warning: blook-kchannel checkout is incomplete; payload/IPC " ..
           "targets are skipped")
@@ -85,11 +108,34 @@ local function kdu_user_defaults()
     add_includedirs("include", "src", {public = true})
     add_syslinks("advapi32", "user32", "shell32", "psapi", "ntdll", "version",
                  "ole32", "crypt32", "wintrust", "bcrypt", "wevtapi")
+    add_defines('DRVLITE_VERSION="1.0.1"')
     if has_kchannel_user then
         add_includedirs(path.join(kchannel_dir, "include"))
         add_defines("KDU_HAS_KCHANNEL=1")
     end
 end
+
+-- ---------------------------------------------------------------------------
+-- MASM rule (drv-lite's syscall trampoline is written in .asm)
+-- ---------------------------------------------------------------------------
+rule("kdu.masm")
+    set_extensions(".asm")
+    on_build_file(function (target, sourcefile, opt)
+        import("core.project.depend")
+        import("core.tool.toolchain")
+        local tc = toolchain.load("msvc", {plat = target:plat(), arch = target:arch()})
+        local compiler = tc:tool("as")
+        local objectfile = target:objectfile(sourcefile)
+        table.insert(target:objectfiles(), objectfile)
+        depend.on_changed(function ()
+            os.mkdir(path.directory(objectfile))
+            os.vrunv(compiler,
+                     {"/nologo", "/c", "/Fo" .. objectfile, sourcefile},
+                     {envs = tc:runenvs()})
+        end, {dependfile = target:dependfile(objectfile), files = {sourcefile},
+              changed = target:is_rebuilt()})
+    end)
+rule_end()
 
 -- ---------------------------------------------------------------------------
 -- core utilities
@@ -187,7 +233,7 @@ target("kdu_loader")
 -- ---------------------------------------------------------------------------
 -- IPC (blook-kchannel adapter) + kernel payload
 -- ---------------------------------------------------------------------------
-if has_kchannel_user then
+if has_ipc then
     target("kdu_ipc")
         set_kind("static")
         kdu_user_defaults()
@@ -195,9 +241,14 @@ if has_kchannel_user then
         add_deps("kdu_base")
         add_packages("fmt", "spdlog")
         add_includedirs(path.join(kchannel_dir, "src"),
+                        path.join(drvlite_dir, "include"),
+                        path.join(drvlite_dir, "src"),
+                        path.join(drvlite_dir, "src", "core"),
                         path.join(os.projectdir(), "build", "generated"))
         add_files(path.join(kchannel_dir, "src", "user", "*.cpp"),
-                  path.join(kchannel_dir, "src", "common", "*.cpp"))
+                  path.join(kchannel_dir, "src", "common", "*.cpp"),
+                  path.join(drvlite_dir, "src", "sdk", "*.cpp"),
+                  path.join(drvlite_dir, "src", "core", "*.cpp"))
         if build_payload then
             -- payload blob header is generated by the payload after_build step
             add_deps("kdu_payload")
@@ -207,31 +258,52 @@ end
 if build_payload then
     target("kdu_payload")
         set_kind("binary")
-        add_rules("wdk.driver", "wdk.env.wdm")
-        add_files("src/payload/*.cpp")
-        add_includedirs("src/payload", "src", path.join(kchannel_dir, "include"),
-                        path.join(kchannel_dir, "src"))
+        add_rules("wdk.driver", "wdk.env.wdm", "kdu.masm")
+        set_values("wdk.env.winver", "win10_vb")
+        set_languages("cxx17")
+        set_exceptions("no-cxx")
+        add_files(path.join(drvlite_dir, "src", "driver", "*.cpp"),
+                  path.join(drvlite_dir, "src", "driver", "*", "*.cpp"),
+                  path.join(drvlite_dir, "src", "driver", "*", "*.asm"),
+                  path.join(drvlite_dir, "src", "core", "*.cpp"))
         add_files(path.join(kchannel_dir, "src", "kernel", "*.cpp"),
                   path.join(kchannel_dir, "src", "common", "*.cpp"))
-        add_defines("UNICODE", "NOMINMAX", "_KERNEL_MODE=1",
-                    "KDU_HAS_KCHANNEL=1",
-                    -- ExAllocatePool2 (used by kchannel) needs 2004+ headers
-                    "NTDDI_VERSION=0x0A00000C")
-        add_syslinks("ntoskrnl", "wdmsec")
-        local compat = path.join(os.projectdir(), "src", "payload",
-                                 "kdu_kernel_compat.h")
-        add_cxflags("/GS-", "/GR-", "/W4", "/FI" .. compat, {force = true})
-        add_ldflags("/ENTRY:kdu_payload_entry", {force = true})
-        -- After the .sys is linked, turn it into a C array header so the CLI
-        -- can carry the payload inside its own image (single self-contained exe).
+        add_includedirs(path.join(drvlite_dir, "include"),
+                        path.join(drvlite_dir, "src"),
+                        path.join(drvlite_dir, "src", "core"),
+                        path.join(drvlite_dir, "src", "driver"),
+                        path.join(kchannel_dir, "include"),
+                        path.join(kchannel_dir, "src"))
+        add_defines("NOMINMAX", "POOL_NX_OPTIN=1", "KDU_HAS_KCHANNEL=1",
+                    "DRVLITE_VERSION=\"1.0.1\"", "NTDDI_VERSION=0x0A00000C")
+        add_cxxflags("/kernel", "/W4", "/GR-", "/EHs-c-",
+                     "/Zc:threadSafeInit-", "/GS-", "/utf-8", {force = true})
+        add_syslinks("ntoskrnl", "hal", "wdmsec")
+        add_ldflags("/INTEGRITYCHECK", "/ENTRY:DriverEntry", {force = true})
+        set_encodings("utf8")
+        -- Turn the linked .sys into a C array header so the CLI carries the
+        -- payload inside its own image (single self-contained exe). The image
+        -- is also test-signed locally so the service-load path can start it on
+        -- a test-signing guest; CI does not need a signature.
         after_build(function (target)
-            local script = path.join(os.projectdir(), "scripts",
-                                     "gen-payload-blob.ps1")
+            -- Sign first: the embedded blob must carry the signature because
+            -- the service-load path writes it to disk and starts it.
+            local ci = os.getenv("CI") or os.getenv("GITHUB_ACTIONS")
+            local signer = path.join(os.projectdir(), "signer", "spcsign",
+                                     "spcsign.exe")
+            if not ci and os.isfile(signer) then
+                os.exec('pwsh -NoProfile -ExecutionPolicy Bypass -File "' ..
+                        path.join(os.projectdir(), "scripts", "sign.ps1") ..
+                        '" -Files "' .. target:targetfile() .. '"')
+            end
+            local blob = path.join(os.projectdir(), "scripts",
+                                   "gen-payload-blob.ps1")
             local output = path.join(os.projectdir(), "build", "generated",
                                      "payload_blob.h")
             os.exec('pwsh -NoProfile -ExecutionPolicy Bypass -File "' ..
-                    script .. '" -InputFile "' .. target:targetfile() ..
-                    '" -OutputFile "' .. output .. '"')
+                    blob .. '" -InputFile "' .. target:targetfile() ..
+                    '" -OutputFile "' .. output ..
+                    '" -Symbol kdu_payload_image')
         end)
 end
 
@@ -262,7 +334,7 @@ target("kdu_e2e_helper")
 -- ---------------------------------------------------------------------------
 -- SDK + CLI (require the IPC adapter, i.e. real kchannel sources)
 -- ---------------------------------------------------------------------------
-if has_kchannel_user then
+if has_ipc then
     target("kdu_sdk")
         set_kind("static")
         kdu_user_defaults()
@@ -295,7 +367,7 @@ end
 -- tests
 -- ---------------------------------------------------------------------------
 if build_tests then
-    if has_kchannel_user then
+    if has_ipc then
         target("kdu_tests")
             set_kind("binary")
             kdu_user_defaults()
@@ -318,6 +390,13 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
+
+
+
+
+
+
 
 
 

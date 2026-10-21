@@ -29,8 +29,8 @@ int main() {
 ```
 
 A compiled copy lives in `examples/api_example.cpp` (`xmake build
-kdu_api_example`). Run it inside a bvmenv guest: kernel execution is refused on
-physical hosts.
+kdu_api_example`). Kernel execution is not gated by the SDK; run it on a
+disposable VM or a machine you can reboot.
 
 ## Lifecycle
 
@@ -93,3 +93,4 @@ Buffers are caller-owned; byte-vector shortcuts (`read_*_bytes`) exist for
 convenience. Mapped images live in non-paged pool: `unmap()` stops tracking them
 but cannot free the executing pool allocation (documented residual, released on
 reboot). `unload_payload()` stops the kchannel server and detaches cleanly.
+

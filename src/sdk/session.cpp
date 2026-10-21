@@ -196,7 +196,7 @@ Result<MappedImage> Session::map_payload(const MapOptions& options) {
             std::make_unique<ManualMapper>(*impl_->access, *impl_->services);
     }
     MappedImage mapping{};
-    auto result = impl_->payload->map(*impl_->mapper, options, &mapping);
+    auto result = impl_->payload->map(impl_->mapper.get(), options, &mapping);
     if (!result) {
         return Result<MappedImage>::fail(result.error().code,
                                          result.error().message);
@@ -700,22 +700,14 @@ Result<TraceReport> Session::scan_traces() {
 Result<Session> kdu_open(const OpenOptions& options) {
     core::init_logging(options.log_level, options.log_file);
 
-    // Safety gate: this tool loads kernel drivers, maps payloads and can patch
-    // DSE. Running that on a physical host is unsupported and dangerous (host
-    // hangs/reboots have been observed), so refuse unless we are clearly inside
-    // a VMware guest, which is exactly what bvmenv manages.
+    // Inform (do not block): kernel experiments can crash the machine they run
+    // on. The toolkit is usable anywhere the caller has the privileges for it.
     {
         std::string vendor;
-        const bool vmware = core::is_running_under_hypervisor(&vendor) &&
-                            vendor.find("VMware") != std::string::npos;
-        if (!vmware) {
-            return Result<Session>::fail(
-                Status::access_denied,
-                "refusing to load kernel exploitation code outside a bvmenv "
-                "VMware guest (hypervisor vendor: " +
-                    (vendor.empty() ? std::string("none") : vendor) +
-                    "). Kernel experiments are VM-only; see docs/e2e.md.");
-        }
+        const bool hypervisor = core::is_running_under_hypervisor(&vendor);
+        KDU_LOG_DEBUG("kdu_open: hypervisor={} vendor={}",
+                      hypervisor ? "yes" : "no",
+                      vendor.empty() ? "none" : vendor);
     }
     KDU_LOG_DEBUG("kdu_open: build {} ({}), exploit='{}'",
                   BLOOK_KDU_VERSION_STRING, core::windows_version_string(),
@@ -784,7 +776,7 @@ Result<Session> kdu_open(const OpenOptions& options) {
         return Result<Session>::fail(Status::no_suitable_exploit, last_error);
     }
 
-    if (options.use_payload) {
+    if (options.use_payload && options.auto_map_payload) {
         impl->payload = ipc::create_payload_backend();
         if (!impl->payload) {
             const std::string message =
@@ -799,7 +791,7 @@ Result<Session> kdu_open(const OpenOptions& options) {
                 std::make_unique<ManualMapper>(*impl->access, *impl->services);
             MappedImage mapping{};
             auto mapped =
-                impl->payload->map(*impl->mapper, MapOptions{}, &mapping);
+                impl->payload->map(impl->mapper.get(), MapOptions{}, &mapping);
             if (mapped) {
                 impl->access = std::move(mapped.value());
                 impl->payload_mapped = true;

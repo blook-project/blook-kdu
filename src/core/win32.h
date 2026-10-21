@@ -158,6 +158,13 @@ class ServiceControl {
     Result<ServiceState> query(std::wstring_view name);
     Result<bool> exists(std::wstring_view name);
 
+    // Write a REG_BINARY value under the service Parameters key
+    // (HKLM\SYSTEM\CurrentControlSet\Services\<name>\Parameters\<value>).
+    // The payload service path uses this to deliver the kchannel bootstrap.
+    Result<void> set_parameters_binary(std::wstring_view name,
+                                       std::wstring_view value_name,
+                                       const void* data, std::size_t size);
+
     [[nodiscard]] SC_HANDLE get() const noexcept { return manager_.get(); }
 
    private:

@@ -17,5 +17,6 @@ void add_doctor_command(CLI::App& app, Context& context);
 void add_cleanup_command(CLI::App& app, Context& context);
 void add_batch_command(CLI::App& app, Context& context);
 void add_assets_command(CLI::App& app, Context& context);
+void add_payload_command(CLI::App& app, Context& context);
 
 }  // namespace blook::kdu::cli

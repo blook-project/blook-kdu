@@ -20,7 +20,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-Location $Root
 if (-not $Vm) {
-    throw "refusing to run kernel e2e on the host: pass -Vm <bvmenv guest name> (e.g. -Vm vm-kdu)"
+    throw "pass -Vm <bvmenv guest name> (e.g. -Vm vm-kdu); this harness drives a disposable guest"
 }
 if (-not (Test-Path $Bvmenv)) {
     throw "bvmenv not found: $Bvmenv"
@@ -171,6 +171,24 @@ foreach ($id in $assetMap.Keys) {
 foreach ($phaseScript in Get-ChildItem (Join-Path $Root 'tests/e2e') -Filter 'phase*.ps1') {
     Copy-Item $phaseScript.FullName (Join-Path $bundle $phaseScript.Name) -Force
 }
+# SPC trust material: the guest must trust the signer chain (root + VeriSign
+# CAs + the XINDA leaf as a trusted publisher) before the payload service can
+# start with DSE on / test-signing off.
+$certsDir = Join-Path $bundle 'certs'
+New-Item -ItemType Directory -Force $certsDir | Out-Null
+Copy-Item (Join-Path $Root 'signer/tsa/tsa-root.cer') $certsDir -Force
+Copy-Item (Join-Path $Root 'signer/certs/*.cer') $certsDir -Force
+$payloadImage = Join-Path $build 'kdu_payload.sys'
+if (Test-Path $payloadImage) {
+    try {
+        & pwsh -NoProfile -ExecutionPolicy Bypass -File `
+            (Join-Path $Root 'scripts/sign.ps1') -Files $payloadImage `
+            -ExportLeafCert (Join-Path $certsDir 'xinda-leaf.cer') | Out-Null
+    } catch {
+        Write-Warning ("could not export the signer leaf: " + $_)
+    }
+}
+
 Copy-Item (Join-Path $Root 'tests/e2e/guest-run.ps1') `
           (Join-Path $bundle 'guest-run.ps1') -Force
 Copy-Item (Join-Path $Root 'README.md') (Join-Path $bundle 'README.md') -Force
@@ -321,6 +339,8 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
+
 
 
 
