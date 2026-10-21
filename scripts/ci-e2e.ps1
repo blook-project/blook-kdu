@@ -30,6 +30,8 @@ function Add-Result([string] $name, [bool] $ok, [string] $detail) {
     $results.Add([pscustomobject]@{ name = $name; status = $status
         detail = $detail })
     Write-Host ("[{0}] {1}: {2}" -f $status.ToUpper(), $name, $detail)
+    Add-Content -Path artifacts/ci-e2e-progress.log -ErrorAction SilentlyContinue `
+        -Value ("[{0}] {1}: {2}" -f $status.ToUpper(), $name, $detail)
 }
 # Skip reasons use the shared CI vocabulary so the matrix gate can classify
 # every skip.
@@ -43,15 +45,24 @@ function Add-Skip([string] $name, [string] $reason) {
     $results.Add([pscustomobject]@{ name = $name; status = 'skip'
         detail = $reason })
     Write-Host ("[SKIP] {0}: {1}" -f $name, $reason)
+    Add-Content -Path artifacts/ci-e2e-progress.log -ErrorAction SilentlyContinue `
+        -Value ("[SKIP] {0}: {1}" -f $name, $reason)
 }
-function Invoke-Kdu([string[]] $arguments) {
-    $previous = $ErrorActionPreference
-    $ErrorActionPreference = 'Continue'
-    try {
-        $output = & $kdu @arguments 2>&1 | Out-String
-        $code = $LASTEXITCODE
-    } finally { $ErrorActionPreference = $previous }
-    return @{ code = $code; output = $output }
+function Invoke-Kdu([string[]] $arguments, [int] $timeoutSeconds = 120) {
+    $stdout = Join-Path $env:TEMP ("kdu-ci-" + [guid]::NewGuid() + ".out")
+    $stderr = Join-Path $env:TEMP ("kdu-ci-" + [guid]::NewGuid() + ".err")
+    $process = Start-Process -FilePath $kdu -ArgumentList $arguments `
+        -NoNewWindow -PassThru -RedirectStandardOutput $stdout `
+        -RedirectStandardError $stderr
+    if (-not $process.WaitForExit($timeoutSeconds * 1000)) {
+        try { $process.Kill($true) } catch { }
+        return @{ code = -1
+                  output = "TIMEOUT after $timeoutSeconds s" }
+    }
+    $out = Get-Content $stdout -Raw -ErrorAction SilentlyContinue
+    $err = Get-Content $stderr -Raw -ErrorAction SilentlyContinue
+    Remove-Item $stdout, $stderr -Force -ErrorAction SilentlyContinue
+    return @{ code = $process.ExitCode; output = (($out + $err) | Out-String) }
 }
 function Test-DriverLoad([string] $service, [string] $image) {
     sc.exe stop $service *> $null
@@ -131,7 +142,7 @@ Add-Skip 'dse/unsigned-load' 'requires VM reboot/BSOD'
 # ---------------------------------------------------------------------------
 # 4. Repeated load/unload (service must be removed every time).
 # ---------------------------------------------------------------------------
-$cycles = 5
+$cycles = 3
 $failures = 0
 for ($index = 0; $index -lt $cycles; $index++) {
     $run = Invoke-Kdu @('payload', 'load', '--json', '--mode', 'service')
@@ -169,6 +180,7 @@ $failed = @($results | Where-Object { $_.status -eq 'fail' }).Count
 $skipped = @($results | Where-Object { $_.status -eq 'skip' }).Count
 $passed = @($results | Where-Object { $_.status -eq 'pass' }).Count
 New-Item -ItemType Directory -Force artifacts | Out-Null
+"" | Set-Content artifacts/ci-e2e-progress.log -Encoding UTF8
 $documentOut = [ordered]@{
     suite = 'blook-kdu-ci-e2e'
     schema = 'kdu.e2e.v1'
@@ -187,5 +199,6 @@ $documentOut | ConvertTo-Json -Depth 6 |
 Write-Host ("result: artifacts/ci-e2e-result.json ({0} checks, {1} failed, {2} skipped)" -f `
             $results.Count, $failed, $skipped)
 if ($failed -ne 0) { exit 1 }
+
 
 

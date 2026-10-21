@@ -345,6 +345,7 @@ jobs:
           if (-not (Test-Path ci-build/kdu_payload.sys)) { throw "kdu_payload.sys missing from build artifact" }
       - name: Run full CI e2e matrix
         shell: pwsh
+        timeout-minutes: 12
         run: |
           & pwsh -NoProfile -File scripts/ci-e2e.ps1 -BuildDir ci-build
           if ($LASTEXITCODE -ne 0) { throw "CI e2e matrix failed" }
@@ -353,7 +354,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kdu-ci-e2e-result
-          path: artifacts/ci-e2e-result.json
+          path: |
+            artifacts/ci-e2e-result.json
+            artifacts/ci-e2e-progress.log
           if-no-files-found: warn
       - name: Capture code integrity events
         if: always()
@@ -370,6 +373,7 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
 
 
