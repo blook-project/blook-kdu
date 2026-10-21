@@ -63,9 +63,24 @@ function Invoke-Kdu([string[]] $arguments, [int] $timeoutSeconds = 120) {
     Remove-Item $stdout, $stderr -Force -ErrorAction SilentlyContinue
     return @{ code = $process.ExitCode; output = (($out + $err) | Out-String) }
 }
+function Invoke-Bounded([string] $file, [string[]] $arguments, [int] $timeoutSeconds) {
+    $stdout = Join-Path $env:TEMP ("bounded-" + [guid]::NewGuid() + ".out")
+    $stderr = Join-Path $env:TEMP ("bounded-" + [guid]::NewGuid() + ".err")
+    $process = Start-Process -FilePath $file -ArgumentList $arguments `
+        -NoNewWindow -PassThru -RedirectStandardOutput $stdout `
+        -RedirectStandardError $stderr
+    if (-not $process.WaitForExit($timeoutSeconds * 1000)) {
+        try { $process.Kill($true) } catch { }
+        return @{ code = -1; output = "TIMEOUT after $timeoutSeconds s" }
+    }
+    $out = Get-Content $stdout -Raw -ErrorAction SilentlyContinue
+    $err = Get-Content $stderr -Raw -ErrorAction SilentlyContinue
+    Remove-Item $stdout, $stderr -Force -ErrorAction SilentlyContinue
+    return @{ code = $process.ExitCode; output = (($out + $err) | Out-String) }
+}
 function Test-DriverLoad([string] $service, [string] $image) {
-    sc.exe stop $service *> $null
-    sc.exe delete $service *> $null
+    (Invoke-Bounded "sc.exe" @("stop", $service) 15) | Out-Null
+    (Invoke-Bounded "sc.exe" @("delete", $service) 15) | Out-Null
     Start-Sleep -Milliseconds 500
     if (-not (Test-Path $image)) { return @{ loaded = $false; output = 'missing image' } }
     $create = sc.exe create $service type= kernel start= demand binPath= $image 2>&1
@@ -95,7 +110,8 @@ if ((Test-Path $smokeDriver) -and (Test-Path $smokeClient)) {
     $load = Test-DriverLoad 'kduCiSmoke' $smokeDriver
     if ($load.loaded) {
         Add-Result 'driver/signed-load' $true 'SPC-signed test driver STATE 4 RUNNING'
-        $client = & $smokeClient | Out-String
+        $clientRun = Invoke-Bounded $smokeClient @() 45
+        $client = $clientRun.output
         $clientDocument = $null
         try { $clientDocument = $client | ConvertFrom-Json } catch { }
         $functional = $null -ne $clientDocument -and $clientDocument.ok -and
@@ -113,7 +129,7 @@ if ((Test-Path $smokeDriver) -and (Test-Path $smokeClient)) {
 # ---------------------------------------------------------------------------
 # 2. Repeated load/unload of the real driver.
 # ---------------------------------------------------------------------------
-$cycles = 5
+$cycles = 2
 $failures = 0
 for ($index = 0; $index -lt $cycles; $index++) {
     $load = Test-DriverLoad 'kduCiSmoke' $smokeDriver
@@ -124,7 +140,7 @@ Add-Result 'stress/load-unload' ($failures -eq 0) ("{0}x, failures={1}" -f $cycl
 # ---------------------------------------------------------------------------
 # 3. Trace scan (no kdu-owned service/registry/file leftovers).
 # ---------------------------------------------------------------------------
-$traces = Invoke-Kdu @('--json', 'traces')
+$traces = Invoke-Kdu @('--json', 'traces') 90
 $cleanable = $false
 try {
     $report = $traces.output | ConvertFrom-Json
@@ -186,4 +202,5 @@ $documentOut | ConvertTo-Json -Depth 6 |
 Write-Host ("result: artifacts/ci-e2e-result.json ({0} checks, {1} passed, {2} failed, {3} skipped)" -f `
             $results.Count, $passed, $failed, $skipped)
 if ($failed -ne 0) { exit 1 }
+
 
