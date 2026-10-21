@@ -1,0 +1,147 @@
+exit_code    : 1
+[PASS] environment/build: Windows 10.0.26200 build 26200
+[PASS] environment/elevated: administrator token
+[PASS] exploits/list: [
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write"
+    ],
+    "cve": "CVE-2020-15368",
+    "description": "ASRock IO driver AsrDrv107n (CVE-2020-15368): arbitrary physical memory read/write through the RWE dispatch",
+    "device": "\\\\.\\AsrDrv107n",
+    "driver": "AsrDrv107n.sys",
+    "id": "asrock",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "ASRock AsrDrv107n",
+    "service": "AsrDrv107n",
+    "vendor": "ASRock"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write",
+      "map_physical"
+    ],
+    "cve": "",
+    "description": "ASUSTeK WinFlash ATSZIO64: physical memory map/copy through \\Device\\PhysicalMemory",
+    "device": "\\\\.\\ATSZIO",
+    "driver": "ATSZIO.sys",
+    "id": "atszio64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "ASUS ATSZIO",
+    "service": "ATSZIO",
+    "vendor": "ASUSTeK Computer Inc."
+  },
+  {
+    "capabilities": [
+      "virtual_read",
+      "virtual_write"
+    ],
+    "cve": "",
+    "description": "Cheat Engine CEDRIVER73 (dbk64): arbitrary kernel virtual memory read/write through MDL mapping",
+    "device": "\\\\.\\CEDRIVER73",
+    "driver": "CEDRIVER73.sys",
+    "id": "dbk64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "Cheat Engine DBK64",
+    "service": "CEDRIVER73",
+    "vendor": "Cheat Engine"
+  },
+  {
+    "capabilities": [
+      "virtual_read",
+      "virtual_write"
+    ],
+    "cve": "",
+    "description": "Inspect Element EchoDrv: kernel virtual memory copy through MmCopyVirtualMemory",
+    "device": "\\\\.\\EchoDrv",
+    "driver": "EchoDrv.sys",
+    "id": "echodrv",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "Echo AntiCheat",
+    "service": "EchoDrv",
+    "vendor": "Inspect Element LTD"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write",
+      "map_physical"
+    ],
+    "cve": "CVE-2018-19320",
+    "description": "GIGABYTE GDRV (CVE-2018-19320): arbitrary physical memory map/copy",
+    "device": "\\\\.\\GIO",
+    "driver": "gdrv.sys",
+    "id": "gdrv",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "GIGABYTE GDRV",
+    "service": "GIO",
+    "vendor": "GIGABYTE"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write",
+      "map_physical"
+    ],
+    "cve": "",
+    "description": "Huawei MateBook Manager phymemx64: physical memory map/copy through the PhyMem driver",
+    "device": "\\\\.\\PhyMem",
+    "driver": "phymemx64.sys",
+    "id": "physmem64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "Huawei PhyMem",
+    "service": "phymemx64",
+    "vendor": "Huawei Technologies Co.,Ltd."
+  },
+  {
+    "capabilities": [
+      "virtual_read",
+      "virtual_write",
+      "msr"
+    ],
+    "cve": "CVE-2019-16098",
+    "description": "MSI Afterburner RTCore64 (CVE-2019-16098): 4-byte arbitrary kernel virtual memory read/write",
+    "device": "\\\\.\\RTCore64",
+    "driver": "RTCore64.sys",
+    "id": "rtcore64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "MSI RTCore64",
+    "service": "RTCore64",
+    "vendor": "MSI / Micro-Star"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write"
+    ],
+    "cve": "CVE-2017-14311",
+    "description": "EVGA Precision X1 WinRing0x64 (CVE-2017-14311): arbitrary physical memory read/write",
+    "device": "\\\\.\\WinRing0_1_2_0",
+    "driver": "WinRing0x64.sys",
+    "id": "winring0",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "EVGA WinRing0",
+    "service": "WinRing0x64",
+    "vendor": "EVGA"
+  }
+]
+--- stderr ---
+kdu.exe : error exploit self-test failed
+����λ�� C:\kdu-e2e\guest-run.ps1:42 �ַ�: 15
++     $output = & $kdu @arguments 2>&1 | Out-String
++               ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

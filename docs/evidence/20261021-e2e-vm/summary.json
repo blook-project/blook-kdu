@@ -1,0 +1,43 @@
+{
+  "suite": "blook-kdu-e2e",
+  "schema": "kdu.e2e.v1",
+  "version": "0.1.0",
+  "vm": "vm-kdu",
+  "finished": "2026-10-21T12:23:25.7667475+08:00",
+  "exec_exit_code": 1,
+  "ok": false,
+  "guest_result": null,
+  "exec_stdout_tail": "    \"capabilities\": [\r\r\n      \"physical_read\",\r\r\n      \"physical_write\",\r\r\n      \"map_physical\"\r\r\n    ],\r\r\n    \"cve\": \"\",\r\r\n    \"description\": \"Huawei MateBook Manager phymemx64: physical memory map/copy through the PhyMem driver\",\r\r\n    \"device\": \"\\\\\\\\.\\\\PhyMem\",\r\r\n    \"driver\": \"phymemx64.sys\",\r\r\n    \"id\": \"physmem64\",\r\r\n    \"max_build\": 4294967295,\r\r\n    \"min_build\": 7600,\r\r\n    \"name\": \"Huawei PhyMem\",\r\r\n    \"service\": \"phymemx64\",\r\r\n    \"vendor\": \"Huawei Technologies Co.,Ltd.\"\r\r\n  },\r\r\n  {\r\r\n    \"capabilities\": [\r\r\n      \"virtual_read\",\r\r\n      \"virtual_write\",\r\r\n      \"msr\"\r\r\n    ],\r\r\n    \"cve\": \"CVE-2019-16098\",\r\r\n    \"description\": \"MSI Afterburner RTCore64 (CVE-2019-16098): 4-byte arbitrary kernel virtual memory read/write\",\r\r\n    \"device\": \"\\\\\\\\.\\\\RTCore64\",\r\r\n    \"driver\": \"RTCore64.sys\",\r\r\n    \"id\": \"rtcore64\",\r\r\n    \"max_build\": 4294967295,\r\r\n    \"min_build\": 7600,\r\r\n    \"name\": \"MSI RTCore64\",\r\r\n    \"service\": \"RTCore64\",\r\r\n    \"vendor\": \"MSI / Micro-Star\"\r\r\n  },\r\r\n  {\r\r\n    \"capabilities\": [\r\r\n      \"physical_read\",\r\r\n      \"physical_write\"\r\r\n    ],\r\r\n    \"cve\": \"CVE-2017-14311\",\r\r\n    \"description\": \"EVGA Precision X1 WinRing0x64 (CVE-2017-14311): arbitrary physical memory read/write\",\r\r\n    \"device\": \"\\\\\\\\.\\\\WinRing0_1_2_0\",\r\r\n    \"driver\": \"WinRing0x64.sys\",\r\r\n    \"id\": \"winring0\",\r\r\n    \"max_build\": 4294967295,\r\r\n    \"min_build\": 7600,\r\r\n    \"name\": \"EVGA WinRing0\",\r\r\n    \"service\": \"WinRing0x64\",\r\r\n    \"vendor\": \"EVGA\"\r\r\n  }\r\r\n]\r\n--- stderr ---\r\nkdu.exe : error exploit self-test failed\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:42 �ַ�: 15\r\r\n+     $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+               ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\r\n   eption\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\r\n \r\r\n",
+  "exec_stderr_tail": "",
+  "state": {
+    "guest_queryable": true,
+    "hang": {
+      "samples": 1,
+      "suspected": false,
+      "unchanged_samples": 0
+    },
+    "ip": null,
+    "log": {
+      "issues": []
+    },
+    "power": "on",
+    "sampled_at": "2026-10-21T04:23:14Z",
+    "schema": "bvmenv.state.v1",
+    "screen": {
+      "classification": "login",
+      "confidence": 0.75,
+      "ocr_text": "如\r\n\r\n",
+      "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
+      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T042324Z.png",
+      "stop_code": null
+    },
+    "tools": {
+      "running": true,
+      "state": "unknown",
+      "version": "13313"
+    },
+    "uptime_seconds": 1216,
+    "vm": "vm-kdu",
+    "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
+  }
+}
