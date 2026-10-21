@@ -390,10 +390,10 @@ jobs:
       - name: Cleanup kernel service
         if: always()
         shell: pwsh
+        timeout-minutes: 2
         run: |
-          sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
-          sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
 
 
