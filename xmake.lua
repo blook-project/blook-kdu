@@ -155,7 +155,9 @@ if build_payload then
                     "NTDDI_VERSION=0x0A00000C")
         add_syslinks("ntoskrnl", "wdmsec")
         add_cxflags("/GS-", "/GR-", "/W4", {force = true})
-        add_ldflags("/ENTRY:kdu_stage_entry", {force = true})
+        add_ldflags("/ENTRY:kdu_stage_entry", "/MERGE:.rdata=.text",
+                    "/MERGE:.pdata=.text", "/MERGE:.kparam=.text",
+                    "/SECTION:.text,ER", {force = true})
         after_build(function (target)
             local script = path.join(os.projectdir(), "scripts",
                                      "gen-payload-blob.ps1")
@@ -307,6 +309,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 

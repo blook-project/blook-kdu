@@ -90,6 +90,16 @@ if ($power -ne 'on') {
         Write-Warning ("wait-ready reported not ready: " + $ready.stdout + $ready.stderr)
     }
 }
+# Lab preparation: kernel pool must be executable for the manual mapper
+# (nx AlwaysOff) and Defender would block the staged vulnerable drivers.
+$prepCommand = 'cmd /c bcdedit /set nx AlwaysOff >nul 2>&1 && powershell -NoProfile -Command "Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue; Set-MpPreference -DisableIOAVProtection $true -ErrorAction SilentlyContinue; Add-MpPreference -ExclusionPath C:\Windows\Temp -ErrorAction SilentlyContinue; Add-MpPreference -ExclusionPath C:\kdu-e2e -ErrorAction SilentlyContinue" && shutdown /r /t 0 /f'
+$prep = Invoke-Bvmenv ("exec {0} --elevated --timeout 120 -- {1}" -f $Vm, $prepCommand) 180
+Write-Host "lab preparation exit: $($prep.code)"
+Start-Sleep -Seconds 15
+$readyAfterPrep = Invoke-Bvmenv ("wait-ready {0} --timeout 600" -f $Vm) 660
+if ($readyAfterPrep.code -ne 0) {
+    Write-Warning ("guest not ready after lab preparation: " + $readyAfterPrep.stdout)
+}
 # ---------------------------------------------------------------------------
 # 1. Build the bundle.
 # ---------------------------------------------------------------------------
@@ -204,6 +214,7 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 
 

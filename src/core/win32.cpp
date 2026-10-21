@@ -382,6 +382,20 @@ Result<void> ServiceControl::create_driver(std::wstring_view name,
         SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START,
         SERVICE_ERROR_IGNORE, path.c_str(), nullptr, nullptr, nullptr, nullptr,
         nullptr);
+    // A service from a previous run can still be marked for deletion; retry
+    // briefly instead of failing the whole mapping.
+    for (int attempt = 0; !handle && attempt < 30; ++attempt) {
+        const DWORD error = ::GetLastError();
+        if (error != ERROR_SERVICE_MARKED_FOR_DELETE) {
+            break;
+        }
+        ::Sleep(100);
+        handle = ::CreateServiceW(manager_.get(), name_buffer.c_str(),
+                                  name_buffer.c_str(), SERVICE_ALL_ACCESS,
+                                  SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START,
+                                  SERVICE_ERROR_IGNORE, path.c_str(), nullptr,
+                                  nullptr, nullptr, nullptr, nullptr);
+    }
     if (!handle) {
         const DWORD error = ::GetLastError();
         if (error == ERROR_SERVICE_EXISTS) {

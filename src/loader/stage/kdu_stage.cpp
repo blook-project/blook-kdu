@@ -26,9 +26,12 @@ NTKERNELAPI PVOID NTAPI ExAllocatePoolWithTag(POOL_TYPE pool_type,
 }
 
 // Parameters are placed in their own section so the mapper can find them by
-// name in the PE section table and fill them in before mapping.
+// name in the PE section table and fill them in before mapping. Compact stage
+// builds merge the section into .text, so the block also carries a pre-filled
+// magic/version pair that the loader can scan for.
 #pragma section(".kparam", read, write)
-__declspec(allocate(".kparam")) kdu_stage_params g_kdu_stage_params = {};
+__declspec(allocate(".kparam")) kdu_stage_params g_kdu_stage_params = {
+    KDU_STAGE_PARAMS_MAGIC, KDU_STAGE_PARAMS_VERSION};
 #pragma section()
 
 namespace {
@@ -98,13 +101,26 @@ extern "C" NTSTATUS kdu_stage_entry(void* device_object, void* irp) {
     if (!allocate) {
         return finish(static_cast<NTSTATUS>(0xC000000D));
     }
-    void* raw =
-        allocate(NonPagedPool, params->image_alloc_size, params->pool_tag);
-    if (!raw) {
+    // Executable kernel memory: allocated pool is non-executable on current
+    // Windows builds, so map pages through an MDL without MdlMappingNoExecute.
+    PHYSICAL_ADDRESS highest{};
+    highest.QuadPart = -1;
+    PHYSICAL_ADDRESS lowest{};
+    PMDL mdl = MmAllocatePagesForMdlEx(lowest, highest, lowest,
+                                       params->image_alloc_size, MmCached, 0);
+    if (!mdl) {
         return finish(static_cast<NTSTATUS>(0xC0000017));  // NO_MEMORY
     }
+    void* mapped = MmMapLockedPagesSpecifyCache(
+        mdl, KernelMode, MmCached, nullptr, FALSE, NormalPagePriority);
+    if (!mapped) {
+        MmFreePagesFromMdl(mdl);
+        IoFreeMdl(mdl);
+        return finish(static_cast<NTSTATUS>(0xC0000017));
+    }
     const auto base =
-        (reinterpret_cast<unsigned long long>(raw) + 0xFFFull) & ~0xFFFull;
+        (reinterpret_cast<unsigned long long>(mapped) + 0xFFFull) & ~0xFFFull;
+    (void)allocate;
 
     // 3. Copy and relocate the prepared image.
     copy_bytes(reinterpret_cast<void*>(base),
