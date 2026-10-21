@@ -372,7 +372,8 @@ jobs:
               cases = $results
           } | ConvertTo-Json -Depth 6 | Set-Content artifacts/ci-e2e-result.json -Encoding UTF8
           Write-Host ("matrix: {0} passed, {1} failed, {2} skipped" -f $passed, $failed, $skipped)
-          if ($failed -ne 0) { throw "CI e2e matrix failed" }      - name: Upload CI e2e result
+          if ($failed -ne 0) { throw "CI e2e matrix failed" }
+      - name: Upload CI e2e result
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -394,4 +395,5 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
