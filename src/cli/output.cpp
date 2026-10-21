@@ -154,7 +154,11 @@ std::string format_status(blook::kdu::Status status) {
 }
 
 std::string json_escape(std::string_view text) {
-    const auto dumped = nlohmann::json(std::string(text)).dump();
+    // Localized Windows messages can contain non-UTF-8 bytes; replace them
+    // instead of throwing so --json output is always valid.
+    const auto dumped =
+        nlohmann::json(std::string(text))
+            .dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
     // Strip the surrounding quotes: callers embed this inside hand-written
     // JSON strings.
     if (dumped.size() >= 2) {

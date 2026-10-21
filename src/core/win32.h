@@ -19,7 +19,10 @@ namespace blook::kdu::core {
 std::string to_utf8(std::wstring_view text);
 std::wstring to_utf16(std::string_view text);
 
-// Format the current Win32 error as "message (0xXXXX)".
+// Convert locally encoded (CP_ACP) text to UTF-8.
+std::string ansi_to_utf8(std::string_view text);
+
+// Format the current Win32 error as "message (0xXXXX)" (UTF-8).
 std::string format_win32_error(DWORD error);
 // Format an NTSTATUS value.
 std::string format_nt_status(LONG status);
@@ -177,5 +180,10 @@ bool file_exists(const std::string& path);
 
 // Create a unique temporary path (does not create the file).
 std::string make_temp_path(std::string_view prefix, std::string_view suffix);
+
+// Preferred staging path for kernel drivers: %SystemRoot%\Temp when it exists
+// (no spaces, always writable for an elevated/SYSTEM process), otherwise
+// %TEMP%.
+std::string make_staging_path(std::string_view prefix, std::string_view suffix);
 
 }  // namespace blook::kdu::core

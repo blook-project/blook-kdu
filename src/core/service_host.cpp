@@ -99,7 +99,7 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
             valid.error().code, valid.error().message);
     }
 
-    const std::string driver_path = make_temp_path(
+    const std::string driver_path = make_staging_path(
         ("kdu_" + std::string(info.service_name) + "_").c_str(), ".sys");
     auto written = write_file(driver_path, image->data(), image->size());
     if (!written) {

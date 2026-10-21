@@ -20,16 +20,6 @@ namespace {
 
 constexpr DWORD kServiceWaitMs = 15000;
 
-std::wstring quote_path(const std::wstring& path) {
-    if (path.empty()) {
-        return path;
-    }
-    if (path.front() == L'"') {
-        return path;
-    }
-    return L'"' + path + L'"';
-}
-
 }  // namespace
 
 // ---------------------------------------------------------------------------
@@ -67,6 +57,21 @@ std::wstring to_utf16(std::string_view text) {
     return result;
 }
 
+std::string ansi_to_utf8(std::string_view text) {
+    if (text.empty()) {
+        return {};
+    }
+    const int wide_length = ::MultiByteToWideChar(
+        CP_ACP, 0, text.data(), static_cast<int>(text.size()), nullptr, 0);
+    if (wide_length <= 0) {
+        return std::string(text);
+    }
+    std::wstring wide(static_cast<std::size_t>(wide_length), L'\0');
+    ::MultiByteToWideChar(CP_ACP, 0, text.data(), static_cast<int>(text.size()),
+                          wide.data(), wide_length);
+    return to_utf8(wide);
+}
+
 std::string format_win32_error(DWORD error) {
     char* buffer = nullptr;
     const DWORD length = ::FormatMessageA(
@@ -76,6 +81,9 @@ std::string format_win32_error(DWORD error) {
     std::string message;
     if (length && buffer) {
         message.assign(buffer, length);
+        // FormatMessage returns localized ANSI text (e.g. GBK); the SDK emits
+        // UTF-8 JSON, so convert it or nlohmann refuses to serialize it.
+        message = ansi_to_utf8(message);
         while (!message.empty() &&
                (message.back() == '\r' || message.back() == '\n')) {
             message.pop_back();
@@ -366,7 +374,9 @@ Result<ServiceHandle> ServiceControl::open_service(
 Result<void> ServiceControl::create_driver(std::wstring_view name,
                                            std::wstring_view binary_path) {
     std::wstring name_buffer(name);
-    std::wstring path = quote_path(std::wstring(binary_path));
+    // Kernel driver ImagePath is an NT path and must not be quoted; quoting
+    // makes the SCM reject it with ERROR_INVALID_NAME on current Windows.
+    std::wstring path(binary_path);
     SC_HANDLE handle = ::CreateServiceW(
         manager_.get(), name_buffer.c_str(), name_buffer.c_str(),
         SERVICE_ALL_ACCESS, SERVICE_KERNEL_DRIVER, SERVICE_DEMAND_START,
@@ -590,6 +600,25 @@ bool file_exists(const std::string& path) {
     const DWORD attributes = ::GetFileAttributesW(to_utf16(path).c_str());
     return attributes != INVALID_FILE_ATTRIBUTES &&
            (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
+}
+
+std::string make_staging_path(std::string_view prefix,
+                              std::string_view suffix) {
+    std::wstring directory = to_utf16(system_root() + "\\Temp");
+    const DWORD attributes = ::GetFileAttributesW(directory.c_str());
+    if (attributes == INVALID_FILE_ATTRIBUTES ||
+        (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+        return make_temp_path(prefix, suffix);
+    }
+    GUID guid{};
+    ::CoCreateGuid(&guid);
+    wchar_t name[96];
+    std::swprintf(name, 96, L"\\%hs%08lX-%04X%04X%08lX%hs",
+                  std::string(prefix).c_str(),
+                  static_cast<unsigned long>(guid.Data1), guid.Data2,
+                  guid.Data3, *reinterpret_cast<unsigned long*>(guid.Data4),
+                  std::string(suffix).c_str());
+    return to_utf8(directory + name);
 }
 
 std::string make_temp_path(std::string_view prefix, std::string_view suffix) {

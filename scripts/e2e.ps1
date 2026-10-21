@@ -10,7 +10,7 @@ param(
     [string] $Root = (Split-Path -Parent $PSScriptRoot),
     [string] $Vm = '',
     [string] $Out = '',
-    [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\build\windows\x64\releasedbg\bvmenv.exe',
+    [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\build\windows\x64\release\bvmenv.exe',
     [int] $ExecTimeoutSeconds = 1500,
     [int] $StepTimeoutSeconds = 300,
     [switch] $NoReset,
@@ -191,4 +191,5 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 

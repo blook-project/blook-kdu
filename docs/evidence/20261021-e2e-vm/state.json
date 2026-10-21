@@ -7,25 +7,31 @@
   },
   "ip": null,
   "log": {
-    "issues": []
+    "issues": [
+      {
+        "level": "warning",
+        "message": "2026-10-21T04:57:50.257Z -INFO vmware-vmx.exe 11988 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
+        "source": "vmware.log"
+      }
+    ]
   },
   "power": "on",
-  "sampled_at": "2026-10-21T04:57:33Z",
+  "sampled_at": "2026-10-21T05:04:04Z",
   "schema": "bvmenv.state.v1",
   "screen": {
-    "classification": "login",
-    "confidence": 0.75,
+    "classification": "desktop",
+    "confidence": 0.80000000000000004,
     "ocr_text": "时加\r\n\r\n",
-    "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T045741Z.png",
+    "reason": "guest operations responded to a ping",
+    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T050415Z.png",
     "stop_code": null
   },
   "tools": {
     "running": true,
-    "state": "unknown",
+    "state": "running",
     "version": "13313"
   },
-  "uptime_seconds": 1437,
+  "uptime_seconds": 371,
   "vm": "vm-kdu",
   "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
 }

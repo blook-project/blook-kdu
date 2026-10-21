@@ -3,13 +3,13 @@
   "schema": "kdu.e2e.v1",
   "version": "0.1.0",
   "vm": "vm-kdu",
-  "finished": "2026-10-21T12:57:42.7009914+08:00",
+  "finished": "2026-10-21T13:04:15.8297138+08:00",
   "exec_exit_code": 1,
   "ok": false,
   "guest_result": {
     "suite": "blook-kdu-e2e",
     "version": 1,
-    "started": "2026-10-21T12:57:25.8900928+08:00",
+    "started": "2026-10-21T13:03:58.0703985+08:00",
     "host": "BLOOK-BASE",
     "build": "26200",
     "elevated": true,
@@ -34,12 +34,12 @@
       {
         "name": "exploit/asrock",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL asrock           asrock: embedded image for asrock has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL asrock           asrock: cannot start service 'AsrDrv107n': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/asrock/payload-map",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"asrock: embedded image for asrock has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 65: 0xC4\"}}"
       },
       {
         "name": "exploit/asrock/traces",
@@ -49,12 +49,12 @@
       {
         "name": "exploit/atszio64",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL atszio64         atszio64: embedded image for atszio64 has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL atszio64         atszio64: cannot start service 'ATSZIO': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/atszio64/payload-map",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"atszio64: embedded image for atszio64 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 63: 0xC4\"}}"
       },
       {
         "name": "exploit/atszio64/traces",
@@ -64,7 +64,7 @@
       {
         "name": "exploit/dbk64",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL dbk64            dbk64: embedded image for dbk64 has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL dbk64            dbk64: cannot start service 'CEDRIVER73': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/dbk64/traces",
@@ -74,7 +74,7 @@
       {
         "name": "exploit/echodrv",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL echodrv          echodrv: embedded image for echodrv has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL echodrv          echodrv: cannot start service 'EchoDrv': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/echodrv/traces",
@@ -84,7 +84,7 @@
       {
         "name": "exploit/gdrv",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL gdrv             gdrv: cannot start service 'GIO': StartService failed: 文件名、目录名或卷标语法不正确。 (0x0000007B)"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL gdrv             gdrv: cannot start service 'GIO': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/gdrv/payload-map",
@@ -99,12 +99,12 @@
       {
         "name": "exploit/physmem64",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL physmem64        physmem64: embedded image for physmem64 has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL physmem64        physmem64: cannot start service 'phymemx64': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/physmem64/payload-map",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"physmem64: embedded image for physmem64 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 67: 0xC4\"}}"
       },
       {
         "name": "exploit/physmem64/traces",
@@ -114,7 +114,7 @@
       {
         "name": "exploit/rtcore64",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL rtcore64         rtcore64: embedded image for rtcore64 has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL rtcore64         rtcore64: cannot start service 'RTCore64': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/rtcore64/traces",
@@ -124,12 +124,12 @@
       {
         "name": "exploit/winring0",
         "ok": false,
-        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL winring0         winring0: embedded image for winring0 has no DOS signature"
+        "detail": "kdu.exe : error exploit self-test failed\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc \r\n   eption\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nFAIL winring0         winring0: cannot start service 'WinRing0x64': StartService failed: �ļ�����Ŀ¼�������﷨����ȷ�� (0x0000007B)"
       },
       {
         "name": "exploit/winring0/payload-map",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "exploit/winring0/traces",
@@ -144,12 +144,12 @@
       {
         "name": "memory/physical-read",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "memory/modules",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "memory/virtual-read",
@@ -159,12 +159,12 @@
       {
         "name": "memory/process-read",
         "ok": false,
-        "detail": "pid=7308 hex="
+        "detail": "pid=5272 hex="
       },
       {
         "name": "memory/process-write",
         "ok": false,
-        "detail": "kdu.exe : --pid is required\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nRun with --help for more information."
+        "detail": "kdu.exe : --pid is required\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nRun with --help for more information."
       },
       {
         "name": "dse/signed-load",
@@ -174,42 +174,42 @@
       {
         "name": "dse/disable",
         "ok": false,
-        "detail": "kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\n   Exception\r\n    + FullyQualifiedErrorId : NativeCommandError"
+        "detail": "kdu.exe : error winring0: cannot start service 'WinRing0x64': StartService failed: �ļ�����Ŀ¼������\r\n�﷨����ȷ�� (0x0000007B)\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error winring0:...�� (0x0000007B):String) [], Remote \r\n   Exception\r\n    + FullyQualifiedErrorId : NativeCommandError"
       },
       {
         "name": "dse/unsigned-load",
         "ok": false,
-        "detail": "[SC] StartService 失败 577:\r\n\r\nWindows 无法验证此文件的数字签名。某软件或硬件最近有所更改，可能安装了签名错误或损毁的文件，或者安装的文件可能是来路不明的恶意软件。"
+        "detail": "[SC] StartService FAILED 577:\r\n\r\nWindows cannot verify the digital signature for this file. A recent hardware or software change might have installed a file that is signed incorrectly or damaged, or that might be malicious software from an unknown source."
       },
       {
         "name": "dse/restore",
         "ok": false,
-        "detail": "kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:48 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\n   Exception\r\n    + FullyQualifiedErrorId : NativeCommandError"
+        "detail": "kdu.exe : error winring0: cannot start service 'WinRing0x64': StartService failed: �ļ�����Ŀ¼������\r\n�﷨����ȷ�� (0x0000007B)\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (error winring0:...�� (0x0000007B):String) [], Remote \r\n   Exception\r\n    + FullyQualifiedErrorId : NativeCommandError"
       },
       {
         "name": "dse/unsigned-blocked",
         "ok": true,
-        "detail": "[SC] StartService 失败 577:\r\n\r\nWindows 无法验证此文件的数字签名。某软件或硬件最近有所更改，可能安装了签名错误或损毁的文件，或者安装的文件可能是来路不明的恶意软件。"
+        "detail": "[SC] StartService FAILED 577:\r\n\r\nWindows cannot verify the digital signature for this file. A recent hardware or software change might have installed a file that is signed incorrectly or damaged, or that might be malicious software from an unknown source."
       },
       {
         "name": "robustness/invalid-physical",
         "ok": true,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "robustness/invalid-virtual",
         "ok": true,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "robustness/unknown-op",
         "ok": true,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "stress/1000-reads-one-session",
         "ok": false,
-        "detail": "{\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}"
+        "detail": "{\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}"
       },
       {
         "name": "stress/map-unload-cycles",
@@ -233,7 +233,7 @@
       }
     ]
   },
-  "exec_stdout_tail": "[PASS] exploit/winring0/traces: {\r\r\n  \"clean\": true,\r\r\n  \"findings\": []\r\r\n}\r\n[FAIL] payload/map: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 56: 0xC4\"}}\r\n[FAIL] memory/physical-read: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] memory/modules: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] memory/virtual-read: ntoskrnl.exe not found\r\n[FAIL] memory/process-read: pid=7308 hex=\r\n[FAIL] memory/process-write: kdu.exe : --pid is required\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:48 �ַ�: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\r\n \r\r\nRun with --help for more information.\r\n[PASS] dse/signed-load: SERVICE_NAME: kduE2eSigned \r\r\n        TYPE               : 1  KERNEL_DRIVER  \r\r\n        STATE              : 4  RUNNING \r\r\n                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)\r\r\n        WIN32_EXIT_CODE    : 0  (0x0)\r\r\n        SERVICE_EXIT_CODE  : 0  (0x0)\r\r\n        CHECKPOINT         : 0x0\r\r\n        WAIT_HINT          : 0x0\r\r\n        PID                : 0\r\r\n        FLAGS              :\r\n[FAIL] dse/disable: kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:48 �ַ�: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\r\n   Exception\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n[FAIL] dse/unsigned-load: [SC] StartService ʧ�� 577:\r\r\n\r\r\nWindows �޷���֤���ļ�������ǩ����ĳ������Ӳ������������ģ����ܰ�װ��ǩ���������ٵ��ļ������߰�װ���ļ���������·�����Ķ���������\r\n[FAIL] dse/restore: kdu.exe : error winring0: embedded image for winring0 has no DOS signature\r\r\n����λ�� C:\\kdu-e2e\\guest-run.ps1:48 �ַ�: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error winring0:...o DOS signature:String) [], Remote \r\r\n   Exception\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n[PASS] dse/unsigned-blocked: [SC] StartService ʧ�� 577:\r\r\n\r\r\nWindows �޷���֤���ļ�������ǩ����ĳ������Ӳ������������ģ����ܰ�װ��ǩ���������ٵ��ļ������߰�װ���ļ���������·�����Ķ���������\r\n[PASS] robustness/invalid-physical: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[PASS] robustness/invalid-virtual: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[PASS] robustness/unknown-op: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] stress/1000-reads-one-session: {\"error\":{\"code\":\"no_suitable_exploit\",\"message\":\"winring0: embedded image for winring0 has no DOS signature\"}}\r\n[FAIL] stress/map-unload-cycles: 50 cycles\r\n[FAIL] stress/load-unload: 20x, failures=20\r\n[FAIL] stress/read: 200x, failures=200\r\n[PASS] cleanup/traces: {\r\r\n  \"clean\": true,\r\r\n  \"findings\": []\r\r\n}\r\nresult: C:\\kdu-e2e\\out\\result.json (43 checks, 26 failed)\r\n",
+  "exec_stdout_tail": "  \"findings\": []\r\r\n}\r\n[FAIL] payload/map: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 56: 0xC4\"}}\r\n[FAIL] memory/physical-read: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}\r\n[FAIL] memory/modules: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}\r\n[FAIL] memory/virtual-read: ntoskrnl.exe not found\r\n[FAIL] memory/process-read: pid=5272 hex=\r\n[FAIL] memory/process-write: kdu.exe : --pid is required\r\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\r\n \r\r\nRun with --help for more information.\r\n[PASS] dse/signed-load: SERVICE_NAME: kduE2eSigned \r\r\n        TYPE               : 1  KERNEL_DRIVER  \r\r\n        STATE              : 4  RUNNING \r\r\n                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)\r\r\n        WIN32_EXIT_CODE    : 0  (0x0)\r\r\n        SERVICE_EXIT_CODE  : 0  (0x0)\r\r\n        CHECKPOINT         : 0x0\r\r\n        WAIT_HINT          : 0x0\r\r\n        PID                : 0\r\r\n        FLAGS              :\r\n[FAIL] dse/disable: kdu.exe : error winring0: cannot start service 'WinRing0x64': StartService failed: �ļ�����Ŀ¼������\r\r\n�﷨����ȷ�� (0x0000007B)\r\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error winring0:...�� (0x0000007B):String) [], Remote \r\r\n   Exception\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n[FAIL] dse/unsigned-load: [SC] StartService FAILED 577:\r\r\n\r\r\nWindows cannot verify the digital signature for this file. A recent hardware or software change might have installed a file that is signed incorrectly or damaged, or that might be malicious software from an unknown source.\r\n[FAIL] dse/restore: kdu.exe : error winring0: cannot start service 'WinRing0x64': StartService failed: �ļ�����Ŀ¼������\r\r\n�﷨����ȷ�� (0x0000007B)\r\r\n所在位置 C:\\kdu-e2e\\guest-run.ps1:54 字符: 19\r\r\n+         $output = & $kdu @arguments 2>&1 | Out-String\r\r\n+                   ~~~~~~~~~~~~~~~~~~~~~~\r\r\n    + CategoryInfo          : NotSpecified: (error winring0:...�� (0x0000007B):String) [], Remote \r\r\n   Exception\r\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n[PASS] dse/unsigned-blocked: [SC] StartService FAILED 577:\r\r\n\r\r\nWindows cannot verify the digital signature for this file. A recent hardware or software change might have installed a file that is signed incorrectly or damaged, or that might be malicious software from an unknown source.\r\n[PASS] robustness/invalid-physical: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}\r\n[PASS] robustness/invalid-virtual: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}\r\n[PASS] robustness/unknown-op: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}\r\n[FAIL] stress/1000-reads-one-session: {\"error\":{\"code\":\"internal_error\",\"message\":\"unhandled exception: [json.exception.type_error.316] invalid UTF-8 byte at index 68: 0xC4\"}}\r\n[FAIL] stress/map-unload-cycles: 50 cycles\r\n[FAIL] stress/load-unload: 20x, failures=20\r\n[FAIL] stress/read: 200x, failures=200\r\n[PASS] cleanup/traces: {\r\r\n  \"clean\": true,\r\r\n  \"findings\": []\r\r\n}\r\nresult: C:\\kdu-e2e\\out\\result.json (43 checks, 26 failed)\r\n",
   "exec_stderr_tail": "",
   "state": {
     "guest_queryable": true,
@@ -244,25 +244,31 @@
     },
     "ip": null,
     "log": {
-      "issues": []
+      "issues": [
+        {
+          "level": "warning",
+          "message": "2026-10-21T04:57:50.257Z -INFO vmware-vmx.exe 11988 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
+          "source": "vmware.log"
+        }
+      ]
     },
     "power": "on",
-    "sampled_at": "2026-10-21T04:57:33Z",
+    "sampled_at": "2026-10-21T05:04:04Z",
     "schema": "bvmenv.state.v1",
     "screen": {
-      "classification": "login",
-      "confidence": 0.75,
+      "classification": "desktop",
+      "confidence": 0.8,
       "ocr_text": "时加\r\n\r\n",
-      "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
-      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T045741Z.png",
+      "reason": "guest operations responded to a ping",
+      "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T050415Z.png",
       "stop_code": null
     },
     "tools": {
       "running": true,
-      "state": "unknown",
+      "state": "running",
       "version": "13313"
     },
-    "uptime_seconds": 1437,
+    "uptime_seconds": 371,
     "vm": "vm-kdu",
     "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
   }

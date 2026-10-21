@@ -52,6 +52,36 @@ TEST_CASE("file round trip") {
     CHECK(!file_exists(path));
 }
 
+TEST_CASE("localized error text is converted to UTF-8") {
+    // GBK-encoded "你好" (CP_ACP on a Chinese Windows install).
+    const std::string ansi("\xC4\xE3\xBA\xC3");
+    const auto utf8 = ansi_to_utf8(ansi);
+    CHECK(!utf8.empty());
+    // Valid UTF-8 must round-trip through the wide conversion.
+    CHECK(!to_utf16(utf8).empty());
+    const auto message = format_win32_error(ERROR_FILE_NOT_FOUND);
+    CHECK(!message.empty());
+    // Every byte of the result must form valid UTF-8 (no stray 0xC4 lead
+    // bytes from the ANSI code page).
+    for (std::size_t index = 0; index < message.size();) {
+        const auto byte = static_cast<unsigned char>(message[index]);
+        std::size_t length = 1;
+        if ((byte & 0x80) == 0) {
+            length = 1;
+        } else if ((byte & 0xE0) == 0xC0) {
+            length = 2;
+        } else if ((byte & 0xF0) == 0xE0) {
+            length = 3;
+        } else if ((byte & 0xF8) == 0xF0) {
+            length = 4;
+        } else {
+            FAIL("invalid UTF-8 lead byte");
+        }
+        CHECK(index + length <= message.size());
+        index += length;
+    }
+}
+
 TEST_CASE("status strings") {
     CHECK(std::string(status_to_string(Status::ok)) == "ok");
     CHECK(std::string(status_to_string(Status::payload_unavailable)) ==

@@ -42,3 +42,8 @@ artifacts/
 !signer/**/*.exe
 !signer/**/*.dll
 
+
+# e2e evidence: keep result JSON/logs/screenshot, never the pushed bundle
+docs/evidence/**/bundle/
+docs/evidence/**/guest-out/*.bin
+
