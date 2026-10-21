@@ -165,6 +165,9 @@ foreach ($id in $assetMap.Keys) {
     }
 }
 
+foreach ($phaseScript in Get-ChildItem (Join-Path $Root 'tests/e2e') -Filter 'phase*.ps1') {
+    Copy-Item $phaseScript.FullName (Join-Path $bundle $phaseScript.Name) -Force
+}
 Copy-Item (Join-Path $Root 'tests/e2e/guest-run.ps1') `
           (Join-Path $bundle 'guest-run.ps1') -Force
 Copy-Item (Join-Path $Root 'README.md') (Join-Path $bundle 'README.md') -Force
@@ -172,6 +175,8 @@ $version | Set-Content (Join-Path $bundle 'version.txt')
 
 # ---------------------------------------------------------------------------
 # 2. Push + run inside the guest (elevated; bvmenv falls back to SYSTEM).
+# The suite runs in small phases so a hang/crash in one step is isolated and the
+# results of the previous phases are already on the host.
 # ---------------------------------------------------------------------------
 $guestDir = 'C:\kdu-e2e'
 $guestOutDir = "$guestDir\out"
@@ -180,23 +185,71 @@ if ($pushed.code -ne 0) {
     throw ("bvmenv push failed: " + $pushed.stdout + $pushed.stderr)
 }
 
-$command = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File $guestDir\guest-run.ps1 -BundleDir $guestDir -OutDir $guestOutDir"
-$exec = Invoke-Bvmenv ("exec {0} --elevated --timeout {1} -- {2}" -f $Vm, $ExecTimeoutSeconds, $command) ($ExecTimeoutSeconds + 120)
-$exec.stdout | Set-Content (Join-Path $Out 'guest-exec.log')
-$exec.stderr | Set-Content (Join-Path $Out 'guest-exec.err.log')
-
 $guestOut = Join-Path $Out 'guest-out'
 if (Test-Path $guestOut) { Remove-Item $guestOut -Recurse -Force }
-$pulled = $null
-try {
-    $pulled = Invoke-Bvmenv ("pull {0} {1} `"{2}`"" -f $Vm, $guestOutDir, $guestOut) 600
-    if ($pulled.code -ne 0) {
-        Write-Warning ("bvmenv pull failed: " + $pulled.stdout + $pulled.stderr)
+New-Item -ItemType Directory -Force $guestOut | Out-Null
+
+$phaseSummaries = @()
+$ok = $true
+foreach ($phase in 1..4) {
+    $script = "$guestDir\phase$phase.ps1"
+    if (-not (Test-Path (Join-Path $bundle "phase$phase.ps1"))) {
+        $phaseSummaries += [ordered]@{ phase = $phase; code = -1; note = 'script missing' }
+        $ok = $false
+        break
     }
-} catch {
-    # A hung guest (BSOD) makes pull time out; keep going so the host-side state
-    # observation and summary still capture the failure as evidence.
-    Write-Warning ("bvmenv pull failed: " + $_)
+    $command = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File $script -BundleDir $guestDir -OutDir $guestOutDir"
+    try {
+        $exec = Invoke-Bvmenv ("exec {0} --elevated --timeout {1} -- {2}" -f $Vm, $ExecTimeoutSeconds, $command) ($ExecTimeoutSeconds + 120)
+    } catch {
+        $phaseSummaries += [ordered]@{ phase = $phase; code = -1; note = [string]$_ }
+        $ok = $false
+        break
+    }
+    ($exec.stdout | Out-String) | Set-Content (Join-Path $Out "phase$phase.log")
+    ($exec.stderr | Out-String) | Set-Content (Join-Path $Out "phase$phase.err.log")
+    # Best-effort pull after every phase so completed results survive a later hang.
+    try {
+        (Invoke-Bvmenv ("pull {0} {1} `"{2}`"" -f $Vm, $guestOutDir, $guestOut) 300) | Out-Null
+    } catch {
+        Write-Warning ("pull after phase $phase failed: " + $_)
+    }
+    $phaseSummaries += [ordered]@{
+        phase = $phase
+        code = $exec.code
+        stdout_tail = (($exec.stdout | Out-String) -split "`n" | Select-Object -Last 8) -join "`n"
+    }
+    if ($exec.code -ne 0) {
+        $ok = $false
+        break
+    }
+}
+
+# Merge the per-phase result documents that made it to the host.
+$mergedResults = @()
+$mergedFailed = 0
+$mergedSkipped = 0
+foreach ($phase in 1..4) {
+    $path = Join-Path $guestOut "result-$phase.json"
+    if (-not (Test-Path $path)) { continue }
+    try {
+        $document = Get-Content $path -Raw | ConvertFrom-Json
+        $mergedResults += $document.results
+        $mergedFailed += [int]$document.failed
+        $mergedSkipped += @($document.results | Where-Object { $_.skipped }).Count
+    } catch {
+        Write-Warning ("cannot parse $path : " + $_)
+    }
+}
+$guestResult = [ordered]@{
+    suite = 'blook-kdu-e2e'
+    total = @($mergedResults).Count
+    failed = $mergedFailed
+    skipped = $mergedSkipped
+    results = $mergedResults
+}
+if (@($mergedResults).Count -eq 0) {
+    $ok = $false
 }
 
 # ---------------------------------------------------------------------------
@@ -205,24 +258,16 @@ try {
 $state = Invoke-Bvmenv ("state {0} --json --screenshot `"{1}`"" -f $Vm, (Join-Path $Out 'state.png')) $StepTimeoutSeconds
 $state.stdout | Set-Content (Join-Path $Out 'state.json')
 
-$resultPath = Join-Path $guestOut 'result.json'
-$guestResult = $null
-if (Test-Path $resultPath) {
-    $guestResult = Get-Content $resultPath -Raw | ConvertFrom-Json
-}
-$ok = $exec.code -eq 0 -and $null -ne $guestResult -and
-      $guestResult.failed -eq 0
+$ok = $ok -and $mergedFailed -eq 0
 $summary = [ordered]@{
     suite = 'blook-kdu-e2e'
     schema = 'kdu.e2e.v1'
     version = $version
     vm = $Vm
     finished = (Get-Date).ToString('o')
-    exec_exit_code = $exec.code
     ok = $ok
+    phases = $phaseSummaries
     guest_result = $guestResult
-    exec_stdout_tail = ($exec.stdout -split "`n" | Select-Object -Last 60) -join "`n"
-    exec_stderr_tail = ($exec.stderr -split "`n" | Select-Object -Last 20) -join "`n"
     state = ($state.stdout | ConvertFrom-Json -ErrorAction SilentlyContinue)
 }
 $summary | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $Out 'summary.json') -Encoding UTF8
