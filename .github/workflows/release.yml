@@ -10,6 +10,8 @@ on:
 env:
   KCHANNEL_REPO: https://github.com/blook-project/blook-kchannel
   KCHANNEL_COMMIT: 40a5337a2d69c79fb049361f616aacc58ae75d4d
+  DRVLITE_REPO: https://github.com/blook-project/blook-drv-lite
+  DRVLITE_COMMIT: 2e7808e7c6374b43f980b3f4b643c2dc7163eadc
   WDK_VERSION: 10.0.26100.6584
 
 jobs:
@@ -42,10 +44,13 @@ jobs:
       - name: Fetch pinned blook-drv-lite
         shell: pwsh
         run: |
+          if (-not $env:DRVLITE_COMMIT) { throw "DRVLITE_COMMIT is not set" }
+          if (-not $env:DRVLITE_REPO) { throw "DRVLITE_REPO is not set" }
           $target = "$env:GITHUB_WORKSPACE\..\blook-drv-lite"
           Remove-Item $target -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force $target | Out-Null
-          $url = "https://codeload.github.com/blook-project/blook-drv-lite/tar.gz/$env:DRVLITE_COMMIT"
+          $repo = $env:DRVLITE_REPO -replace '^https://github\.com/', '' -replace '\.git$', ''
+          $url = "https://codeload.github.com/$repo/tar.gz/$env:DRVLITE_COMMIT"
           for ($attempt = 1; $attempt -le 4; $attempt++) {
               try {
                   $tar = "$env:RUNNER_TEMP\drvlite.tar.gz"
