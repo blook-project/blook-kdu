@@ -19,6 +19,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: 3.0.8
@@ -36,6 +39,12 @@ jobs:
           git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
           git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
           "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
+      - name: Clone pinned blook-drv-lite
+        shell: pwsh
+        run: |
+          git clone $env:DRVLITE_REPO "$env:GITHUB_WORKSPACE\..\blook-drv-lite"
+          git -C "$env:GITHUB_WORKSPACE\..\blook-drv-lite" checkout $env:DRVLITE_COMMIT
+          "DRVLITE_DIR=$env:GITHUB_WORKSPACE\..\blook-drv-lite" >> $env:GITHUB_ENV
       - name: Version
         shell: pwsh
         run: |
@@ -54,7 +63,7 @@ jobs:
           SPC_PFX_BASE64: ${{ secrets.SPC_PFX_BASE64 }}
           SPC_PFX_PASSWORD: ${{ secrets.SPC_PFX_PASSWORD }}
         run: |
-          xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --wdk="$env:WDK_ROOT"
+          xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --drvlite_dir="$env:DRVLITE_DIR" --wdk="$env:WDK_ROOT"
           xmake -y
           xmake run kdu_tests
       - name: Package
@@ -79,5 +88,6 @@ jobs:
           & pwsh -NoProfile -File scripts/publish-registry.ps1 `
               -Package blook-kdu -Version $env:KDU_VERSION `
               -Zip "artifacts/blook-kdu-$env:KDU_VERSION-windows-x64.zip"
+
 
 

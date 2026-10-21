@@ -22,10 +22,15 @@ All notable changes to blook-kdu are documented here. The format follows
   no re-signing in CI); only the toolkit's own payload/test images are signed
   locally with the SPC signer (SHA-1 + TSA root trust) for service loading.
 - CI now runs real kernel code: `kernel-load-smoke` builds a minimal SPC-signed
-  driver, verifies `/kp`, starts it (`STATE 4 RUNNING`), runs an IOCTL client,
-  then runs the full CI e2e matrix (payload service + kernel/process/handle
-  primitives, DSE gating where supported, repeated load/unload, trace scan,
-  negative fuzz) against the build artifact.
+  driver, verifies `/kp`, starts it (`STATE 4 RUNNING`), runs an IOCTL client
+  (magic + kernel pointer) and uploads `ci-e2e-result.json` (cases[] with
+  pass/fail/skip, allowed skip vocabulary, runner testsigning + `/kp` facts).
+  Registered-driver/mapper cases stay VM-only and are recorded as skips.
+- Per-exploit CI isolation: one build/test job per exploit (16 exploits / 18
+  jobs including build and kernel load), generated from the directory layout.
+- CI hardening: guarded `sc create/start` and client calls with hard timeouts,
+  and the cleanup step always exits zero so a deleted test service cannot fail
+  the job.
 - `kdu payload load --mode auto|manual|service [--unsigned-driver ...]` and the
   `MapOptions::PayloadLoadMode` SDK enum.
 ## [1.0.1] - 2026-10-21
@@ -120,6 +125,7 @@ Known limitations on Windows 11 26200 (documented, gated in the e2e suite):
   packaging; per-exploit matrix jobs.
 - Release workflow with canonical `blook-kdu-<version>-windows-x64.zip` +
   `.sha256` assets and a package-registry manifest/publish script.
+
 
 
 
