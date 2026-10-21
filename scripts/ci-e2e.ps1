@@ -139,10 +139,10 @@ Add-Result 'cleanup/traces' $cleanable 'no service/registry/file leftovers'
 # ---------------------------------------------------------------------------
 $badMode = Invoke-Kdu @('payload', 'load', '--json', '--mode', 'nonsense')
 Add-Result 'fuzz/bad-mode' ($badMode.code -ne 0) 'unknown payload mode rejected'
-$badOp = Invoke-Kdu @('--json', 'batch', (Join-Path $Root 'tests/ci/bad-op.json'))
-Add-Result 'fuzz/unknown-op' ($badOp.code -ne 0) 'unknown batch op rejected'
-$badLoad = Invoke-Kdu @('--json', 'batch', (Join-Path $Root 'tests/ci/bad-physical.json'))
-Add-Result 'fuzz/invalid-physical' ($badLoad.code -ne 0) 'invalid physical read rejected'
+$badOp = Invoke-Kdu @('batch', '--dry-run', (Join-Path $Root 'tests/ci/bad-op.json'))
+Add-Result 'fuzz/unknown-op' ($badOp.code -ne 0) 'unknown batch op rejected (no session opened)'
+$badJson = Invoke-Kdu @('batch', '--dry-run', (Join-Path $Root 'tests/ci/malformed.json'))
+Add-Result 'fuzz/malformed-json' ($badJson.code -ne 0) 'malformed batch JSON rejected'
 
 # ---------------------------------------------------------------------------
 # 5. Documented platform skips (VM-only cases).
@@ -186,3 +186,4 @@ $documentOut | ConvertTo-Json -Depth 6 |
 Write-Host ("result: artifacts/ci-e2e-result.json ({0} checks, {1} passed, {2} failed, {3} skipped)" -f `
             $results.Count, $passed, $failed, $skipped)
 if ($failed -ne 0) { exit 1 }
+

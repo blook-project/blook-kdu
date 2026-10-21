@@ -11,6 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include <cstdint>
+#include <set>
 #include <cstdio>
 #include <fstream>
 #include <memory>
@@ -265,12 +266,15 @@ void add_batch_command(CLI::App& app, Context& context) {
     // alive by storing them in a shared state object.
     struct State {
         std::string file;
+        bool dry_run = false;
     };
     auto state = std::make_shared<State>();
     bool continue_on_error = false;
     batch->add_option("file", state->file, "Batch JSON file")->required();
     batch->add_flag("--continue-on-error", continue_on_error,
                     "Keep executing after a failed operation");
+    batch->add_flag("--dry-run", state->dry_run,
+                    "Validate the batch file without opening a kernel session");
     batch->footer(
         "Example:\n"
         "  kdu batch ops.json\n"
@@ -294,6 +298,27 @@ void add_batch_command(CLI::App& app, Context& context) {
         if (!document.contains("ops") || !document["ops"].is_array()) {
             throw CliError(blook::kdu::Status::invalid_argument,
                            "batch JSON must contain an \"ops\" array");
+        }
+        if (state->dry_run) {
+            static const std::set<std::string> kKnownOps = {
+                "read_physical",  "write_physical", "read_virtual",
+                "write_virtual",  "read_process",   "write_process",
+                "translate",      "process_cr3",    "dse_status",
+                "dse_disable",    "dse_restore",    "modules",
+                "sleep",          "ping",           "map_payload",
+                "unload_payload", "map_driver",     "unmap"};
+            std::size_t index = 0;
+            for (const auto& operation : document["ops"]) {
+                const auto name = operation.value("op", std::string());
+                if (!kKnownOps.count(name)) {
+                    throw CliError(blook::kdu::Status::invalid_argument,
+                                   "unknown batch op at index " +
+                                       std::to_string(index) + ": " + name);
+                }
+                ++index;
+            }
+            std::printf("{\"ok\":true,\"dry_run\":true,\"ops\":%zu}\n", index);
+            return;
         }
         auto& session = context.ensure_session();
         nlohmann::json results = nlohmann::json::array();
