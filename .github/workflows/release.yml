@@ -11,7 +11,7 @@ env:
   KCHANNEL_REPO: https://github.com/blook-project/blook-kchannel
   KCHANNEL_COMMIT: 40a5337a2d69c79fb049361f616aacc58ae75d4d
   DRVLITE_REPO: https://github.com/blook-project/blook-drv-lite
-  DRVLITE_COMMIT: 2e7808e7c6374b43f980b3f4b643c2dc7163eadc
+  DRVLITE_COMMIT: e8d096b56f160637bf1c268a6780a43240fa5f37
   WDK_VERSION: 10.0.26100.6584
 
 jobs:
@@ -41,25 +41,24 @@ jobs:
           git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
           git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
           "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
-      - name: Fetch pinned blook-drv-lite
+      - name: Clone pinned blook-drv-lite
         shell: pwsh
         run: |
           if (-not $env:DRVLITE_COMMIT) { throw "DRVLITE_COMMIT is not set" }
-          if (-not $env:DRVLITE_REPO) { throw "DRVLITE_REPO is not set" }
           $target = "$env:GITHUB_WORKSPACE\..\blook-drv-lite"
           Remove-Item $target -Recurse -Force -ErrorAction SilentlyContinue
-          New-Item -ItemType Directory -Force $target | Out-Null
-          $repo = $env:DRVLITE_REPO -replace '^https://github\.com/', '' -replace '\.git$', ''
-          $url = "https://codeload.github.com/$repo/tar.gz/$env:DRVLITE_COMMIT"
-          for ($attempt = 1; $attempt -le 4; $attempt++) {
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
               try {
-                  $tar = "$env:RUNNER_TEMP\drvlite.tar.gz"
-                  Invoke-WebRequest $url -OutFile $tar -MaximumRedirection 5
-                  tar.exe -xzf $tar -C $target --strip-components=1
+                  git clone --depth 1 $env:DRVLITE_REPO $target
+                  if ($LASTEXITCODE -ne 0) { throw "git clone failed" }
+                  git -C $target fetch --depth 1 origin $env:DRVLITE_COMMIT
+                  if ($LASTEXITCODE -ne 0) { throw "git fetch failed" }
+                  git -C $target checkout FETCH_HEAD
+                  if ($LASTEXITCODE -ne 0) { throw "git checkout failed" }
                   if (Test-Path "$target\src\driver\entry.cpp") { break }
-                  throw "archive did not contain the expected sources"
+                  throw "sources missing after checkout"
               } catch {
-                  Write-Warning "drv-lite download attempt $attempt failed: $_"
+                  Write-Warning "drv-lite clone attempt $attempt failed: $_"
                   Start-Sleep -Seconds (5 * $attempt)
               }
           }
@@ -108,6 +107,7 @@ jobs:
           & pwsh -NoProfile -File scripts/publish-registry.ps1 `
               -Package blook-kdu -Version $env:KDU_VERSION `
               -Zip "artifacts/blook-kdu-$env:KDU_VERSION-windows-x64.zip"
+
 
 
 
