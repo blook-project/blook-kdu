@@ -310,7 +310,7 @@ jobs:
               Where-Object { $_.FullName -match "x64" } |
               Select-Object -Last 1 -ExpandProperty FullName
           if (-not $signtool) { throw "signtool.exe not found on the runner" }
-          & $signtool verify /pa /kp build/windows/x64/release/kdu_payload.sys
+          & $signtool verify /kp build/windows/x64/release/kdu_payload.sys
           if ($LASTEXITCODE -ne 0) { throw "signtool /kp verification failed" }
       - name: Load payload service and exercise the client
         shell: pwsh
@@ -387,7 +387,7 @@ jobs:
               Where-Object { $_.FullName -match "x64" } |
               Select-Object -Last 1 -ExpandProperty FullName
           if (-not $signtool) { throw "signtool.exe not found on the runner" }
-          & $signtool verify /pa /kp build/windows/x64/release/kdu_ci_smoke_driver.sys
+          & $signtool verify /kp build/windows/x64/release/kdu_ci_smoke_driver.sys
           if ($LASTEXITCODE -ne 0) { throw "signtool /kp verification failed" }
       - name: Load driver + run client
         shell: pwsh
@@ -464,4 +464,5 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 

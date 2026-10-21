@@ -338,11 +338,13 @@ if is_plat("windows") then
         add_files("tests/ci/kernel_smoke_client.cpp")
 end
 
-target("kdu_api_example")
-    set_kind("binary")
-    kdu_user_defaults()
-    add_files("examples/api_example.cpp")
-    add_deps("kdu_sdk")
+if has_ipc then
+    target("kdu_api_example")
+        set_kind("binary")
+        kdu_user_defaults()
+        add_files("examples/api_example.cpp")
+        add_deps("kdu_sdk")
+end
 
 target("kdu_e2e_helper")
     set_kind("binary")
@@ -408,6 +410,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 
