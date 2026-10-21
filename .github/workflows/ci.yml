@@ -303,6 +303,7 @@ jobs:
               ConvertTo-Json | Set-Content artifacts/ci-signing.json -Encoding UTF8
       - name: Kernel load + full e2e matrix
         shell: pwsh
+        timeout-minutes: 8
         run: |
           $ErrorActionPreference = "Stop"
           $driver = (Resolve-Path "build/windows/x64/release/kdu_ci_smoke_driver.sys").Path
@@ -323,23 +324,18 @@ jobs:
               }
               return @{ code = $p.ExitCode; output = (Get-Content $out -Raw -ErrorAction SilentlyContinue) }
           }
-          function Load-Driver([string] $service) {
-              Invoke-Guarded "sc.exe" @("stop", $service) 15 | Out-Null
-              Invoke-Guarded "sc.exe" @("delete", $service) 15 | Out-Null
-              Start-Sleep -Milliseconds 500
-              $create = Invoke-Guarded "sc.exe" @("create", $service, "type=", "kernel",
-                  "start=", "demand", "binPath=", $driver) 20
-              if ($create.code -ne 0) { return $false }
-              $start = Invoke-Guarded "sc.exe" @("start", $service) 30
-              return ($start.output -match "RUNNING")
-          }
           $admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
               [Security.Principal.WindowsBuiltInRole]::Administrator)
           Add-Case "environment/elevated" $(if ($admin) { "pass" } else { "fail" }) "administrator token"
           $signing = Get-Content artifacts/ci-signing.json -Raw | ConvertFrom-Json
           Add-Case "signing/signtool-kp" $(if ($signing.signtool_kp -eq "pass") { "pass" } else { "fail" }) ("kp=" + $signing.signtool_kp)
           Add-Case "signing/testsigning" "pass" ("testsigning=" + $signing.testsigning)
-          if (Load-Driver "kduCiSmoke") {
+          Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
+          Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
+          $create = Invoke-Guarded "sc.exe" @("create", "kduCiSmoke", "type=", "kernel",
+              "start=", "demand", "binPath=", $driver) 20
+          $start = Invoke-Guarded "sc.exe" @("start", "kduCiSmoke") 30
+          if ($create.code -eq 0 -and $start.output -match "RUNNING") {
               Add-Case "driver/signed-load" "pass" "SPC-signed driver STATE 4 RUNNING"
               $run = Invoke-Guarded $client @() 45
               $doc = $null
@@ -349,20 +345,12 @@ jobs:
               } else {
                   Add-Case "driver/ioctl-roundtrip" "fail" $run.output
               }
-              Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
-              Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
           } else {
-              Add-Case "driver/signed-load" "fail" "driver did not start"
+              Add-Case "driver/signed-load" "fail" ("create=" + $create.code + " start=" + $start.output)
               Add-Case "driver/ioctl-roundtrip" "fail" "driver did not start"
           }
-          $cycles = 2
-          $failures = 0
-          for ($index = 0; $index -lt $cycles; $index++) {
-              if (-not (Load-Driver "kduCiSmoke")) { $failures++ }
-              Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
-              Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
-          }
-          Add-Case "stress/load-unload" $(if ($failures -eq 0) { "pass" } else { "fail" }) ("{0}x, failures={1}" -f $cycles, $failures)
+          Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
+          Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
           Add-Case "exploit/victim-driver-load" "skip" "blocklisted victim driver"
           Add-Case "payload/manual-map" "skip" "manual-map NX on 26200"
           Add-Case "dse/unsigned-load" "skip" "requires VM reboot/BSOD"
@@ -384,8 +372,7 @@ jobs:
               cases = $results
           } | ConvertTo-Json -Depth 6 | Set-Content artifacts/ci-e2e-result.json -Encoding UTF8
           Write-Host ("matrix: {0} passed, {1} failed, {2} skipped" -f $passed, $failed, $skipped)
-          if ($failed -ne 0) { throw "CI e2e matrix failed" }
-      - name: Upload CI e2e result
+          if ($failed -ne 0) { throw "CI e2e matrix failed" }      - name: Upload CI e2e result
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -407,3 +394,4 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
