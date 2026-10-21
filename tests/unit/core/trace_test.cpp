@@ -64,4 +64,3 @@ TEST_CASE("load_kernel_exports fails cleanly for a bad path") {
     CHECK(!exports.has_value());
     CHECK(exports.error().code != Status::ok);
 }
-

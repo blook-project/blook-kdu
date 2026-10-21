@@ -65,4 +65,3 @@ TEST_CASE("capability names are stable") {
     CHECK(names[1] == "virtual_write");
     CHECK(capability_names(Capability::none).empty());
 }
-

@@ -164,11 +164,11 @@ int main(int argc, char** argv) {
             return app.exit(error);
         } catch (const blook::kdu::cli::CliError& error) {
             print_error(context, error.status(), error.what());
-            exit_code = 1;
+            exit_code = exit_code_for(error.status());
         } catch (const std::exception& error) {
             print_error(context, blook::kdu::Status::internal_error,
                         error.what());
-            exit_code = 1;
+            exit_code = exit_code_for(blook::kdu::Status::internal_error);
         }
 
         context.close_session();
