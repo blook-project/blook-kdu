@@ -47,6 +47,11 @@ pwsh scripts/build.ps1
 pwsh scripts/e2e.ps1 -Vm vm-kdu -Out docs/evidence/$(Get-Date -Format yyyyMMdd)-e2e
 ```
 
+`bvmenv` currently lives at
+`D:\blook-kernel-project\blook-vmware-environment\build\windows\x64\release\bvmenv.exe`
+(the harness defaults to that path; it starts a powered-off VM and enforces a
+hard timeout on every call).
+
 `scripts/e2e.ps1` builds the guest bundle from `build/windows/x64/release`
 (`kdu.exe`, `kdu_payload.sys`, `kdu_e2e_helper.exe`, `kdu_guest_test_driver.sys`,
 `guest-run.ps1`), pushes it to `C:\kdu-e2e`, runs the elevated guest suite and
@@ -61,4 +66,5 @@ The runner is intentionally thin: it builds a bundle, pushes it, invokes the
 in-guest PowerShell runner as an elevated command and copies the artifacts back.
 Results are committed under `docs/evidence/<date>-<slug>/` (JSON + key
 screenshots + log summaries; large logs are stored as hashes/head+tail).
+
 
