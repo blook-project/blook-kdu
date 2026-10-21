@@ -1,0 +1,38 @@
+{
+  "guest_queryable": true,
+  "hang": {
+    "samples": 1,
+    "suspected": false,
+    "unchanged_samples": 0
+  },
+  "ip": null,
+  "log": {
+    "issues": [
+      {
+        "level": "warning",
+        "message": "2026-10-21T08:43:37.779Z -INFO vmware-vmx.exe 7624 [ws@4413 threadName=\"vmx\"] DISKUTILWIN32: DiskUtilW32IsATASSDDevice: Failed to send ATA IDENTIFY command to the target device.",
+        "source": "vmware.log"
+      }
+    ]
+  },
+  "power": "on",
+  "sampled_at": "2026-10-21T08:47:51Z",
+  "schema": "bvmenv.state.v1",
+  "screen": {
+    "classification": "login",
+    "confidence": 0.75,
+    "ocr_text": "无法在此设备上加载驱动程序\r\n\r\n驱动程序physmem64sys\r\nphysmem64.sys\r\n\r\n某个安全设才符其检测为易受攻击的驱动程序，并阻止其加载。你需要调整设于以j0吉\r\n此BE动程序\r\n\r\n门] 不再显示此消息\r\n\r\n二                           1648\r\n\r\nQ ee       bES&weaga   ~ & BB apo\r\n",
+    "reason": "dominant blue framebuffer with light text but a live guest (logon UI)",
+    "screenshot": "C:\\blook-vms\\_cache\\shots\\vm-kdu-20261021T084801Z.png",
+    "stop_code": null
+  },
+  "tools": {
+    "running": true,
+    "state": "running",
+    "version": "13313"
+  },
+  "uptime_seconds": 218,
+  "vm": "vm-kdu",
+  "vmx": "C:\\blook-vms\\vms\\vm-kdu\\vm-kdu.vmx"
+}
+

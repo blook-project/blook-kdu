@@ -1,0 +1,11 @@
+exit_code    : 1
+[PASS] memory/modules
+[SKIP] memory/virtual-read: ntoskrnl not in module list
+[FAIL] memory/physical-read
+[PASS] safety/winring0-va-guard
+[SKIP] memory/process-read: CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design
+[SKIP] memory/process-write: same as process-read
+[SKIP] payload/map: manual-map payload cannot execute on this build (kernel executable memory restrictions)
+[PASS] cleanup/traces
+
+

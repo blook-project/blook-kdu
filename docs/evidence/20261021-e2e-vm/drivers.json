@@ -1,0 +1,42 @@
+[
+  {
+    "id": "asrock",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "atszio64",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "dbk64",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "echodrv",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "gdrv",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "physmem64",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "rtcore64",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  },
+  {
+    "id": "winring0",
+    "status": "not-started",
+    "detail": "exit_code    : 0\r\n[SC] DeleteService �ɹ�"
+  }
+]

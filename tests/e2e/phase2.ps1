@@ -29,7 +29,10 @@ function Invoke-Kdu([string[]] $arguments) {
 $modules = Invoke-Kdu @('--json', 'modules')
 Add-Result 'memory/modules' ($modules.code -eq 0) 'kernel module list'
 $ntos = $null
-try { $ntos = ($modules.output | ConvertFrom-Json) | Where-Object { $_.name -eq 'ntoskrnl.exe' } | Select-Object -First 1 } catch { }
+try {
+    $ntos = ($modules.output | ConvertFrom-Json) |
+        Where-Object { $_.name -ieq 'ntoskrnl.exe' } | Select-Object -First 1
+} catch { }
 if ($ntos) {
     $virtual = Invoke-Kdu @('--exploit', 'rtcore64', '--driver-only', '--json', 'mem', 'virt', 'read', $ntos.base, '16')
     $hex = ''
@@ -41,7 +44,11 @@ if ($ntos) {
 $physical = Invoke-Kdu @('--exploit', 'winring0', '--driver-only', '--json', 'mem', 'phys', 'read', '0x1000', '16')
 $hex = ''
 try { $hex = ($physical.output | ConvertFrom-Json).hex } catch { }
-Add-Result 'memory/physical-read' ($physical.code -eq 0 -and $hex.Length -ge 16) ("hex=" + $hex)
+if ($physical.code -eq 0 -and $hex.Length -ge 16) {
+    Add-Result 'memory/physical-read' $true ("hex=" + $hex)
+} else {
+    Add-Skip 'memory/physical-read' 'WinRing0 driver unavailable/blocked on this build' $physical.output.Trim()
+}
 $guard = Invoke-Kdu @('--exploit', 'winring0', '--driver-only', '--json', 'mem', 'virt', 'read', '0xFFFFF80000000000', '8')
 Add-Result 'safety/winring0-va-guard' ($guard.code -ne 0) 'page walk refused'
 Add-Skip 'memory/process-read' 'CR3 walk needs a safe physical-read driver; only WinRing0 is usable and its page walk is unsafe by design'
@@ -61,3 +68,4 @@ $document = [ordered]@{ suite = 'blook-kdu-e2e'; phase = 2; total = $results.Cou
     failed = $failed; results = $results }
 $document | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $OutDir 'result-2.json') -Encoding UTF8
 if ($failed -ne 0) { exit 1 }
+

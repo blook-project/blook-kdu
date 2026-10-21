@@ -225,7 +225,7 @@ Write-Host ("driver load matrix: {0}/{1} drivers started" -f $driverLoaded, $dri
 
 $phaseSummaries = @()
 $ok = $true
-foreach ($phase in 2..4) {
+foreach ($phase in 1..4) {
     $script = "$guestDir\phase$phase.ps1"
     if (-not (Test-Path (Join-Path $bundle "phase$phase.ps1"))) {
         $phaseSummaries += [ordered]@{ phase = $phase; code = -1; note = 'script missing' }
@@ -263,7 +263,7 @@ foreach ($phase in 2..4) {
 $mergedResults = @()
 $mergedFailed = 0
 $mergedSkipped = 0
-foreach ($phase in 2..4) {
+foreach ($phase in 1..4) {
     $path = Join-Path $guestOut "result-$phase.json"
     if (-not (Test-Path $path)) { continue }
     try {
@@ -316,6 +316,7 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 
 
