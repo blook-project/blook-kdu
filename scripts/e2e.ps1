@@ -143,6 +143,28 @@ if (Test-Path $guestDriverSource) {
     }
 }
 
+# Per-exploit signed driver images for the guest load matrix.
+$assetMap = @{
+    asrock = 'asrock/AsrDrv107n.sys.bin.signed'
+    atszio64 = 'atszio64/ATSZIO64.bin.signed'
+    dbk64 = 'dbk64/dbk64.bin.signed'
+    echodrv = 'echodrv/echo_driver.bin.signed'
+    gdrv = 'gdrv/gdrv.bin.signed'
+    physmem64 = 'physmem64/Phymemx64.bin.signed'
+    rtcore64 = 'rtcore64/RTCore64.sys.bin.signed'
+    winring0 = 'winring0/WinRing0x64.bin.signed'
+}
+$driversDir = Join-Path $bundle 'drivers'
+New-Item -ItemType Directory -Force $driversDir | Out-Null
+foreach ($id in $assetMap.Keys) {
+    $asset = Join-Path $Root ('build/generated/assets/' + $assetMap[$id])
+    if (Test-Path $asset) {
+        Copy-Item $asset (Join-Path $driversDir ($id + '.sys')) -Force
+    } else {
+        Write-Warning "signed driver asset missing: $asset"
+    }
+}
+
 Copy-Item (Join-Path $Root 'tests/e2e/guest-run.ps1') `
           (Join-Path $bundle 'guest-run.ps1') -Force
 Copy-Item (Join-Path $Root 'README.md') (Join-Path $bundle 'README.md') -Force
@@ -214,6 +236,7 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 
 
