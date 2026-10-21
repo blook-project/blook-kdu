@@ -181,6 +181,11 @@ bool file_exists(const std::string& path);
 // Create a unique temporary path (does not create the file).
 std::string make_temp_path(std::string_view prefix, std::string_view suffix);
 
+// Convert a DOS path to the NT form used in a kernel driver service ImagePath
+// (\\??\\C:\\...). Never quoted: the SCM rejects quoted ImagePath values with
+// ERROR_INVALID_NAME on current Windows.
+std::wstring kernel_driver_image_path(const std::string& dos_path);
+
 // Preferred staging path for kernel drivers: %SystemRoot%\Temp when it exists
 // (no spaces, always writable for an elevated/SYSTEM process), otherwise
 // %TEMP%.

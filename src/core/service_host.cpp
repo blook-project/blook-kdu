@@ -108,12 +108,7 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
     }
 
     const std::wstring service = to_utf16(info.service_name);
-    std::wstring path = to_utf16(driver_path);
-    // Kernel driver ImagePath must be an NT path; the SCM rejects a bare DOS
-    // path with ERROR_INVALID_NAME on some Windows builds.
-    if (path.size() > 2 && path[1] == L':') {
-        path = L"\\??\\" + path;
-    }
+    const std::wstring path = kernel_driver_image_path(driver_path);
     auto created = manager->create_driver(service, path);
     if (!created) {
         (void)remove_file(driver_path);

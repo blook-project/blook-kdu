@@ -602,6 +602,14 @@ bool file_exists(const std::string& path) {
            (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
 
+std::wstring kernel_driver_image_path(const std::string& dos_path) {
+    std::wstring path = to_utf16(dos_path);
+    if (path.size() > 2 && path[1] == L':') {
+        return L"\\??\\" + path;
+    }
+    return path;
+}
+
 std::string make_staging_path(std::string_view prefix,
                               std::string_view suffix) {
     std::wstring directory = to_utf16(system_root() + "\\Temp");

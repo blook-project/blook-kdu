@@ -40,6 +40,24 @@ TEST_CASE("temp path is unique") {
     CHECK(first.find(".sys") != std::string::npos);
 }
 
+TEST_CASE("kernel driver image path is an unquoted NT path") {
+    const auto path =
+        kernel_driver_image_path("C:\\Windows\\Temp\\kdu_GIO_1.sys");
+    CHECK(path == L"\\??\\C:\\Windows\\Temp\\kdu_GIO_1.sys");
+    CHECK(path.find(L'"') == std::wstring::npos);
+    const auto already_nt =
+        kernel_driver_image_path("\\??\\C:\\Windows\\Temp\\k.sys");
+    CHECK(already_nt == L"\\??\\C:\\Windows\\Temp\\k.sys");
+}
+
+TEST_CASE("driver staging path avoids spaces") {
+    const auto staging = make_staging_path("kdu_test_", ".sys");
+    CHECK(staging.find("kdu_test_") != std::string::npos);
+    CHECK(staging.find(".sys") != std::string::npos);
+    CHECK(staging.find(' ') == std::string::npos);
+    CHECK(staging.find("Temp") != std::string::npos);
+}
+
 TEST_CASE("file round trip") {
     const auto path = make_temp_path("kdu_file_", ".bin");
     const std::vector<std::uint8_t> data = {1, 2, 3, 4, 5};
