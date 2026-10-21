@@ -22,6 +22,17 @@ void add_doctor_command(CLI::App& app, Context& context) {
         bool ok = true;
         const auto build = core::windows_build_number();
         rows.push_back({"Windows build", std::to_string(build)});
+        std::string hypervisor;
+        const bool under_hypervisor =
+            core::is_running_under_hypervisor(&hypervisor);
+        const bool vmware_guest =
+            under_hypervisor && hypervisor.find("VMware") != std::string::npos;
+        rows.push_back(
+            {"Hypervisor", under_hypervisor ? hypervisor : "none (host)"});
+        rows.push_back({"Kernel ops allowed", vmware_guest
+                                                  ? green("yes (VMware guest)")
+                                                  : red("no (VM-only guard)")});
+        ok = ok && vmware_guest;
         const bool elevated = core::is_process_elevated();
         rows.push_back({"Elevated", elevated ? green("yes") : red("no")});
         ok = ok && elevated;

@@ -298,3 +298,43 @@ TEST_CASE("initialize_security_cookie replaces the linker default") {
         8);
     CHECK(stored == ~kTestCookie);
 }
+
+TEST_CASE("prepare_image rejects malformed relocations and sections") {
+    auto payload = load_payload();
+    if (payload.empty()) {
+        MESSAGE("skipping: kdu_payload.sys not available");
+        return;
+    }
+    {
+        auto copy = payload;
+        auto* nt = pe_headers(copy);
+        REQUIRE(nt != nullptr);
+        const auto reloc_rva =
+            nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC]
+                .VirtualAddress;
+        REQUIRE(reloc_rva != 0);
+        const auto reloc_offset = rva_to_file_offset(copy, reloc_rva);
+        REQUIRE(reloc_offset != 0);
+        auto* first = reinterpret_cast<IMAGE_BASE_RELOCATION*>(copy.data() +
+                                                               reloc_offset);
+        REQUIRE(first->SizeOfBlock >= sizeof(IMAGE_BASE_RELOCATION) + 2);
+        auto* entries = reinterpret_cast<WORD*>(copy.data() + reloc_offset +
+                                                sizeof(IMAGE_BASE_RELOCATION));
+        // Keep the page offset, change the relocation type to HIGHLOW (3),
+        // which a x64 kernel image must not contain.
+        entries[0] = static_cast<WORD>((3u << 12) | (entries[0] & 0x0FFF));
+        auto result = prepare_image(copy);
+        CHECK(!result.has_value());
+        CHECK(result.error().message.find("relocation") != std::string::npos);
+    }
+    {
+        auto copy = payload;
+        auto* nt = pe_headers(copy);
+        REQUIRE(nt != nullptr);
+        auto* sections = IMAGE_FIRST_SECTION(nt);
+        sections[0].SizeOfRawData = 0xFFFFFF;
+        auto result = prepare_image(copy);
+        CHECK(!result.has_value());
+        CHECK(result.error().message.find("section") != std::string::npos);
+    }
+}

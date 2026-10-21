@@ -494,22 +494,54 @@ Result<void> Session::dse_restore() {
 // Introspection
 // ---------------------------------------------------------------------------
 Result<std::vector<ModuleInfo>> Session::enum_modules() {
-    auto modules = impl_ ? impl_->kernel_modules()
-                         : Result<std::vector<core::KernelModuleEntry>>::fail(
-                               Status::invalid_argument, "session is not open");
-    if (!modules) {
-        return Result<std::vector<ModuleInfo>>::fail(modules.error().code,
-                                                     modules.error().message);
+    if (!valid()) {
+        return Result<std::vector<ModuleInfo>>::fail(Status::invalid_argument,
+                                                     "session is not open");
     }
+    // Prefer the active backend (the payload has the real kernel loader list);
+    // fall back to the user-mode module list when it cannot enumerate.
+    auto native = impl_->access->enumerate_modules();
     std::vector<ModuleInfo> result;
-    result.reserve(modules->size());
-    for (const auto& module : modules.value()) {
-        ModuleInfo info;
-        info.name = module.name;
-        info.path = module.path;
-        info.base = module.base;
-        info.size = module.size;
-        result.push_back(std::move(info));
+    if (native) {
+        result = std::move(native.value());
+    } else {
+        auto modules = impl_->kernel_modules();
+        if (!modules) {
+            return Result<std::vector<ModuleInfo>>::fail(
+                modules.error().code, modules.error().message);
+        }
+        result.reserve(modules->size());
+        for (const auto& module : modules.value()) {
+            ModuleInfo info;
+            info.name = module.name;
+            info.path = module.path;
+            info.base = module.base;
+            info.size = module.size;
+            result.push_back(std::move(info));
+        }
+    }
+    // Fill in missing SizeOfImage values from the loaded PE headers.
+    for (auto& module : result) {
+        if (module.size != 0 || module.base == 0) {
+            continue;
+        }
+        std::uint8_t header[0x1000] = {};
+        auto read =
+            impl_->access->read_virtual(module.base, header, sizeof(header));
+        if (!read) {
+            continue;
+        }
+        const auto* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(header);
+        if (dos->e_magic != IMAGE_DOS_SIGNATURE || dos->e_lfanew < 0 ||
+            static_cast<std::size_t>(dos->e_lfanew) + sizeof(IMAGE_NT_HEADERS) >
+                sizeof(header)) {
+            continue;
+        }
+        const auto* nt =
+            reinterpret_cast<const IMAGE_NT_HEADERS*>(header + dos->e_lfanew);
+        if (nt->Signature == IMAGE_NT_SIGNATURE) {
+            module.size = nt->OptionalHeader.SizeOfImage;
+        }
     }
     return Result<std::vector<ModuleInfo>>::ok(std::move(result));
 }

@@ -169,6 +169,35 @@ class PayloadKernelAccess final : public IKernelAccess {
         return Result<std::uint64_t>::ok(response.cr3);
     }
 
+    Result<std::vector<ModuleInfo>> enumerate_modules() override {
+        std::vector<ModuleInfo> modules;
+        for (std::uint32_t index = 0;; ++index) {
+            kdu_module_request request{};
+            request.header.magic = KDU_PAYLOAD_MAGIC;
+            request.header.opcode = KDU_OP_ENUM_MODULES;
+            request.header.size = sizeof(request);
+            request.index = index;
+            kdu_module_info response{};
+            uint32_t written = 0;
+            const kc_status status =
+                kc_call(client_, KDU_OP_ENUM_MODULES, &request, sizeof(request),
+                        &response, sizeof(response), &written, kCallTimeoutMs);
+            if (status == KC_ERR_NOT_FOUND) {
+                break;
+            }
+            if (status != KC_OK || written < sizeof(response)) {
+                return Result<std::vector<ModuleInfo>>::fail(
+                    kc_status_to_status(status), kc_status_str(status));
+            }
+            ModuleInfo module;
+            module.name = response.name;
+            module.base = response.base;
+            module.size = response.size;
+            modules.push_back(std::move(module));
+        }
+        return Result<std::vector<ModuleInfo>>::ok(std::move(modules));
+    }
+
     Result<std::size_t> read_process(std::uint32_t pid, std::uint64_t address,
                                      void* buffer, std::size_t size) override {
         return process_transfer(KDU_OP_READ_PROCESS, pid, address, buffer,

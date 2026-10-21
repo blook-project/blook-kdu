@@ -8,6 +8,23 @@ All notable changes to blook-kdu are documented here. The format follows
 
 ### Added
 
+- `kdu batch <ops.json>`: one-session, JSON-described multi-operation runner
+  (read/write physical/virtual/process, translate, CR3, DSE, modules, sleep)
+  with `--continue-on-error` and structured results; documented JSON schema.
+- Documented stable CLI exit codes and `--json` output schema
+  (`docs/json-schema.md`).
+- `examples/api_example.cpp`: 20-line SDK walkthrough, documented in
+  `docs/api.md`.
+- Manual mapper hardening: /GS security-cookie randomization (detect + patch
+  cookie/complement), exception-directory detection, strict import/relocation/
+  section bounds validation, and host unit tests for malformed/truncated images
+  and cookies.
+- VM-only safety gate: the SDK refuses kernel operations outside a VMware guest
+  (no override), the guest e2e runner refuses non-VMware guests, and the host e2e
+  script requires `-Vm` plus hard timeouts on every `bvmenv` call.
+- Six more exploits (asrock AsrDrv107n, winring0, physmem64, dbk64, atszio64,
+  echodrv) with per-exploit mock unit tests and automatic per-exploit CI jobs.
+
 - Public SDK (`include/blook/kdu/kdu.h`): session object, status/error type,
   physical/kernel-virtual/process memory access, DSE control, module
   enumeration, driver dumping, payload map/unmap, cleanup and trace scanning.
@@ -37,3 +54,4 @@ All notable changes to blook-kdu are documented here. The format follows
   packaging; per-exploit matrix jobs.
 - Release workflow with canonical `blook-kdu-<version>-windows-x64.zip` +
   `.sha256` assets and a package-registry manifest/publish script.
+

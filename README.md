@@ -94,8 +94,10 @@ scripts/               build/signing/registry/e2e scripts
 docs/                  architecture, exploits, e2e and evidence
 ```
 
-See [docs/architecture.md](docs/architecture.md), [docs/exploits.md](docs/exploits.md)
-and [docs/e2e.md](docs/e2e.md).
+See [docs/architecture.md](docs/architecture.md), [docs/exploits.md](docs/exploits.md),
+[docs/api.md](docs/api.md) (SDK guide + 20-line example),
+[docs/json-schema.md](docs/json-schema.md) (`--json` schema + exit codes) and
+[docs/e2e.md](docs/e2e.md).
 
 ## Building
 
@@ -150,5 +152,6 @@ scripts. There is no host-mode switch.
 ## License
 
 MIT, see [LICENSE](LICENSE).
+
 
 
