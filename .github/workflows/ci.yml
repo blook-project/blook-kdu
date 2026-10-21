@@ -393,6 +393,8 @@ jobs:
         timeout-minutes: 2
         run: |
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
+          exit 0
+
 
 
 
