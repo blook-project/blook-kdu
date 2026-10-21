@@ -78,6 +78,24 @@ foreach ($file in $required) {
         Write-Warning "optional e2e asset missing: $source"
     }
 }
+
+# The DSE check needs both a test-signed driver (loads while DSE is on) and a
+# plain unsigned driver (must be blocked until DSE is disabled). Sign the copy
+# with the bundled signer so test-signing accepts it.
+$guestDriverSource = Join-Path $build 'kdu_guest_test_driver.sys'
+if (Test-Path $guestDriverSource) {
+    $unsigned = Join-Path $bundle 'kdu_guest_test_driver_unsigned.sys'
+    $signed = Join-Path $bundle 'kdu_guest_test_driver_signed.sys'
+    Copy-Item $guestDriverSource $unsigned -Force
+    Copy-Item $guestDriverSource $signed -Force
+    try {
+        & pwsh -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'scripts/sign.ps1') -Files $signed | Out-Null
+        Write-Host "test-signed guest driver: $signed"
+    } catch {
+        Write-Warning ("could not test-sign the guest driver: " + $_)
+        Remove-Item $signed -Force -ErrorAction SilentlyContinue
+    }
+}
 Copy-Item (Join-Path $Root 'tests/e2e/guest-run.ps1') (Join-Path $bundle 'guest-run.ps1') -Force
 Copy-Item (Join-Path $Root 'README.md') (Join-Path $bundle 'README.md') -Force
 $version | Set-Content (Join-Path $bundle 'version.txt')
@@ -138,4 +156,5 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 

@@ -37,3 +37,8 @@ node_modules/
 # release packaging output
 artifacts/
 
+
+# bundled test signer assets (required for guest driver test-signing)
+!signer/**/*.exe
+!signer/**/*.dll
+

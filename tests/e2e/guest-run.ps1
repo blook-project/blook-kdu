@@ -29,7 +29,7 @@ if ($vmModel -notmatch 'VMware' -and $vmManufacturer -notmatch 'VMware') {
 New-Item -ItemType Directory -Force $OutDir | Out-Null
 $kdu = Join-Path $BundleDir 'kdu.exe'
 $helper = Join-Path $BundleDir 'kdu_e2e_helper.exe'
-$guestDriver = Join-Path $BundleDir 'kdu_guest_test_driver.sys'
+$guestDriver = Join-Path $BundleDir 'kdu_guest_test_driver_unsigned.sys'
 $results = New-Object System.Collections.Generic.List[object]
 
 function Add-Result([string] $name, [bool] $ok, [string] $detail) {
@@ -151,28 +151,44 @@ try {
 # ---------------------------------------------------------------------------
 # DSE: disable -> unsigned driver loads -> restore -> it cannot load again.
 # ---------------------------------------------------------------------------
-function Test-DriverLoad([string] $service) {
+function Test-DriverLoad([string] $service, [string] $image) {
     sc.exe stop $service *> $null
     sc.exe delete $service *> $null
-    $create = sc.exe create $service type= kernel start= demand binPath= $guestDriver 2>&1
+    if (-not (Test-Path $image)) {
+        return @{ loaded = $false; create = ''; start = "missing image: $image" }
+    }
+    $create = sc.exe create $service type= kernel start= demand binPath= $image 2>&1
     $start = sc.exe start $service 2>&1
     $loaded = $start -match 'STATE\s+:\s+4' -or $start -match 'RUNNING'
     return @{ loaded = $loaded; create = ($create | Out-String); start = ($start | Out-String) }
 }
 
-if (Test-Path $guestDriver) {
+$signedDriver = Join-Path $BundleDir 'kdu_guest_test_driver_signed.sys'
+$unsignedDriver = Join-Path $BundleDir 'kdu_guest_test_driver_unsigned.sys'
+if (Test-Path $signedDriver) {
+    # A test-signed driver must load with DSE still enabled (base image has
+    # testsigning ON), proving the signature path works before we patch DSE.
+    $signedLoad = Test-DriverLoad 'kduE2eSigned' $signedDriver
+    Add-Result 'dse/signed-load' $signedLoad.loaded $signedLoad.start.Trim()
+    sc.exe stop 'kduE2eSigned' *> $null
+    sc.exe delete 'kduE2eSigned' *> $null
+} else {
+    Add-Result 'dse/signed-load' $false "signed guest driver missing: $signedDriver"
+}
+
+if (Test-Path $unsignedDriver) {
     $disabled = Invoke-Kdu @('dse', 'disable')
     Add-Result 'dse/disable' ($disabled.code -eq 0) $disabled.output.Trim()
-    $first = Test-DriverLoad 'kduE2eDriver'
+    $first = Test-DriverLoad 'kduE2eUnsigned' $unsignedDriver
     Add-Result 'dse/unsigned-load' $first.loaded $first.start.Trim()
     $restored = Invoke-Kdu @('dse', 'restore')
     Add-Result 'dse/restore' ($restored.code -eq 0) $restored.output.Trim()
-    $second = Test-DriverLoad 'kduE2eDriver'
+    $second = Test-DriverLoad 'kduE2eUnsigned' $unsignedDriver
     Add-Result 'dse/unsigned-blocked' (-not $second.loaded) $second.start.Trim()
-    sc.exe stop 'kduE2eDriver' *> $null
-    sc.exe delete 'kduE2eDriver' *> $null
+    sc.exe stop 'kduE2eUnsigned' *> $null
+    sc.exe delete 'kduE2eUnsigned' *> $null
 } else {
-    Add-Result 'dse/unsigned-load' $false "guest test driver missing: $guestDriver"
+    Add-Result 'dse/unsigned-load' $false "unsigned guest driver missing: $unsignedDriver"
 }
 
 # ---------------------------------------------------------------------------
@@ -261,6 +277,7 @@ $resultPath = Join-Path $OutDir 'result.json'
 $result | ConvertTo-Json -Depth 6 | Set-Content -Path $resultPath -Encoding UTF8
 Write-Host ("result: {0} ({1} checks, {2} failed)" -f $resultPath, $results.Count, $failed)
 exit $(if ($failed -eq 0) { 0 } else { 1 })
+
 
 
 
