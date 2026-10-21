@@ -10,7 +10,7 @@ param(
     [string] $Root = (Split-Path -Parent $PSScriptRoot),
     [string] $Vm = '',
     [string] $Out = '',
-    [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\dist\bvmenv-latest.exe',
+    [string] $Bvmenv = 'D:\blook-kernel-project\blook-vmware-environment\dist\bvmenv-6e83eb6.exe',
     [int] $ExecTimeoutSeconds = 1500,
     [int] $StepTimeoutSeconds = 300,
     [switch] $NoReset,
@@ -26,6 +26,8 @@ if (-not (Test-Path $Bvmenv)) {
     throw "bvmenv not found: $Bvmenv"
 }
 $version = (Get-Content (Join-Path $Root 'version.txt') -Raw).Trim()
+$bvmenvVersion = 'unknown'
+try { $bvmenvVersion = ((& $Bvmenv version) | Out-String).Trim() } catch { }
 if (-not $Out) {
     $Out = Join-Path $Root ("docs/evidence/{0}-e2e" -f (Get-Date -Format 'yyyyMMdd'))
 }
@@ -297,6 +299,7 @@ $summary = [ordered]@{
     suite = 'blook-kdu-e2e'
     schema = 'kdu.e2e.v1'
     version = $version
+    bvmenv_version = $bvmenvVersion
     vm = $Vm
     finished = (Get-Date).ToString('o')
     ok = $ok
@@ -316,6 +319,7 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
 
 
 

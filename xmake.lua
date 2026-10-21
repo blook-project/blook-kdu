@@ -280,6 +280,15 @@ if has_kchannel_user then
         add_files("src/assets.rc")
         add_deps("kdu_sdk")
         add_packages("cli11", "fmt", "spdlog", "nlohmann_json")
+        -- Regenerate the signed embedded-driver table before the RC compiles.
+        -- This must happen at build (not configure) time: `xmake f -c` cleans
+        -- build/ after the project script ran.
+        before_build(function (target)
+            local script = path.join(os.projectdir(), "scripts",
+                                     "prepare-assets.ps1")
+            os.exec('pwsh -NoProfile -ExecutionPolicy Bypass -File "' ..
+                    script .. '"')
+        end)
 end
 
 -- ---------------------------------------------------------------------------
@@ -309,6 +318,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 

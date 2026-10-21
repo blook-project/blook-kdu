@@ -73,7 +73,7 @@ try {
         git add .
         git -c user.name="MicroBlock" `
             -c user.email="66859419+std-microblock@users.noreply.github.com" `
-            commit -m "$Package: publish $Version ($($hash.Substring(0, 12)))"
+            commit -m "${Package}: publish $Version ($($hash.Substring(0, 12)))"
         git push origin HEAD
     } finally {
         Pop-Location
@@ -82,3 +82,4 @@ try {
 } finally {
     if (Test-Path $temp) { Remove-Item $temp -Recurse -Force }
 }
+
