@@ -1,0 +1,1725 @@
+exit_code    : 1
+[PASS] environment/build: Windows 10.0.26200 build 26200
+[PASS] environment/elevated: administrator token
+[PASS] exploits/list: [
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write"
+    ],
+    "cve": "CVE-2020-15368",
+    "description": "ASRock IO driver AsrDrv107n (CVE-2020-15368): arbitrary physical memory read/write through the RWE dispatch",
+    "device": "\\\\.\\AsrDrv107n",
+    "driver": "AsrDrv107n.sys",
+    "id": "asrock",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "ASRock AsrDrv107n",
+    "service": "AsrDrv107n",
+    "unsafe_physical_holes": false,
+    "vendor": "ASRock"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write",
+      "map_physical"
+    ],
+    "cve": "",
+    "description": "ASUSTeK WinFlash ATSZIO64: physical memory map/copy through \\Device\\PhysicalMemory",
+    "device": "\\\\.\\ATSZIO",
+    "driver": "ATSZIO.sys",
+    "id": "atszio64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "ASUS ATSZIO",
+    "service": "ATSZIO",
+    "unsafe_physical_holes": false,
+    "vendor": "ASUSTeK Computer Inc."
+  },
+  {
+    "capabilities": [
+      "virtual_read",
+      "virtual_write"
+    ],
+    "cve": "",
+    "description": "Cheat Engine CEDRIVER73 (dbk64): arbitrary kernel virtual memory read/write through MDL mapping",
+    "device": "\\\\.\\CEDRIVER73",
+    "driver": "CEDRIVER73.sys",
+    "id": "dbk64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "Cheat Engine DBK64",
+    "service": "CEDRIVER73",
+    "unsafe_physical_holes": false,
+    "vendor": "Cheat Engine"
+  },
+  {
+    "capabilities": [
+      "virtual_read",
+      "virtual_write"
+    ],
+    "cve": "",
+    "description": "Inspect Element EchoDrv: kernel virtual memory copy through MmCopyVirtualMemory",
+    "device": "\\\\.\\EchoDrv",
+    "driver": "EchoDrv.sys",
+    "id": "echodrv",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "Echo AntiCheat",
+    "service": "EchoDrv",
+    "unsafe_physical_holes": false,
+    "vendor": "Inspect Element LTD"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write",
+      "map_physical"
+    ],
+    "cve": "CVE-2018-19320",
+    "description": "GIGABYTE GDRV (CVE-2018-19320): arbitrary physical memory map/copy",
+    "device": "\\\\.\\GIO",
+    "driver": "gdrv.sys",
+    "id": "gdrv",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "GIGABYTE GDRV",
+    "service": "GIO",
+    "unsafe_physical_holes": false,
+    "vendor": "GIGABYTE"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write",
+      "map_physical"
+    ],
+    "cve": "",
+    "description": "Huawei MateBook Manager phymemx64: physical memory map/copy through the PhyMem driver",
+    "device": "\\\\.\\PhyMem",
+    "driver": "phymemx64.sys",
+    "id": "physmem64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "Huawei PhyMem",
+    "service": "phymemx64",
+    "unsafe_physical_holes": false,
+    "vendor": "Huawei Technologies Co.,Ltd."
+  },
+  {
+    "capabilities": [
+      "virtual_read",
+      "virtual_write",
+      "msr"
+    ],
+    "cve": "CVE-2019-16098",
+    "description": "MSI Afterburner RTCore64 (CVE-2019-16098): 4-byte arbitrary kernel virtual memory read/write",
+    "device": "\\\\.\\RTCore64",
+    "driver": "RTCore64.sys",
+    "id": "rtcore64",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "MSI RTCore64",
+    "service": "RTCore64",
+    "unsafe_physical_holes": false,
+    "vendor": "MSI / Micro-Star"
+  },
+  {
+    "capabilities": [
+      "physical_read",
+      "physical_write"
+    ],
+    "cve": "CVE-2017-14311",
+    "description": "EVGA Precision X1 WinRing0x64 (CVE-2017-14311): arbitrary physical memory read/write",
+    "device": "\\\\.\\WinRing0_1_2_0",
+    "driver": "WinRing0x64.sys",
+    "id": "winring0",
+    "max_build": 4294967295,
+    "min_build": 7600,
+    "name": "EVGA WinRing0",
+    "service": "WinRing0x64",
+    "unsafe_physical_holes": true,
+    "vendor": "EVGA"
+  }
+]
+[FAIL] exploit/asrock: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL asrock           cannot read ntoskrnl image header
+[FAIL] exploit/asrock/payload-map: [warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] payload mapping failed (victim driver is not present in the module list); continuing with the driver backend
+{"error":{"code":"invalid_argument","message":"provide an image path or --payload"}}
+[PASS] exploit/asrock/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] exploit/atszio64: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL atszio64         atszio64: cannot start service 'ATSZIO': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+[FAIL] exploit/atszio64/payload-map: {"error":{"code":"no_suitable_exploit","message":"atszio64: cannot start service 'ATSZIO': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)"}}
+[PASS] exploit/atszio64/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] exploit/dbk64: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL dbk64            dbk64: cannot start service 'CEDRIVER73': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+[PASS] exploit/dbk64/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] exploit/echodrv: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL echodrv          echodrv: cannot start service 'EchoDrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+[PASS] exploit/echodrv/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] exploit/gdrv: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL gdrv             gdrv: cannot start service 'GIO': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+[FAIL] exploit/gdrv/payload-map: {"error":{"code":"no_suitable_exploit","message":"gdrv: cannot start service 'GIO': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)"}}
+[PASS] exploit/gdrv/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] exploit/physmem64: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL physmem64        physmem64: cannot start service 'phymemx64': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+[FAIL] exploit/physmem64/payload-map: {"error":{"code":"no_suitable_exploit","message":"physmem64: cannot start service 'phymemx64': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)"}}
+[PASS] exploit/physmem64/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] exploit/rtcore64: kdu.exe : error exploit self-test failed
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error exploit self-test failed:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL rtcore64         rtcore64: cannot start service 'RTCore64': StartService failed: 无法成功完成操作，因为文件包含病毒或潜在的垃圾软件。 (0x000000E1)
+[PASS] exploit/rtcore64/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[PASS] exploit/winring0: unsafe-physical driver, safe physical read: [warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] payload mapping failed (victim driver is not present in the module list); continuing with the driver backend
+{"address":"0x1000","size":16,"hex":"00000000000000000000000000000000"}
+[PASS] exploit/winring0/unsafe-guard: [warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] payload mapping failed (victim driver is not present in the module list); continuing with the driver backend
+{"error":{"code":"not_supported","message":"this driver has the WinRing0 unsafe-physical-mapping bug; kernel virtual memory reads are disabled to avoid a bugcheck"}}
+[PASS] exploit/winring0/traces: {
+  "clean": false,
+  "findings": [
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    },
+    {
+      "category": "eventlog",
+      "cleaned": false,
+      "description": "2 Service Control Manager install event(s) reference the driver (selective deletion not supported by Windows)",
+      "location": "System log, EventID 7045"
+    }
+  ]
+}
+[FAIL] payload/map: {"error":{"code":"no_suitable_exploit","message":"gdrv: cannot start service 'GIO': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)"}}
+[PASS] memory/physical-read: [warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] payload mapping failed (victim driver is not present in the module list); continuing with the driver backend
+{"address":"0x1000","size":64,"hex":"00000000000000000000000000000000000601010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+[PASS] memory/modules: [warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] payload mapping failed (victim driver is not present in the module list); continuing with the driver backend
+[
+  {
+    "base": "0xfffff8078d200000",
+    "name": "ntoskrnl.exe",
+    "path": "\\SystemRoot\\system32\\ntoskrnl.exe",
+    "size": 21299200
+  },
+  {
+    "base": "0xfffff8078ea00000",
+    "name": "hal.dll",
+    "path": "\\SystemRoot\\system32\\hal.dll",
+    "size": 24576
+  },
+  {
+    "base": "0xfffff8071ebd0000",
+    "name": "kdcom.dll",
+    "path": "\\SystemRoot\\system32\\kdcom.dll",
+    "size": 65536
+  },
+  {
+    "base": "0xfffff8071e450000",
+    "name": "mcupdate_GenuineIntel.dll",
+    "path": "\\SystemRoot\\system32\\mcupdate_GenuineIntel.dll",
+    "size": 3612672
+  },
+  {
+    "base": "0xfffff8071ebf0000",
+    "name": "symcryptk.dll",
+    "path": "\\SystemRoot\\system32\\symcryptk.dll",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff8071ecc0000",
+    "name": "cng.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\cng.sys",
+    "size": 917504
+  },
+  {
+    "base": "0xfffff8071ec30000",
+    "name": "CLFS.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\CLFS.SYS",
+    "size": 573440
+  },
+  {
+    "base": "0xfffff8071ec00000",
+    "name": "tm.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\tm.sys",
+    "size": 180224
+  },
+  {
+    "base": "0xfffff8071edb0000",
+    "name": "winaccel.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\winaccel.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff8071edd0000",
+    "name": "PSHED.dll",
+    "path": "\\SystemRoot\\system32\\PSHED.dll",
+    "size": 110592
+  },
+  {
+    "base": "0xfffff8071edf0000",
+    "name": "BOOTVID.dll",
+    "path": "\\SystemRoot\\system32\\BOOTVID.dll",
+    "size": 53248
+  },
+  {
+    "base": "0xfffff8071ef20000",
+    "name": "FLTMGR.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\FLTMGR.SYS",
+    "size": 610304
+  },
+  {
+    "base": "0xfffff8071f000000",
+    "name": "msrpc.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\msrpc.sys",
+    "size": 401408
+  },
+  {
+    "base": "0xfffff8071efc0000",
+    "name": "ksecdd.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\ksecdd.sys",
+    "size": 200704
+  },
+  {
+    "base": "0xfffff8071ee00000",
+    "name": "clipsp.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\clipsp.sys",
+    "size": 1130496
+  },
+  {
+    "base": "0xfffff8071f070000",
+    "name": "cmimcext.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\cmimcext.sys",
+    "size": 65536
+  },
+  {
+    "base": "0xfffff8071f090000",
+    "name": "werkernel.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\werkernel.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff8071f0b0000",
+    "name": "ntosext.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\ntosext.sys",
+    "size": 53248
+  },
+  {
+    "base": "0xfffff8071f190000",
+    "name": "watchdog.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\watchdog.sys",
+    "size": 131072
+  },
+  {
+    "base": "0xfffff8071f6c0000",
+    "name": "WMILIB.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\WMILIB.SYS",
+    "size": 53248
+  },
+  {
+    "base": "0xfffff8071f1c0000",
+    "name": "dxgkrnl.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\dxgkrnl.sys",
+    "size": 5185536
+  },
+  {
+    "base": "0xfffff8071f0c0000",
+    "name": "win32k.sys",
+    "path": "\\SystemRoot\\System32\\win32k.sys",
+    "size": 811008
+  },
+  {
+    "base": "0xfffff8071f6d0000",
+    "name": "CI.dll",
+    "path": "\\SystemRoot\\system32\\CI.dll",
+    "size": 1114112
+  },
+  {
+    "base": "0xfffff8071f7f0000",
+    "name": "globmerger.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\globmerger.sys",
+    "size": 135168
+  },
+  {
+    "base": "0xfffff8071f820000",
+    "name": "Wdf01000.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\Wdf01000.sys",
+    "size": 987136
+  },
+  {
+    "base": "0xfffff8071f940000",
+    "name": "WppRecorder.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\WppRecorder.sys",
+    "size": 81920
+  },
+  {
+    "base": "0xfffff8071f920000",
+    "name": "WDFLDR.SYS",
+    "path": "\\SystemRoot\\system32\\drivers\\WDFLDR.SYS",
+    "size": 94208
+  },
+  {
+    "base": "0xfffff8071f960000",
+    "name": "PRM.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\prm.inf_amd64_7c38475757a1f016\\PRM.sys",
+    "size": 61440
+  },
+  {
+    "base": "0xfffff8071f980000",
+    "name": "acpiex.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\acpiex.sys",
+    "size": 172032
+  },
+  {
+    "base": "0xfffff8071f9b0000",
+    "name": "msseccore.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\msseccore.sys",
+    "size": 61440
+  },
+  {
+    "base": "0xfffff8071f9d0000",
+    "name": "ACPI.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\ACPI.sys",
+    "size": 876544
+  },
+  {
+    "base": "0xfffff8071fec0000",
+    "name": "amdwps.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\amdwps.sys",
+    "size": 57344
+  },
+  {
+    "base": "0xfffff8071fee0000",
+    "name": "WindowsTrustedRT.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\WindowsTrustedRT.sys",
+    "size": 98304
+  },
+  {
+    "base": "0xfffff8071ff00000",
+    "name": "intelpep.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\intelpep.sys",
+    "size": 671744
+  },
+  {
+    "base": "0xfffff8071ffb0000",
+    "name": "WindowsTrustedRTProxy.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\WindowsTrustedRTProxy.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff8071ffc0000",
+    "name": "IntelPMT.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\IntelPMT.sys",
+    "size": 77824
+  },
+  {
+    "base": "0xfffff8071ffe0000",
+    "name": "pcw.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pcw.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff80720000000",
+    "name": "msisadrv.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\msisadrv.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff80720010000",
+    "name": "isapnp.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\isapnp.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff80720020000",
+    "name": "pci.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pci.sys",
+    "size": 602112
+  },
+  {
+    "base": "0xfffff807200c0000",
+    "name": "vdrvroot.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vdrvroot.sys",
+    "size": 114688
+  },
+  {
+    "base": "0xfffff807200e0000",
+    "name": "ucx01000.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\ucx01000.sys",
+    "size": 303104
+  },
+  {
+    "base": "0xfffff80720130000",
+    "name": "pdc.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\pdc.sys",
+    "size": 229376
+  },
+  {
+    "base": "0xfffff80720170000",
+    "name": "CEA.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\CEA.sys",
+    "size": 98304
+  },
+  {
+    "base": "0xfffff80720190000",
+    "name": "partmgr.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\partmgr.sys",
+    "size": 217088
+  },
+  {
+    "base": "0xfffff807201d0000",
+    "name": "nvraid.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\nvraid.sys",
+    "size": 163840
+  },
+  {
+    "base": "0xfffff80720200000",
+    "name": "CLASSPNP.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\CLASSPNP.SYS",
+    "size": 495616
+  },
+  {
+    "base": "0xfffff80720280000",
+    "name": "evbd0a.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\evbd0a.sys",
+    "size": 3596288
+  },
+  {
+    "base": "0xfffff80720600000",
+    "name": "evbda.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\evbda.sys",
+    "size": 3612672
+  },
+  {
+    "base": "0xfffff80720980000",
+    "name": "pcmcia.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pcmcia.sys",
+    "size": 147456
+  },
+  {
+    "base": "0xfffff807209b0000",
+    "name": "spaceport.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\spaceport.sys",
+    "size": 1015808
+  },
+  {
+    "base": "0xfffff80720ab0000",
+    "name": "pciide.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pciide.sys",
+    "size": 45056
+  },
+  {
+    "base": "0xfffff80720ac0000",
+    "name": "PCIIDEX.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\PCIIDEX.SYS",
+    "size": 81920
+  },
+  {
+    "base": "0xfffff80720ae0000",
+    "name": "volmgr.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\volmgr.sys",
+    "size": 122880
+  },
+  {
+    "base": "0xfffff80720b10000",
+    "name": "intelide.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\intelide.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff80720b20000",
+    "name": "volmgrx.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\volmgrx.sys",
+    "size": 409600
+  },
+  {
+    "base": "0xfffff80720b90000",
+    "name": "sdbus.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\sdbus.sys",
+    "size": 339968
+  },
+  {
+    "base": "0xfffff80720bf0000",
+    "name": "vmbus.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vmbus.sys",
+    "size": 217088
+  },
+  {
+    "base": "0xfffff80720c30000",
+    "name": "vmbkmcl.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vmbkmcl.sys",
+    "size": 151552
+  },
+  {
+    "base": "0xfffff80720c60000",
+    "name": "winhv.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\winhv.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff80720d70000",
+    "name": "NDIS.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\NDIS.SYS",
+    "size": 1851392
+  },
+  {
+    "base": "0xfffff80720cb0000",
+    "name": "NETIO.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\NETIO.SYS",
+    "size": 753664
+  },
+  {
+    "base": "0xfffff80720c80000",
+    "name": "hvsocket.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\hvsocket.sys",
+    "size": 184320
+  },
+  {
+    "base": "0xfffff80720f40000",
+    "name": "vpci.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vpci.sys",
+    "size": 159744
+  },
+  {
+    "base": "0xfffff80720f70000",
+    "name": "bxvbda.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\bxvbda.sys",
+    "size": 561152
+  },
+  {
+    "base": "0xfffff80721000000",
+    "name": "vsock.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\vsock.sys",
+    "size": 98304
+  },
+  {
+    "base": "0xfffff80721020000",
+    "name": "vmci.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vmci.sys",
+    "size": 118784
+  },
+  {
+    "base": "0xfffff80721040000",
+    "name": "urscx01000.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\urscx01000.sys",
+    "size": 102400
+  },
+  {
+    "base": "0xfffff80721060000",
+    "name": "mountmgr.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\mountmgr.sys",
+    "size": 126976
+  },
+  {
+    "base": "0xfffff80721090000",
+    "name": "iaStorV.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\iaStorV.sys",
+    "size": 1171456
+  },
+  {
+    "base": "0xfffff807211c0000",
+    "name": "stexstor.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\stexstor.sys",
+    "size": 45056
+  },
+  {
+    "base": "0xfffff807211d0000",
+    "name": "storport.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\storport.sys",
+    "size": 2551808
+  },
+  {
+    "base": "0xfffff80721450000",
+    "name": "AppleSSD.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\AppleSSD.sys",
+    "size": 143360
+  },
+  {
+    "base": "0xfffff80721480000",
+    "name": "3ware.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\3ware.sys",
+    "size": 122880
+  },
+  {
+    "base": "0xfffff807214b0000",
+    "name": "amdsata.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\amdsata.sys",
+    "size": 126976
+  },
+  {
+    "base": "0xfffff807214e0000",
+    "name": "amdxata.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\amdxata.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff807214f0000",
+    "name": "amdsbs.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\amdsbs.sys",
+    "size": 421888
+  },
+  {
+    "base": "0xfffff80721560000",
+    "name": "arcsas.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\arcsas.sys",
+    "size": 151552
+  },
+  {
+    "base": "0xfffff80721590000",
+    "name": "ItSas35i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\ItSas35i.sys",
+    "size": 200704
+  },
+  {
+    "base": "0xfffff807215d0000",
+    "name": "lsi_sas.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\lsi_sas.sys",
+    "size": 126976
+  },
+  {
+    "base": "0xfffff80721600000",
+    "name": "lsi_sas2i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\lsi_sas2i.sys",
+    "size": 135168
+  },
+  {
+    "base": "0xfffff80721630000",
+    "name": "lsi_sas3i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\lsi_sas3i.sys",
+    "size": 147456
+  },
+  {
+    "base": "0xfffff80721660000",
+    "name": "MegaSas2i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\MegaSas2i.sys",
+    "size": 94208
+  },
+  {
+    "base": "0xfffff80721680000",
+    "name": "megasas35i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\megasas35i.sys",
+    "size": 110592
+  },
+  {
+    "base": "0xfffff807216a0000",
+    "name": "megasr.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\megasr.sys",
+    "size": 978944
+  },
+  {
+    "base": "0xfffff807217a0000",
+    "name": "mpi3drvi.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\mpi3drvi.sys",
+    "size": 102400
+  },
+  {
+    "base": "0xfffff807217c0000",
+    "name": "mvumis.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\mvumis.sys",
+    "size": 77824
+  },
+  {
+    "base": "0xfffff807217e0000",
+    "name": "nvstor.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\nvstor.sys",
+    "size": 172032
+  },
+  {
+    "base": "0xfffff80721810000",
+    "name": "percsas2i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\percsas2i.sys",
+    "size": 73728
+  },
+  {
+    "base": "0xfffff80721830000",
+    "name": "percsas3i.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\percsas3i.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff80721850000",
+    "name": "pvscsii.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pvscsii.sys",
+    "size": 57344
+  },
+  {
+    "base": "0xfffff80721870000",
+    "name": "SiSRaid2.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\SiSRaid2.sys",
+    "size": 57344
+  },
+  {
+    "base": "0xfffff80721890000",
+    "name": "sisraid4.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\sisraid4.sys",
+    "size": 98304
+  },
+  {
+    "base": "0xfffff807218b0000",
+    "name": "vsmraid.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vsmraid.sys",
+    "size": 176128
+  },
+  {
+    "base": "0xfffff807218e0000",
+    "name": "vstxraid.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vstxraid.sys",
+    "size": 319488
+  },
+  {
+    "base": "0xfffff80721940000",
+    "name": "cht4sx64.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\cht4sx64.sys",
+    "size": 376832
+  },
+  {
+    "base": "0xfffff807219a0000",
+    "name": "iaStorAVC.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\iaStorAVC.sys",
+    "size": 1134592
+  },
+  {
+    "base": "0xfffff80721ac0000",
+    "name": "atapi.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\atapi.sys",
+    "size": 57344
+  },
+  {
+    "base": "0xfffff80721ae0000",
+    "name": "ataport.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\ataport.SYS",
+    "size": 274432
+  },
+  {
+    "base": "0xfffff80721b30000",
+    "name": "storahci.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\storahci.sys",
+    "size": 225280
+  },
+  {
+    "base": "0xfffff80721b70000",
+    "name": "ADP80XX.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\ADP80XX.SYS",
+    "size": 2473984
+  },
+  {
+    "base": "0xfffff80721dd0000",
+    "name": "HpSAMD.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\HpSAMD.sys",
+    "size": 77824
+  },
+  {
+    "base": "0xfffff80721df0000",
+    "name": "SmartSAMD.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\SmartSAMD.sys",
+    "size": 221184
+  },
+  {
+    "base": "0xfffff80721e30000",
+    "name": "stornvme.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\stornvme.sys",
+    "size": 319488
+  },
+  {
+    "base": "0xfffff80721e90000",
+    "name": "nvdimm.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\nvdimm.sys",
+    "size": 200704
+  },
+  {
+    "base": "0xfffff80721ed0000",
+    "name": "EhStorTcgDrv.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\EhStorTcgDrv.sys",
+    "size": 159744
+  },
+  {
+    "base": "0xfffff80721f00000",
+    "name": "EhStorClass.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\EhStorClass.sys",
+    "size": 155648
+  },
+  {
+    "base": "0xfffff80721f30000",
+    "name": "fileinfo.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\fileinfo.sys",
+    "size": 118784
+  },
+  {
+    "base": "0xfffff80721f50000",
+    "name": "Wof.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\Wof.sys",
+    "size": 278528
+  },
+  {
+    "base": "0xfffff80721fa0000",
+    "name": "WdFilter.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\WdFilter.sys",
+    "size": 634880
+  },
+  {
+    "base": "0xfffff80722040000",
+    "name": "Ntfs.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\Ntfs.sys",
+    "size": 3575808
+  },
+  {
+    "base": "0xfffff807223b0000",
+    "name": "usbccgp.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\usbccgp.sys",
+    "size": 212992
+  },
+  {
+    "base": "0xfffff807223f0000",
+    "name": "USBD.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\USBD.SYS",
+    "size": 65536
+  },
+  {
+    "base": "0xfffff80722410000",
+    "name": "urschipidea.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\urschipidea.inf_amd64_37fb14618bce547b\\urschipidea.sys",
+    "size": 61440
+  },
+  {
+    "base": "0xfffff80722430000",
+    "name": "storvsc.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\storvsc.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff80722450000",
+    "name": "usbehci.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\usbehci.sys",
+    "size": 118784
+  },
+  {
+    "base": "0xfffff80722470000",
+    "name": "USBPORT.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\USBPORT.SYS",
+    "size": 499712
+  },
+  {
+    "base": "0xfffff807224f0000",
+    "name": "usbhub.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\usbhub.sys",
+    "size": 561152
+  },
+  {
+    "base": "0xfffff80722580000",
+    "name": "UsbHub3.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\UsbHub3.sys",
+    "size": 737280
+  },
+  {
+    "base": "0xfffff80722640000",
+    "name": "Fs_Rec.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\Fs_Rec.sys",
+    "size": 61440
+  },
+  {
+    "base": "0xfffff80722660000",
+    "name": "ksecpkg.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\ksecpkg.sys",
+    "size": 225280
+  },
+  {
+    "base": "0xfffff807226a0000",
+    "name": "Kerb3961Kernel.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\Kerb3961Kernel.sys",
+    "size": 135168
+  },
+  {
+    "base": "0xfffff807226d0000",
+    "name": "tcpip.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\tcpip.sys",
+    "size": 3522560
+  },
+  {
+    "base": "0xfffff80722a30000",
+    "name": "fwpkclnt.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\fwpkclnt.sys",
+    "size": 573440
+  },
+  {
+    "base": "0xfffff80722ac0000",
+    "name": "wfplwfs.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\wfplwfs.sys",
+    "size": 237568
+  },
+  {
+    "base": "0xfffff80722b00000",
+    "name": "vmstorfl.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vmstorfl.sys",
+    "size": 77824
+  },
+  {
+    "base": "0xfffff80722b20000",
+    "name": "fvevol.sys",
+    "path": "\\SystemRoot\\System32\\DRIVERS\\fvevol.sys",
+    "size": 958464
+  },
+  {
+    "base": "0xfffff80722c10000",
+    "name": "bttflt.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\bttflt.sys",
+    "size": 69632
+  },
+  {
+    "base": "0xfffff80722c30000",
+    "name": "volume.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\volume.sys",
+    "size": 45056
+  },
+  {
+    "base": "0xfffff80722c40000",
+    "name": "volsnap.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\volsnap.sys",
+    "size": 524288
+  },
+  {
+    "base": "0xfffff80722cd0000",
+    "name": "USBXHCI.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\USBXHCI.SYS",
+    "size": 724992
+  },
+  {
+    "base": "0xfffff80722d90000",
+    "name": "USBSTOR.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\USBSTOR.SYS",
+    "size": 196608
+  },
+  {
+    "base": "0xfffff80722dd0000",
+    "name": "uaspstor.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\uaspstor.sys",
+    "size": 110592
+  },
+  {
+    "base": "0xfffff80722df0000",
+    "name": "storufs.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\storufs.sys",
+    "size": 139264
+  },
+  {
+    "base": "0xfffff80722e20000",
+    "name": "sdstor.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\sdstor.sys",
+    "size": 131072
+  },
+  {
+    "base": "0xfffff80722e50000",
+    "name": "scmbus.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\scmbus.sys",
+    "size": 249856
+  },
+  {
+    "base": "0xfffff80722e90000",
+    "name": "sbp2port.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\sbp2port.sys",
+    "size": 139264
+  },
+  {
+    "base": "0xfffff80722ec0000",
+    "name": "rdyboost.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\rdyboost.sys",
+    "size": 319488
+  },
+  {
+    "base": "0xfffff80722f20000",
+    "name": "pmem.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pmem.sys",
+    "size": 176128
+  },
+  {
+    "base": "0xfffff80722f50000",
+    "name": "nvmedisk.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\nvmedisk.sys",
+    "size": 118784
+  },
+  {
+    "base": "0xfffff80722f70000",
+    "name": "mup.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\mup.sys",
+    "size": 172032
+  },
+  {
+    "base": "0xfffff80722fa0000",
+    "name": "iorate.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\iorate.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff80722fe0000",
+    "name": "genpass.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\genpass.inf_amd64_0c82d80c9252c9bd\\genpass.sys",
+    "size": 53248
+  },
+  {
+    "base": "0xfffff80722ff0000",
+    "name": "disk.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\disk.sys",
+    "size": 135168
+  },
+  {
+    "base": "0xfffff80723830000",
+    "name": "cdrom.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\cdrom.sys",
+    "size": 221184
+  },
+  {
+    "base": "0xfffff80723870000",
+    "name": "filecrypt.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\filecrypt.sys",
+    "size": 94208
+  },
+  {
+    "base": "0xfffff80723890000",
+    "name": "tbs.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\tbs.sys",
+    "size": 69632
+  },
+  {
+    "base": "0xfffff807238b0000",
+    "name": "Null.SYS",
+    "path": "\\SystemRoot\\System32\\Drivers\\Null.SYS",
+    "size": 45056
+  },
+  {
+    "base": "0xfffff807238c0000",
+    "name": "Beep.SYS",
+    "path": "\\SystemRoot\\System32\\Drivers\\Beep.SYS",
+    "size": 40960
+  },
+  {
+    "base": "0xfffff807238d0000",
+    "name": "vmrawdsk.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\vmrawdsk.sys",
+    "size": 69632
+  },
+  {
+    "base": "0xfffff80723910000",
+    "name": "BasicDisplay.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\basicdisplay.inf_amd64_2753efdbb0d9a226\\BasicDisplay.sys",
+    "size": 106496
+  },
+  {
+    "base": "0xfffff80723930000",
+    "name": "BasicRender.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\basicrender.inf_amd64_3ee4bbe654c2a277\\BasicRender.sys",
+    "size": 81920
+  },
+  {
+    "base": "0xfffff80723950000",
+    "name": "Npfs.SYS",
+    "path": "\\SystemRoot\\System32\\Drivers\\Npfs.SYS",
+    "size": 114688
+  },
+  {
+    "base": "0xfffff80723970000",
+    "name": "Msfs.SYS",
+    "path": "\\SystemRoot\\System32\\Drivers\\Msfs.SYS",
+    "size": 73728
+  },
+  {
+    "base": "0xfffff80723990000",
+    "name": "CimFS.SYS",
+    "path": "\\SystemRoot\\System32\\Drivers\\CimFS.SYS",
+    "size": 282624
+  },
+  {
+    "base": "0xfffff80723200000",
+    "name": "tdx.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\tdx.sys",
+    "size": 176128
+  },
+  {
+    "base": "0xfffff80723230000",
+    "name": "TDI.SYS",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\TDI.SYS",
+    "size": 77824
+  },
+  {
+    "base": "0xfffff80723250000",
+    "name": "ws2ifsl.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\ws2ifsl.sys",
+    "size": 61440
+  },
+  {
+    "base": "0xfffff80723270000",
+    "name": "netbt.sys",
+    "path": "\\SystemRoot\\System32\\DRIVERS\\netbt.sys",
+    "size": 356352
+  },
+  {
+    "base": "0xfffff807232d0000",
+    "name": "afunix.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\afunix.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff807232f0000",
+    "name": "afd.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\afd.sys",
+    "size": 733184
+  },
+  {
+    "base": "0xfffff807233b0000",
+    "name": "vwififlt.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vwififlt.sys",
+    "size": 122880
+  },
+  {
+    "base": "0xfffff807233e0000",
+    "name": "pacer.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\pacer.sys",
+    "size": 196608
+  },
+  {
+    "base": "0xfffff80723420000",
+    "name": "ndiscap.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\ndiscap.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff80723440000",
+    "name": "netbios.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\netbios.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff80723460000",
+    "name": "Vid.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\Vid.sys",
+    "size": 905216
+  },
+  {
+    "base": "0xfffff80723540000",
+    "name": "winhvr.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\winhvr.sys",
+    "size": 167936
+  },
+  {
+    "base": "0xfffff80723570000",
+    "name": "rdbss.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\rdbss.sys",
+    "size": 577536
+  },
+  {
+    "base": "0xfffff80723600000",
+    "name": "csc.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\csc.sys",
+    "size": 626688
+  },
+  {
+    "base": "0xfffff807236a0000",
+    "name": "nsiproxy.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\nsiproxy.sys",
+    "size": 77824
+  },
+  {
+    "base": "0xfffff807236c0000",
+    "name": "npsvctrig.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\npsvctrig.sys",
+    "size": 61440
+  },
+  {
+    "base": "0xfffff807236e0000",
+    "name": "mssmbios.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\mssmbios.sys",
+    "size": 69632
+  },
+  {
+    "base": "0xfffff80723700000",
+    "name": "dfsc.sys",
+    "path": "\\SystemRoot\\System32\\Drivers\\dfsc.sys",
+    "size": 196608
+  },
+  {
+    "base": "0xfffff80723790000",
+    "name": "bam.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\bam.sys",
+    "size": 118784
+  },
+  {
+    "base": "0xfffff807237b0000",
+    "name": "ahcache.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\ahcache.sys",
+    "size": 376832
+  },
+  {
+    "base": "0xfffff80723810000",
+    "name": "CompositeBus.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\compositebus.inf_amd64_8cf6fa9d3afdfa25\\CompositeBus.sys",
+    "size": 81920
+  },
+  {
+    "base": "0xfffff807238f0000",
+    "name": "kdnic.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\kdnic.sys",
+    "size": 69632
+  },
+  {
+    "base": "0xfffff807239e0000",
+    "name": "umbus.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\umbus.inf_amd64_914dd46b4b013b1b\\umbus.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff80723740000",
+    "name": "i8042prt.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\i8042prt.sys",
+    "size": 155648
+  },
+  {
+    "base": "0xfffff80723770000",
+    "name": "kbdclass.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\kbdclass.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff80724470000",
+    "name": "vmmouse.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vmmouse.sys",
+    "size": 36864
+  },
+  {
+    "base": "0xfffff80724480000",
+    "name": "mouclass.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\mouclass.sys",
+    "size": 86016
+  },
+  {
+    "base": "0xfffff807244a0000",
+    "name": "vm3dmp_loader.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\vm3d.inf_amd64_eba3f0b96d8538e4\\vm3dmp_loader.sys",
+    "size": 40960
+  },
+  {
+    "base": "0xfffff807244b0000",
+    "name": "vm3dmp.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\vm3d.inf_amd64_eba3f0b96d8538e4\\vm3dmp.sys",
+    "size": 364544
+  },
+  {
+    "base": "0xfffff80724510000",
+    "name": "e1i68x64.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\e1i68x64.sys",
+    "size": 602112
+  },
+  {
+    "base": "0xfffff807245b0000",
+    "name": "vmgencounter.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\vmgencounter.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff807245c0000",
+    "name": "CmBatt.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\CmBatt.sys",
+    "size": 94208
+  },
+  {
+    "base": "0xfffff80723a00000",
+    "name": "BATTC.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\BATTC.SYS",
+    "size": 135168
+  },
+  {
+    "base": "0xfffff80723a30000",
+    "name": "intelppm.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\intelppm.sys",
+    "size": 327680
+  },
+  {
+    "base": "0xfffff80723a90000",
+    "name": "NdisVirtualBus.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\NdisVirtualBus.sys",
+    "size": 57344
+  },
+  {
+    "base": "0xfffff80723ab0000",
+    "name": "swenum.sys",
+    "path": "\\SystemRoot\\System32\\DriverStore\\FileRepository\\swenum.inf_amd64_8b9dd76f362e3ec6\\swenum.sys",
+    "size": 49152
+  },
+  {
+    "base": "0xfffff80723ac0000",
+    "name": "ks.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\ks.sys",
+    "size": 548864
+  },
+  {
+    "base": "0xfffff80723b50000",
+    "name": "rdpbus.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\rdpbus.sys",
+    "size": 57344
+  },
+  {
+    "base": "0xfffff80723b70000",
+    "name": "cdfs.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\cdfs.sys",
+    "size": 131072
+  },
+  {
+    "base": "0xfffff80723ba0000",
+    "name": "win32kbase.sys",
+    "path": "\\SystemRoot\\System32\\win32kbase.sys",
+    "size": 3350528
+  },
+  {
+    "base": "0xfffff80723ee0000",
+    "name": "HIDPARSE.SYS",
+    "path": "\\SystemRoot\\System32\\drivers\\HIDPARSE.SYS",
+    "size": 81920
+  },
+  {
+    "base": "0xfffff80723f00000",
+    "name": "win32kfull.sys",
+    "path": "\\SystemRoot\\System32\\win32kfull.sys",
+    "size": 4276224
+  },
+  {
+    "base": "0xfffff80724320000",
+    "name": "win32kbase_rs.sys",
+    "path": "\\SystemRoot\\System32\\win32kbase_rs.sys",
+    "size": 159744
+  },
+  {
+    "base": "0xfffff80724350000",
+    "name": "monitor.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\monitor.sys",
+    "size": 126976
+  },
+  {
+    "base": "0xfffff80724fc0000",
+    "name": "dxgmms2.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\dxgmms2.sys",
+    "size": 1191936
+  },
+  {
+    "base": "0xfffff807250f0000",
+    "name": "cdd.dll",
+    "path": "\\SystemRoot\\System32\\cdd.dll",
+    "size": 335872
+  },
+  {
+    "base": "0xfffff80725150000",
+    "name": "bfs.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\bfs.sys",
+    "size": 143360
+  },
+  {
+    "base": "0xfffff807251c0000",
+    "name": "wcifs.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\wcifs.sys",
+    "size": 245760
+  },
+  {
+    "base": "0xfffff80724600000",
+    "name": "cldflt.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\cldflt.sys",
+    "size": 598016
+  },
+  {
+    "base": "0xfffff807246a0000",
+    "name": "UnionFS.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\UnionFS.sys",
+    "size": 487424
+  },
+  {
+    "base": "0xfffff80724720000",
+    "name": "storqosflt.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\storqosflt.sys",
+    "size": 110592
+  },
+  {
+    "base": "0xfffff80724740000",
+    "name": "UCPD.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\UCPD.sys",
+    "size": 167936
+  },
+  {
+    "base": "0xfffff80724770000",
+    "name": "bindflt.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\bindflt.sys",
+    "size": 184320
+  },
+  {
+    "base": "0xfffff807247a0000",
+    "name": "lltdio.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\lltdio.sys",
+    "size": 106496
+  },
+  {
+    "base": "0xfffff807247c0000",
+    "name": "mslldp.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\mslldp.sys",
+    "size": 106496
+  },
+  {
+    "base": "0xfffff807247e0000",
+    "name": "rspndr.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\rspndr.sys",
+    "size": 122880
+  },
+  {
+    "base": "0xfffff80724810000",
+    "name": "HTTP.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\HTTP.sys",
+    "size": 2039808
+  },
+  {
+    "base": "0xfffff80724a10000",
+    "name": "mpsdrv.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\mpsdrv.sys",
+    "size": 114688
+  },
+  {
+    "base": "0xfffff80724a30000",
+    "name": "bowser.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\bowser.sys",
+    "size": 172032
+  },
+  {
+    "base": "0xfffff80724a60000",
+    "name": "mrxsmb.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\mrxsmb.sys",
+    "size": 925696
+  },
+  {
+    "base": "0xfffff80724b50000",
+    "name": "mrxsmb20.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\mrxsmb20.sys",
+    "size": 380928
+  },
+  {
+    "base": "0xfffff80724bb0000",
+    "name": "vmmemctl.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\vmmemctl.sys",
+    "size": 40960
+  },
+  {
+    "base": "0xfffff80724bc0000",
+    "name": "srvnet.sys",
+    "path": "\\SystemRoot\\System32\\DRIVERS\\srvnet.sys",
+    "size": 405504
+  },
+  {
+    "base": "0xfffff80724c30000",
+    "name": "mmcss.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\mmcss.sys",
+    "size": 94208
+  },
+  {
+    "base": "0xfffff80724c50000",
+    "name": "Ndu.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\Ndu.sys",
+    "size": 184320
+  },
+  {
+    "base": "0xfffff80724ca0000",
+    "name": "peauth.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\peauth.sys",
+    "size": 872448
+  },
+  {
+    "base": "0xfffff80724d80000",
+    "name": "srv2.sys",
+    "path": "\\SystemRoot\\System32\\DRIVERS\\srv2.sys",
+    "size": 1019904
+  },
+  {
+    "base": "0xfffff80724e80000",
+    "name": "tcpipreg.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\tcpipreg.sys",
+    "size": 90112
+  },
+  {
+    "base": "0xfffff80724ea0000",
+    "name": "wtd.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\wtd.sys",
+    "size": 118784
+  },
+  {
+    "base": "0xfffff80724ec0000",
+    "name": "vmhgfs.sys",
+    "path": "\\SystemRoot\\system32\\DRIVERS\\vmhgfs.sys",
+    "size": 180224
+  },
+  {
+    "base": "0xfffff80724ef0000",
+    "name": "condrv.sys",
+    "path": "\\SystemRoot\\System32\\drivers\\condrv.sys",
+    "size": 81920
+  },
+  {
+    "base": "0xfffff80724f10000",
+    "name": "KslD.sys",
+    "path": "\\SystemRoot\\system32\\drivers\\KslD.sys",
+    "size": 348160
+  },
+  {
+    "base": "0xfffff80724f70000",
+    "name": "WdNisDrv.sys",
+    "path": "\\SystemRoot\\system32\\Drivers\\WdNisDrv.sys",
+    "size": 110592
+  },
+  {
+    "base": "0xfffff80725180000",
+    "name": "kdu_AsrDrv107n_131BF619-F42A43F401A74B91.sys",
+    "path": "\\??\\C:\\Windows\\Temp\\kdu_AsrDrv107n_131BF619-F42A43F401A74B91.sys",
+    "size": 45056
+  }
+]
+[FAIL] memory/virtual-read: ntoskrnl.exe not found
+[FAIL] memory/process-read: pid=7264 hex=
+[FAIL] memory/process-write: kdu.exe : --pid is required
+所在位置 C:\kdu-e2e\guest-run.ps1:54 字符: 19
++         $output = & $kdu @arguments 2>&1 | Out-String
++                   ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (--pid is required:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Run with --help for more information.
+[FAIL] dse/status: options=
+[PASS] dse/disable: not available on this build: [warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] image has an exception directory: SEH inside a manually mapped image only works if the kernel has the unwind tables registered; the payload must not rely on SEH
+[warning] payload mapping failed (victim driver is not present in the module list); continuing with the driver backend
+{"error":{"code":"address_translation_failed","message":"failed to read PML4 entry @ 18446735308208537600"}}
+[PASS] dse/restore: nothing to restore
+--- stderr ---
+C:\kdu-e2e\guest-run.ps1 : 无法将“Test-DriverLoad”项识别为 cmdlet、函数、脚本文件或可运行程序的名称。请检查名称的拼写，如果包括路径，请确保路径正
+确，然后再试一次。
+    + CategoryInfo          : ObjectNotFound: (Test-DriverLoad:String) [guest-run.ps1], CommandNo 
+   tFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException,guest-run.ps1
+ 
+

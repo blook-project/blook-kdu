@@ -117,7 +117,13 @@ foreach ($source in $sources) {
     } else {
         Copy-Item $source.source $destination -Force
         Strip-Authenticode $destination
-        if ($signer -and (Test-Path $signer)) {
+        $isCi = ($env:GITHUB_ACTIONS -eq 'true') -or ($env:CI -eq 'true')
+        if ($isCi) {
+            # Hosted runners cannot use the SPC/TSA assets (they are only needed
+            # for interactive test-signing VMs). CI still validates the asset
+            # pipeline and embeds valid PEs; release/e2e builds sign locally.
+            Write-Host "CI: embedding stripped (unsigned) $($source.binary)"
+        } elseif ($signer -and (Test-Path $signer)) {
             & pwsh -NoProfile -ExecutionPolicy Bypass -File `
                 (Join-Path $Root 'scripts/sign.ps1') -Files $destination | Out-Null
             if ($LASTEXITCODE -ne 0) { throw "signing failed: $destination" }
@@ -136,5 +142,6 @@ foreach ($entry in $entries) { $rc += $entry }
 Set-Content -Path $rcPath -Value $rc -Encoding ascii
 Write-Host ("prepared {0} embedded driver asset(s): {1} signed, {2} cached" -f `
             $entries.Count, $signedCount, $skippedCount)
+
 
 
