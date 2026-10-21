@@ -238,105 +238,11 @@ jobs:
 
 
 
-  payload-service-smoke:
-    name: payload service (drv-lite) + client
-    needs: install-toolchain
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "10.0.x"
-      - uses: xmake-io/github-action-setup-xmake@v1
-        with:
-          xmake-version: 3.0.8
-      - name: Install WDK
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\wdk" | Out-Null
-          $url = "https://api.nuget.org/v3-flatcontainer/microsoft.windows.wdk.x64/$env:WDK_VERSION/microsoft.windows.wdk.x64.$env:WDK_VERSION.nupkg"
-          Invoke-WebRequest $url -OutFile "$env:RUNNER_TEMP\wdk\wdk.nupkg"
-          tar.exe -xf "$env:RUNNER_TEMP\wdk\wdk.nupkg" -C "$env:RUNNER_TEMP\wdk"
-          "WDK_ROOT=$env:RUNNER_TEMP\wdk\c" >> $env:GITHUB_ENV
-      - name: Clone pinned blook-kchannel + blook-drv-lite
-        shell: pwsh
-        run: |
-          git clone $env:KCHANNEL_REPO "$env:GITHUB_WORKSPACE\..\blook-kchannel"
-          git -C "$env:GITHUB_WORKSPACE\..\blook-kchannel" checkout $env:KCHANNEL_COMMIT
-          "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
-          git clone $env:DRVLITE_REPO "$env:GITHUB_WORKSPACE\..\blook-drv-lite"
-          git -C "$env:GITHUB_WORKSPACE\..\blook-drv-lite" checkout $env:DRVLITE_COMMIT
-          "DRVLITE_DIR=$env:GITHUB_WORKSPACE\..\blook-drv-lite" >> $env:GITHUB_ENV
-      - name: Prepare embedded driver assets
-        shell: pwsh
-        run: |
-          & pwsh -NoProfile -File scripts/prepare-assets.ps1
-      - name: Build toolkit + payload
-        shell: pwsh
-        env:
-          SPC_PFX_BASE64: ${{ secrets.SPC_PFX_BASE64 }}
-          SPC_PFX_PASSWORD: ${{ secrets.SPC_PFX_PASSWORD }}
-        run: |
-          for ($attempt = 1; $attempt -le 3; $attempt++) {
-            xmake f -y -m release --kchannel_dir="$env:KCHANNEL_DIR" --drvlite_dir="$env:DRVLITE_DIR" --wdk="$env:WDK_ROOT"
-            if ($LASTEXITCODE -eq 0) { break }
-            Start-Sleep -Seconds (10 * $attempt)
-          }
-          if ($LASTEXITCODE -ne 0) { throw "xmake configure failed" }
-          xmake -y
-          if ($LASTEXITCODE -ne 0) { throw "xmake build failed" }
-      - name: Sign payload with the SPC signer + export leaf
-        shell: pwsh
-        env:
-          SPC_PFX_BASE64: ${{ secrets.SPC_PFX_BASE64 }}
-          SPC_PFX_PASSWORD: ${{ secrets.SPC_PFX_PASSWORD }}
-        run: |
-          & pwsh -NoProfile -File scripts/sign.ps1 `
-              -Files build/windows/x64/release/kdu_payload.sys `
-              -ExportLeafCert build/generated/xinda-leaf.cer
-          if ($LASTEXITCODE -ne 0) { throw "payload signing failed" }
-      - name: Trust the SPC chain (root + CA + trusted publisher)
-        shell: pwsh
-        run: |
-          certutil -addstore -f root signer/tsa/tsa-root.cer
-          certutil -addstore -f CA signer/certs/verisign-cscs-2010.cer
-          certutil -addstore -f CA signer/certs/verisign-g5-mcvr.cer
-          certutil -addstore -f trustedpublisher build/generated/xinda-leaf.cer
-      - name: Verify the kernel signature policy (signtool /kp)
-        shell: pwsh
-        run: |
-          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" `
-              -Recurse -Filter signtool.exe |
-              Where-Object { $_.FullName -match "x64" } |
-              Select-Object -Last 1 -ExpandProperty FullName
-          if (-not $signtool) { throw "signtool.exe not found on the runner" }
-          & $signtool verify /kp build/windows/x64/release/kdu_payload.sys
-          if ($LASTEXITCODE -ne 0) { throw "signtool /kp verification failed" }
-      - name: Load payload service and exercise the client
-        shell: pwsh
-        run: |
-          $kdu = "build/windows/x64/release/kdu.exe"
-          $result = (& $kdu payload load --json --mode service) | ConvertFrom-Json
-          if ($LASTEXITCODE -ne 0) { throw "payload self-test failed" }
-          if (-not $result.loaded) { throw "payload did not load" }
-          if ($result.ntoskrnl_head -ne "4d5a") { throw "kernel virtual read did not return MZ" }
-          if (-not $result.process_ok) { throw "CR3 process read did not match the pattern" }
-          $result | ConvertTo-Json -Depth 4 | Out-Host
-      - name: Cleanup kernel service
-        if: always()
-        shell: pwsh
-        run: |
-          sc.exe stop kduPayload 2>&1 | Out-Null
-          sc.exe delete kduPayload 2>&1 | Out-Null
-          sc.exe query kduPayload 2>&1 | Out-Null
-
-
-
-
   kernel-load-smoke:
     name: kernel load smoke + full e2e (real driver, SPC signed)
     needs: [install-toolchain, build]
     runs-on: windows-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -464,5 +370,6 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
 

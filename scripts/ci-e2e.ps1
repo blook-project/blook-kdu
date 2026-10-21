@@ -59,7 +59,17 @@ function Test-DriverLoad([string] $service, [string] $image) {
     Start-Sleep -Milliseconds 500
     if (-not (Test-Path $image)) { return @{ loaded = $false; output = 'missing image' } }
     $create = sc.exe create $service type= kernel start= demand binPath= $image 2>&1
-    $start = sc.exe start $service 2>&1
+    # Guarded start: a buggy image must not wedge the runner.
+    $startProcess = Start-Process sc.exe -ArgumentList "start $service" `
+        -NoNewWindow -PassThru -RedirectStandardOutput "$env:TEMP\sc-$service.log" `
+        -RedirectStandardError "$env:TEMP\sc-$service.err"
+    if (-not $startProcess.WaitForExit(30000)) {
+        try { $startProcess.Kill($true) } catch { }
+        sc.exe stop $service *> $null
+        sc.exe delete $service *> $null
+        return @{ loaded = $false; output = 'sc start hung for 30s' }
+    }
+    $start = Get-Content "$env:TEMP\sc-$service.log" -Raw -ErrorAction SilentlyContinue
     $loaded = $start -match 'STATE\s+:\s+4' -or $start -match 'RUNNING'
     sc.exe stop $service *> $null
     sc.exe delete $service *> $null
@@ -177,4 +187,5 @@ $documentOut | ConvertTo-Json -Depth 6 |
 Write-Host ("result: artifacts/ci-e2e-result.json ({0} checks, {1} failed, {2} skipped)" -f `
             $results.Count, $failed, $skipped)
 if ($failed -ne 0) { exit 1 }
+
 
