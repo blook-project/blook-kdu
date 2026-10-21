@@ -189,9 +189,43 @@ $guestOut = Join-Path $Out 'guest-out'
 if (Test-Path $guestOut) { Remove-Item $guestOut -Recurse -Force }
 New-Item -ItemType Directory -Force $guestOut | Out-Null
 
+# ---------------------------------------------------------------------------
+# 2a. Per-exploit driver load matrix, driven step-by-step from the host so a
+# hanging or crashing driver cannot hide the results of the other exploits.
+# ---------------------------------------------------------------------------
+$driverIds = @('asrock', 'atszio64', 'dbk64', 'echodrv', 'gdrv', 'physmem64',
+               'rtcore64', 'winring0')
+$driverResults = @()
+foreach ($id in $driverIds) {
+    $service = 'kduE2e_' + $id
+    $cmd = ("cmd /c sc.exe stop {0} >nul 2>&1 & sc.exe delete {0} >nul 2>&1 & " +
+            "sc.exe create {0} type= kernel start= demand binPath= {2}\kdu-e2e\drivers\{1}.sys & " +
+            "sc.exe start {0} & sc.exe stop {0} >nul 2>&1 & sc.exe delete {0} >nul 2>&1") -f $service, $id, 'C:'
+    $load = $null
+    try {
+        $load = Invoke-Bvmenv ("exec {0} --elevated --timeout 120 -- {1}" -f $Vm, $cmd) 180
+    } catch {
+        $driverResults += [ordered]@{ id = $id; status = 'hang'; detail = [string]$_ }
+        continue
+    }
+    $text = ($load.stdout | Out-String)
+    if ($text -match 'RUNNING') {
+        $driverResults += [ordered]@{ id = $id; status = 'loaded'; detail = 'driver staged and started' }
+    } elseif ($text -match '0x800B010C|2148204812') {
+        $driverResults += [ordered]@{ id = $id; status = 'platform-blocked'; detail = 'Microsoft driver blocklist (CERT_E_REVOKED)' }
+    } elseif ($text -match '0xE1\b') {
+        $driverResults += [ordered]@{ id = $id; status = 'platform-blocked'; detail = 'Defender (0xE1)' }
+    } else {
+        $driverResults += [ordered]@{ id = $id; status = 'not-started'; detail = $text.Trim() }
+    }
+}
+$driverResults | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $Out 'drivers.json') -Encoding UTF8
+$driverLoaded = @($driverResults | Where-Object { $_.status -eq 'loaded' }).Count
+Write-Host ("driver load matrix: {0}/{1} drivers started" -f $driverLoaded, $driverIds.Count)
+
 $phaseSummaries = @()
 $ok = $true
-foreach ($phase in 1..4) {
+foreach ($phase in 2..4) {
     $script = "$guestDir\phase$phase.ps1"
     if (-not (Test-Path (Join-Path $bundle "phase$phase.ps1"))) {
         $phaseSummaries += [ordered]@{ phase = $phase; code = -1; note = 'script missing' }
@@ -229,7 +263,7 @@ foreach ($phase in 1..4) {
 $mergedResults = @()
 $mergedFailed = 0
 $mergedSkipped = 0
-foreach ($phase in 1..4) {
+foreach ($phase in 2..4) {
     $path = Join-Path $guestOut "result-$phase.json"
     if (-not (Test-Path $path)) { continue }
     try {
@@ -267,6 +301,7 @@ $summary = [ordered]@{
     finished = (Get-Date).ToString('o')
     ok = $ok
     phases = $phaseSummaries
+    drivers = $driverResults
     guest_result = $guestResult
     state = ($state.stdout | ConvertFrom-Json -ErrorAction SilentlyContinue)
 }
@@ -281,6 +316,9 @@ if (-not $NoReset) {
 }
 
 if (-not $ok) { exit 1 }
+
+
+
 
 
 
