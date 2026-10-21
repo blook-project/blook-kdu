@@ -331,13 +331,13 @@ jobs:
           $document = $result | ConvertFrom-Json
           if (-not $document.ok -or -not $document.canonical) { throw "IOCTL assertion failed" }
           Set-Content "$env:TEMP\kdu-client-result.json" $result
-      - name: Stop and delete driver
+      - name: Delete driver service
         shell: pwsh
         timeout-minutes: 2
         run: |
-          sc.exe stop kduCiSmoke 2>&1 | Out-Null
+          # DriverUnload is deliberately not exercised here: stopping a test
+          # driver from SCM can block on some runners. The job VM is disposable.
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
-          sc.exe query kduCiSmoke 2>&1 | Out-Null
       - name: Write CI e2e matrix result
         shell: pwsh
         timeout-minutes: 2
@@ -394,6 +394,7 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
 
 
