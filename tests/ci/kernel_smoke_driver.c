@@ -15,6 +15,8 @@
 #define KDU_CI_SMOKE_IOCTL                                                    \
     CTL_CODE(KDU_CI_SMOKE_DEVICE_TYPE, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS)
 #define KDU_CI_SMOKE_MAGIC 0x5355444B /* "KDUS" */
+#define KDU_CI_SMOKE_INFO_IOCTL                                                \
+    CTL_CODE(KDU_CI_SMOKE_DEVICE_TYPE, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
 static PDEVICE_OBJECT g_device = NULL;
 static UNICODE_STRING g_link;
@@ -33,6 +35,18 @@ static NTSTATUS smoke_control(PDEVICE_OBJECT device, PIRP irp) {
     NTSTATUS status = STATUS_INVALID_DEVICE_REQUEST;
     ULONG_PTR information = 0;
     if (stack->Parameters.DeviceIoControl.IoControlCode ==
+        KDU_CI_SMOKE_INFO_IOCTL) {
+        // Kernel code address, so the client can verify a real kernel read.
+        if (stack->Parameters.DeviceIoControl.OutputBufferLength >=
+            sizeof(ULONGLONG)) {
+            *(ULONGLONG*)irp->AssociatedIrp.SystemBuffer =
+                (ULONGLONG)(ULONG_PTR)&smoke_control;
+            information = sizeof(ULONGLONG);
+            status = STATUS_SUCCESS;
+        } else {
+            status = STATUS_BUFFER_TOO_SMALL;
+        }
+    } else if (stack->Parameters.DeviceIoControl.IoControlCode ==
         KDU_CI_SMOKE_IOCTL) {
         if (stack->Parameters.DeviceIoControl.OutputBufferLength >=
             sizeof(ULONG)) {
@@ -97,4 +111,5 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT driver, PUNICODE_STRING registry_path) {
     }
     return STATUS_SUCCESS;
 }
+
 

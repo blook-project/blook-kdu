@@ -295,6 +295,14 @@ jobs:
           if (-not $signtool) { throw "signtool.exe not found on the runner" }
           & $signtool verify /kp build/windows/x64/release/kdu_ci_smoke_driver.sys
           if ($LASTEXITCODE -ne 0) { throw "signtool /kp verification failed" }
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $testsigning = ((bcdedit /enum "{current}" 2>&1 |
+              Select-String -Pattern "testsigning").Line
+              | Out-String).Trim()
+          if (-not $testsigning) { $testsigning = "absent" }
+          [ordered]@{ testsigning = $testsigning
+                      signtool_kp = "pass" } |
+              ConvertTo-Json | Set-Content artifacts/ci-signing.json -Encoding UTF8
       - name: Load driver + run client
         shell: pwsh
         run: |
@@ -373,6 +381,7 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
+
 
 
 

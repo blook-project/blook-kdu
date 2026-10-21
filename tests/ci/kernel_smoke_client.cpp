@@ -1,8 +1,8 @@
 // blook-kdu: minimal CI client for the kernel-load smoke driver.
 //
-// Opens \\.\KduCiSmoke, performs one buffered IOCTL and asserts the magic
-// DWORD, then prints a machine-readable result. Used by the GitHub Actions
-// `kernel-load-smoke` job after it signed and started kernel_smoke_driver.
+// Opens \\.\KduCiSmoke, performs two buffered IOCTLs (magic DWORD and a kernel
+// code pointer) and prints a machine-readable result. The kernel pointer proves
+// a functional kernel-loaded data path (the bytes came from a running driver).
 #include <windows.h>
 #include <winioctl.h>
 
@@ -11,8 +11,10 @@
 namespace {
 
 constexpr DWORD kDeviceType = 0x8333;
-constexpr DWORD kIoctlMagic =
+constexpr DWORD kMagicIoctl =
     CTL_CODE(kDeviceType, 0x800, METHOD_BUFFERED, FILE_ANY_ACCESS);
+constexpr DWORD kInfoIoctl =
+    CTL_CODE(kDeviceType, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS);
 constexpr DWORD kExpectedMagic = 0x5355444B;  // "KDUS"
 
 }  // namespace
@@ -26,19 +28,28 @@ int main() {
                     ::GetLastError());
         return 1;
     }
-    DWORD value = 0;
+    DWORD magic = 0;
     DWORD returned = 0;
-    const BOOL sent = ::DeviceIoControl(device, kIoctlMagic, nullptr, 0, &value,
-                                        sizeof(value), &returned, nullptr);
+    const BOOL magic_ok =
+        ::DeviceIoControl(device, kMagicIoctl, nullptr, 0, &magic,
+                          sizeof(magic), &returned, nullptr);
+    ULONGLONG kernel_pointer = 0;
+    DWORD info_returned = 0;
+    const BOOL info_ok =
+        ::DeviceIoControl(device, kInfoIoctl, nullptr, 0, &kernel_pointer,
+                          sizeof(kernel_pointer), &info_returned, nullptr);
     const DWORD error = ::GetLastError();
     ::CloseHandle(device);
-    if (!sent || returned != sizeof(value) || value != kExpectedMagic) {
-        std::printf(
-            "{\"ok\":false,\"error\":\"ioctl\",\"win32\":%lu,"
-            "\"returned\":%lu,\"value\":%lu}\n",
-            error, returned, value);
-        return 1;
-    }
-    std::printf("{\"ok\":true,\"magic\":%lu}\n", value);
-    return 0;
+
+    const bool canonical_kernel = kernel_pointer >= 0xFFFF800000000000ull;
+    const bool ok = magic_ok && returned == sizeof(magic) &&
+                    magic == kExpectedMagic && info_ok &&
+                    info_returned == sizeof(kernel_pointer) && canonical_kernel;
+    std::printf(
+        "{\"ok\":%s,\"magic\":%lu,\"kernel_pointer\":\"0x%llx\","
+        "\"canonical\":%s,\"win32\":%lu}\n",
+        ok ? "true" : "false", magic,
+        static_cast<unsigned long long>(kernel_pointer),
+        canonical_kernel ? "true" : "false", error);
+    return ok ? 0 : 1;
 }
