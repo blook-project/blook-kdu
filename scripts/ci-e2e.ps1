@@ -24,6 +24,8 @@ Set-Location $Root
 $kdu = Join-Path $BuildDir 'kdu.exe'
 if (-not (Test-Path $kdu)) { throw "kdu.exe not found: $kdu" }
 $results = New-Object System.Collections.Generic.List[object]
+New-Item -ItemType Directory -Force artifacts | Out-Null
+"" | Set-Content artifacts/ci-e2e-progress.log -Encoding UTF8
 
 function Add-Result([string] $name, [bool] $ok, [string] $detail) {
     $status = if ($ok) { 'pass' } else { 'fail' }
@@ -199,6 +201,7 @@ $documentOut | ConvertTo-Json -Depth 6 |
 Write-Host ("result: artifacts/ci-e2e-result.json ({0} checks, {1} failed, {2} skipped)" -f `
             $results.Count, $failed, $skipped)
 if ($failed -ne 0) { exit 1 }
+
 
 
 
