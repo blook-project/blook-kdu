@@ -38,7 +38,23 @@ struct PreparedImage {
     std::uint64_t preferred_base = 0;
     std::string dll_name;
     std::vector<std::string> imported_modules;
+
+    // /GS security cookie slots (0 when the image does not use one). A manually
+    // mapped image keeps the linker default cookie unless we randomize it; the
+    // cookie lives in a RIP-relative data slot, so patching the data bytes is
+    // enough and survives relocation.
+    std::uint32_t security_cookie_offset = 0;
+    std::uint32_t security_cookie_complement_offset = 0;
+
+    // True when the image carries an exception directory. Such images need
+    // their unwind tables registered with the kernel to use SEH; the mapper
+    // cannot do that for an arbitrary image, which is documented.
+    bool has_exception_directory = false;
 };
+
+// Replace the /GS security cookie and its complement with `cookie` (no-op when
+// the image has none). `cookie` must not be zero.
+void initialize_security_cookie(PreparedImage& image, std::uint64_t cookie);
 
 // Prepare an image for mapping: parse/validate, lift sections, resolve imports
 // and collect relocations. Pure user-mode code, unit-tested with synthetic

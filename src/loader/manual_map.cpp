@@ -46,6 +46,14 @@ constexpr std::uint32_t kPoolTag = 'udks';
 constexpr std::size_t kDispatchPatchSize = 5;
 constexpr std::size_t kMaxStageSize = 0x8000;
 
+std::size_t bounded_string_length(const char* text, std::size_t max_length) {
+    for (std::size_t index = 0; index < max_length; ++index) {
+        if (text[index] == '\0') {
+            return index;
+        }
+    }
+    return max_length;
+}
 std::uint64_t align_up(std::uint64_t value, std::uint64_t alignment) {
     return (value + alignment - 1) & ~(alignment - 1);
 }
@@ -383,25 +391,60 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
     }
     std::memcpy(prepared.mapped.data(), image.data(), headers_size);
 
+    const auto section_count = nt->FileHeader.NumberOfSections;
+    if (section_count > 96) {
+        return Result<PreparedImage>::fail(Status::invalid_image,
+                                           "unreasonable number of sections");
+    }
     const auto* sections = IMAGE_FIRST_SECTION(nt);
-    for (USHORT index = 0; index < nt->FileHeader.NumberOfSections; ++index) {
+    if (reinterpret_cast<const std::uint8_t*>(sections) +
+            sizeof(IMAGE_SECTION_HEADER) * section_count >
+        image.data() + headers_size) {
+        return Result<PreparedImage>::fail(Status::invalid_image,
+                                           "section table exceeds headers");
+    }
+    for (USHORT index = 0; index < section_count; ++index) {
         const auto& section = sections[index];
         if (section.SizeOfRawData == 0) {
             continue;
         }
-        if (static_cast<std::size_t>(section.PointerToRawData) +
+        if (static_cast<std::uint64_t>(section.PointerToRawData) +
                 section.SizeOfRawData >
             image.size()) {
             return Result<PreparedImage>::fail(Status::invalid_image,
                                                "section data out of bounds");
         }
-        if (section.VirtualAddress + section.SizeOfRawData > size_of_image) {
+        if (static_cast<std::uint64_t>(section.VirtualAddress) +
+                section.SizeOfRawData >
+            size_of_image) {
             return Result<PreparedImage>::fail(Status::invalid_image,
                                                "section exceeds SizeOfImage");
         }
         std::memcpy(prepared.mapped.data() + section.VirtualAddress,
                     image.data() + section.PointerToRawData,
                     section.SizeOfRawData);
+    }
+
+    // Locate the /GS security cookie (and its complement) so the mapper can
+    // randomize it: MSVC emits the well-known default x64 cookie into .data and
+    // a manually mapped image never runs __security_init_cookie.
+    constexpr std::uint64_t kMsvcDefaultCookie = 0x0000'2B99'2DDF'A232ull;
+    if (prepared.mapped.size() >= sizeof(std::uint64_t)) {
+        for (std::size_t offset = 0;
+             offset + sizeof(std::uint64_t) <= prepared.mapped.size();
+             offset += sizeof(std::uint64_t)) {
+            std::uint64_t value = 0;
+            std::memcpy(&value, prepared.mapped.data() + offset, sizeof(value));
+            if (value == kMsvcDefaultCookie &&
+                prepared.security_cookie_offset == 0) {
+                prepared.security_cookie_offset =
+                    static_cast<std::uint32_t>(offset);
+            } else if (value == ~kMsvcDefaultCookie &&
+                       prepared.security_cookie_complement_offset == 0) {
+                prepared.security_cookie_complement_offset =
+                    static_cast<std::uint32_t>(offset);
+            }
+        }
     }
 
     const auto& reloc_directory =
@@ -464,17 +507,31 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
     auto& export_map = exports.value();
 
     std::size_t patched_imports = 0;
-    if (nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]
-            .VirtualAddress != 0) {
-        std::size_t cursor =
-            nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT]
-                .VirtualAddress;
-        while (true) {
+    const auto& import_directory =
+        nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+    if (import_directory.VirtualAddress != 0) {
+        if (static_cast<std::uint64_t>(import_directory.VirtualAddress) +
+                sizeof(IMAGE_IMPORT_DESCRIPTOR) >
+            size_of_image) {
+            return Result<PreparedImage>::fail(
+                Status::invalid_image, "import directory out of bounds");
+        }
+        std::size_t cursor = import_directory.VirtualAddress;
+        std::size_t descriptor_count = 0;
+        while (descriptor_count++ < 64) {
+            if (cursor + sizeof(IMAGE_IMPORT_DESCRIPTOR) > size_of_image) {
+                return Result<PreparedImage>::fail(
+                    Status::invalid_image, "import descriptor out of bounds");
+            }
             const auto* descriptor =
                 reinterpret_cast<const IMAGE_IMPORT_DESCRIPTOR*>(
                     prepared.mapped.data() + cursor);
             if (descriptor->Name == 0) {
                 break;
+            }
+            if (descriptor->Name >= size_of_image) {
+                return Result<PreparedImage>::fail(
+                    Status::invalid_image, "import module name out of bounds");
             }
             const std::string module_name = reinterpret_cast<const char*>(
                 prepared.mapped.data() + descriptor->Name);
@@ -489,18 +546,42 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
             const auto lookup_rva = descriptor->OriginalFirstThunk
                                         ? descriptor->OriginalFirstThunk
                                         : descriptor->FirstThunk;
+            if (static_cast<std::uint64_t>(lookup_rva) + sizeof(std::uint64_t) >
+                size_of_image) {
+                return Result<PreparedImage>::fail(
+                    Status::invalid_image, "import lookup table out of bounds");
+            }
+            if (static_cast<std::uint64_t>(descriptor->FirstThunk) +
+                    sizeof(std::uint64_t) >
+                size_of_image) {
+                return Result<PreparedImage>::fail(
+                    Status::invalid_image,
+                    "import address table out of bounds");
+            }
             auto* iat = reinterpret_cast<std::uint64_t*>(
                 prepared.mapped.data() + descriptor->FirstThunk);
             const auto* lookup = reinterpret_cast<const std::uint64_t*>(
                 prepared.mapped.data() + lookup_rva);
-            for (std::size_t index = 0; lookup[index] != 0; ++index) {
+            for (std::size_t index = 0; lookup[index] != 0 && index < 0x4000;
+                 ++index) {
                 if ((lookup[index] & IMAGE_ORDINAL_FLAG64) != 0) {
                     return Result<PreparedImage>::fail(
                         Status::invalid_image,
                         "ordinal imports are not supported");
                 }
+                const auto name_rva =
+                    static_cast<std::uint32_t>(lookup[index] & 0x7FFFFFFF);
+                if (static_cast<std::uint64_t>(name_rva) + 2 >= size_of_image) {
+                    return Result<PreparedImage>::fail(
+                        Status::invalid_image, "import name out of bounds");
+                }
                 const auto* name = reinterpret_cast<const char*>(
-                    prepared.mapped.data() + (lookup[index] & 0x7FFFFFFF) + 2);
+                    prepared.mapped.data() + name_rva + 2);
+                const auto max_length = size_of_image - (name_rva + 2);
+                if (bounded_string_length(name, max_length) == max_length) {
+                    return Result<PreparedImage>::fail(
+                        Status::invalid_image, "unterminated import name");
+                }
                 auto found = export_map.find(name);
                 if (found == export_map.end()) {
                     return Result<PreparedImage>::fail(
@@ -515,19 +596,41 @@ Result<PreparedImage> prepare_image(std::span<const std::uint8_t> image) {
         }
     }
 
-    KDU_LOG_WARN("prepare_image patched {} imports (ntos base 0x{:x})",
-                 patched_imports, ntos.value());
-    if (nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION]
-            .Size != 0) {
-        KDU_LOG_DEBUG(
-            "image has an exception directory; SEH inside a manually mapped "
-            "image is only supported if the payload registers its tables");
+    KDU_LOG_DEBUG("prepared image: patched {} imports against ntoskrnl",
+                  patched_imports);
+    prepared.has_exception_directory =
+        nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION]
+            .Size != 0;
+    if (prepared.has_exception_directory) {
+        KDU_LOG_WARN(
+            "image has an exception directory: SEH inside a manually mapped "
+            "image only works if the kernel has the unwind tables registered; "
+            "the payload must not rely on SEH");
     }
     KDU_LOG_INFO("prepared image {} ({} bytes, {} relocations, entry 0x{:x})",
                  prepared.dll_name.empty() ? "<unnamed>" : prepared.dll_name,
                  prepared.size_of_image, prepared.relocations.size(),
                  prepared.entry_offset);
     return Result<PreparedImage>::ok(std::move(prepared));
+}
+
+void initialize_security_cookie(PreparedImage& image, std::uint64_t cookie) {
+    if (cookie == 0) {
+        return;
+    }
+    if (image.security_cookie_offset != 0 &&
+        image.security_cookie_offset + sizeof(cookie) <= image.mapped.size()) {
+        std::memcpy(image.mapped.data() + image.security_cookie_offset, &cookie,
+                    sizeof(cookie));
+    }
+    if (image.security_cookie_complement_offset != 0 &&
+        image.security_cookie_complement_offset + sizeof(cookie) <=
+            image.mapped.size()) {
+        const std::uint64_t complement = ~cookie;
+        std::memcpy(
+            image.mapped.data() + image.security_cookie_complement_offset,
+            &complement, sizeof(complement));
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -554,6 +657,10 @@ Result<MappedImage> ManualMapper::map(std::span<const std::uint8_t> image,
         return Result<MappedImage>::fail(prepared.error().code,
                                          prepared.error().message);
     }
+    // Randomize the /GS cookie before the image is copied: a manually mapped
+    // image never runs __security_init_cookie, and the linker default cookie is
+    // public knowledge.
+    initialize_security_cookie(prepared.value(), core::random_u64());
 
     // 1. Stage image preparation (same PE machinery as the target image).
     auto stage = prepare_image(

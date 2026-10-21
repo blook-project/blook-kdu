@@ -15,5 +15,6 @@ void add_dse_command(CLI::App& app, Context& context);
 void add_modules_command(CLI::App& app, Context& context);
 void add_doctor_command(CLI::App& app, Context& context);
 void add_cleanup_command(CLI::App& app, Context& context);
+void add_batch_command(CLI::App& app, Context& context);
 
 }  // namespace blook::kdu::cli

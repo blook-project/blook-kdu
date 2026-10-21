@@ -227,6 +227,20 @@ bool is_running_under_hypervisor(std::string* vendor) {
     return true;
 }
 
+std::uint64_t random_u64() {
+    std::uint64_t value = 0;
+    if (::BCryptGenRandom(nullptr, reinterpret_cast<PUCHAR>(&value),
+                          sizeof(value),
+                          BCRYPT_USE_SYSTEM_PREFERRED_RNG) != 0) {
+        // Extremely unlikely; fall back to a time-seeded mix so the cookie is
+        // still not the linker default.
+        value = static_cast<std::uint64_t>(::GetTickCount64()) << 17;
+        value ^= ::GetCurrentProcessId();
+        value ^= reinterpret_cast<std::uintptr_t>(&value);
+    }
+    return value | 1;
+}
+
 bool is_process_elevated() {
     HANDLE token = nullptr;
     if (!::OpenProcessToken(::GetCurrentProcess(), TOKEN_QUERY, &token)) {

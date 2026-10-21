@@ -246,6 +246,12 @@ if build_payload then
         add_cxflags("/W4", {force = true})
 end
 
+target("kdu_api_example")
+    set_kind("binary")
+    kdu_user_defaults()
+    add_files("examples/api_example.cpp")
+    add_deps("kdu_sdk")
+
 target("kdu_e2e_helper")
     set_kind("binary")
     kdu_user_defaults()
@@ -300,6 +306,7 @@ if build_tests then
             add_packages("doctest", "fmt", "spdlog")
     end
 end
+
 
 
 

@@ -78,6 +78,10 @@ bool is_process_elevated();
 // True when the CPU reports a hypervisor (VMware, Hyper-V, ...). Used as a
 // safety gate: kernel exploitation must only run inside a test VM.
 bool is_running_under_hypervisor(std::string* vendor = nullptr);
+
+// Cryptographically-random 64-bit value (BCryptGenRandom), used for the manual
+// mapper's /GS security cookie.
+std::uint64_t random_u64();
 std::string current_process_path();
 std::string system_root();
 
