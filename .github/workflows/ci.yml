@@ -87,6 +87,10 @@ jobs:
               throw "blook-kchannel sources are missing at the pinned commit"
           }
           "KCHANNEL_DIR=$env:GITHUB_WORKSPACE\..\blook-kchannel" >> $env:GITHUB_ENV
+      - name: Prepare signed embedded driver assets
+        shell: pwsh
+        run: |
+          & pwsh -NoProfile -File scripts/prepare-assets.ps1
       - name: Verify embedded driver assets
         shell: pwsh
         run: |
@@ -191,6 +195,7 @@ jobs:
         run: |
           xmake run "kdu_exploit_test_${{ matrix.exploit }}"
           if ($LASTEXITCODE -ne 0) { throw "exploit ${{ matrix.exploit }} tests failed" }
+
 
 
 

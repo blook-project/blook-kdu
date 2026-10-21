@@ -50,3 +50,4 @@ foreach ($test in (Get-ChildItem (Join-Path $Root 'tests/unit/exploits') `
     if ($LASTEXITCODE -ne 0) { throw "exploit test failed: $name" }
 }
 Write-Host "build + tests ok ($Mode)"
+
