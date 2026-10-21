@@ -85,11 +85,14 @@ package_end()
 
 # Merge existing versions.txt and any legacy inline add_versions lines.
 function Read-Versions([string] $manifestPath, [string] $versionsPath) {
+    $script:VersionHeaderLines = @()
     $map = [ordered]@{}
     if (Test-Path $versionsPath) {
         foreach ($line in Get-Content $versionsPath) {
             if ($line -match '^\s*([0-9][0-9A-Za-z.\-+]*)\s+([0-9a-fA-F]{64})\s*$') {
                 $map[$matches[1]] = $matches[2].ToLower()
+            } elseif ($line.Trim()) {
+                $script:VersionHeaderLines += $line
             }
         }
     }
@@ -128,7 +131,11 @@ try {
         (Get-Content $manifestPath -Raw) -notmatch 'add_versionfiles') {
         Set-Content -Path $manifestPath -Value (New-Manifest $Package) -Encoding UTF8
     }
-    $lines = @($versions.GetEnumerator() |
+    $header = @($script:VersionHeaderLines)
+    if ($header.Count -eq 0) {
+        $header = @("# <version> <sha256>    # one published version per line; updated by scripts/publish-registry.ps1")
+    }
+    $lines = @($header) + @($versions.GetEnumerator() |
                Sort-Object { [version]($_.Key -replace '-.*$', '') } |
                ForEach-Object { "$($_.Key) $($_.Value)" })
     Set-Content -Path $versionsPath -Value $lines -Encoding UTF8
@@ -152,3 +159,4 @@ try {
 } finally {
     if (Test-Path $temp) { Remove-Item $temp -Recurse -Force }
 }
+
