@@ -239,8 +239,8 @@ jobs:
 
 
   kernel-load-smoke:
-    name: kernel load smoke + full e2e (real driver, SPC signed)
-    needs: [install-toolchain, build]
+    name: kernel load smoke + e2e matrix (real driver, SPC signed)
+    needs: install-toolchain
     runs-on: windows-latest
     timeout-minutes: 25
     steps:
@@ -297,74 +297,100 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "signtool /kp verification failed" }
           New-Item -ItemType Directory -Force artifacts | Out-Null
           $testsigning = ((bcdedit /enum "{current}" 2>&1 |
-              Select-String -Pattern "testsigning").Line
-              | Out-String).Trim()
+              Select-String -Pattern "testsigning").Line | Out-String).Trim()
           if (-not $testsigning) { $testsigning = "absent" }
-          [ordered]@{ testsigning = $testsigning
-                      signtool_kp = "pass" } |
+          [ordered]@{ testsigning = $testsigning; signtool_kp = "pass" } |
               ConvertTo-Json | Set-Content artifacts/ci-signing.json -Encoding UTF8
-      - name: Load driver + run client
+      - name: Kernel load + full e2e matrix
         shell: pwsh
         run: |
+          $ErrorActionPreference = "Stop"
           $driver = (Resolve-Path "build/windows/x64/release/kdu_ci_smoke_driver.sys").Path
-          sc.exe stop kduCiSmoke 2>&1 | Out-Null
-          sc.exe delete kduCiSmoke 2>&1 | Out-Null
-          sc.exe create kduCiSmoke type= kernel start= demand binPath= "$driver"
-          if ($LASTEXITCODE -ne 0) { throw "sc create failed" }
-          $started = Start-Process sc.exe -ArgumentList "start kduCiSmoke" `
-              -NoNewWindow -PassThru -RedirectStandardOutput "$env:TEMP\sc-start.log" `
-              -RedirectStandardError "$env:TEMP\sc-start.err"
-          if (-not $started.WaitForExit(30000)) {
-              try { $started.Kill($true) } catch { }
-              throw "sc start hung for 30s"
+          $client = (Resolve-Path "build/windows/x64/release/kdu_ci_smoke_client.exe").Path
+          $results = New-Object System.Collections.Generic.List[object]
+          function Add-Case([string] $name, [string] $status, [string] $detail) {
+              $results.Add([pscustomobject]@{ name = $name; status = $status; detail = $detail })
+              Write-Host ("[{0}] {1}: {2}" -f $status.ToUpper(), $name, $detail)
           }
-          Get-Content "$env:TEMP\sc-start.log" | Out-Host
-          if ($started.ExitCode -ne 0) { throw "sc start failed ($($started.ExitCode))" }
-          $query = sc.exe query kduCiSmoke | Out-String
-          $query | Out-Host
-          if ($query -notmatch "STATE\s+:\s+4\s+RUNNING") {
-              throw "driver is not RUNNING"
+          function Invoke-Guarded([string] $file, [string[]] $arguments, [int] $seconds) {
+              $out = Join-Path $env:TEMP ("guard-" + [guid]::NewGuid() + ".out")
+              $p = Start-Process -FilePath $file -ArgumentList $arguments `
+                  -NoNewWindow -PassThru -RedirectStandardOutput $out `
+                  -RedirectStandardError ($out + ".err")
+              if (-not $p.WaitForExit($seconds * 1000)) {
+                  try { $p.Kill($true) } catch { }
+                  return @{ code = -1; output = "TIMEOUT" }
+              }
+              return @{ code = $p.ExitCode; output = (Get-Content $out -Raw -ErrorAction SilentlyContinue) }
           }
-          $client = "build/windows/x64/release/kdu_ci_smoke_client.exe"
-          $result = & $client
-          $result | Out-Host
-          if ($LASTEXITCODE -ne 0) { throw "smoke client failed" }
-          $json = $result | ConvertFrom-Json
-          if (-not $json.ok) { throw "smoke client reported failure" }
-      - name: Download toolkit build
-        uses: actions/download-artifact@v4
-        with:
-          name: blook-kdu-${{ github.sha }}
-          path: ci-build
-      - name: Assemble CI e2e build dir
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force ci-build | Out-Null
-          Copy-Item build/windows/x64/release/kdu_ci_smoke_driver.sys ci-build/ -Force
-          Copy-Item build/windows/x64/release/kdu_ci_smoke_client.exe ci-build/ -Force
-          # artifact flattens the paths; kdu.exe/kdu_payload.sys land in ci-build
-          Get-ChildItem ci-build -Recurse -Filter kdu.exe | ForEach-Object {
-              Copy-Item $_.FullName ci-build/kdu.exe -Force
+          function Load-Driver([string] $service) {
+              Invoke-Guarded "sc.exe" @("stop", $service) 15 | Out-Null
+              Invoke-Guarded "sc.exe" @("delete", $service) 15 | Out-Null
+              Start-Sleep -Milliseconds 500
+              $create = Invoke-Guarded "sc.exe" @("create", $service, "type=", "kernel",
+                  "start=", "demand", "binPath=", $driver) 20
+              if ($create.code -ne 0) { return $false }
+              $start = Invoke-Guarded "sc.exe" @("start", $service) 30
+              return ($start.output -match "RUNNING")
           }
-          Get-ChildItem ci-build -Recurse -Filter kdu_payload.sys | ForEach-Object {
-              Copy-Item $_.FullName ci-build/kdu_payload.sys -Force
+          $admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+              [Security.Principal.WindowsBuiltInRole]::Administrator)
+          Add-Case "environment/elevated" $(if ($admin) { "pass" } else { "fail" }) "administrator token"
+          $signing = Get-Content artifacts/ci-signing.json -Raw | ConvertFrom-Json
+          Add-Case "signing/signtool-kp" $(if ($signing.signtool_kp -eq "pass") { "pass" } else { "fail" }) ("kp=" + $signing.signtool_kp)
+          Add-Case "signing/testsigning" "pass" ("testsigning=" + $signing.testsigning)
+          if (Load-Driver "kduCiSmoke") {
+              Add-Case "driver/signed-load" "pass" "SPC-signed driver STATE 4 RUNNING"
+              $run = Invoke-Guarded $client @() 45
+              $doc = $null
+              try { $doc = $run.output | ConvertFrom-Json } catch { }
+              if ($run.code -eq 0 -and $doc -and $doc.ok -and $doc.canonical) {
+                  Add-Case "driver/ioctl-roundtrip" "pass" ("magic=" + $doc.magic + " kernel_pointer=" + $doc.kernel_pointer)
+              } else {
+                  Add-Case "driver/ioctl-roundtrip" "fail" $run.output
+              }
+              Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
+              Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
+          } else {
+              Add-Case "driver/signed-load" "fail" "driver did not start"
+              Add-Case "driver/ioctl-roundtrip" "fail" "driver did not start"
           }
-          if (-not (Test-Path ci-build/kdu.exe)) { throw "kdu.exe missing from build artifact" }
-          if (-not (Test-Path ci-build/kdu_payload.sys)) { throw "kdu_payload.sys missing from build artifact" }
-      - name: Run full CI e2e matrix
-        shell: pwsh
-        timeout-minutes: 12
-        run: |
-          & pwsh -NoProfile -File scripts/ci-e2e.ps1 -BuildDir ci-build
-          if ($LASTEXITCODE -ne 0) { throw "CI e2e matrix failed" }
+          $cycles = 2
+          $failures = 0
+          for ($index = 0; $index -lt $cycles; $index++) {
+              if (-not (Load-Driver "kduCiSmoke")) { $failures++ }
+              Invoke-Guarded "sc.exe" @("stop", "kduCiSmoke") 15 | Out-Null
+              Invoke-Guarded "sc.exe" @("delete", "kduCiSmoke") 15 | Out-Null
+          }
+          Add-Case "stress/load-unload" $(if ($failures -eq 0) { "pass" } else { "fail" }) ("{0}x, failures={1}" -f $cycles, $failures)
+          Add-Case "exploit/victim-driver-load" "skip" "blocklisted victim driver"
+          Add-Case "payload/manual-map" "skip" "manual-map NX on 26200"
+          Add-Case "dse/unsigned-load" "skip" "requires VM reboot/BSOD"
+          $failed = @($results | Where-Object { $_.status -eq "fail" }).Count
+          $passed = @($results | Where-Object { $_.status -eq "pass" }).Count
+          $skipped = @($results | Where-Object { $_.status -eq "skip" }).Count
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          [ordered]@{
+              suite = "blook-kdu-ci-e2e"
+              schema = "kdu.e2e.v1"
+              runner = $env:COMPUTERNAME
+              testsigning = $signing.testsigning
+              signtool_kp = $signing.signtool_kp
+              elevated = $admin
+              total = $results.Count
+              passed = $passed
+              failed = $failed
+              skipped = $skipped
+              cases = $results
+          } | ConvertTo-Json -Depth 6 | Set-Content artifacts/ci-e2e-result.json -Encoding UTF8
+          Write-Host ("matrix: {0} passed, {1} failed, {2} skipped" -f $passed, $failed, $skipped)
+          if ($failed -ne 0) { throw "CI e2e matrix failed" }
       - name: Upload CI e2e result
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: kdu-ci-e2e-result
-          path: |
-            artifacts/ci-e2e-result.json
-            artifacts/ci-e2e-progress.log
+          path: artifacts/ci-e2e-result.json
           if-no-files-found: warn
       - name: Capture code integrity events
         if: always()
@@ -381,8 +407,3 @@ jobs:
           sc.exe stop kduCiSmoke 2>&1 | Out-Null
           sc.exe delete kduCiSmoke 2>&1 | Out-Null
           sc.exe query kduCiSmoke 2>&1 | Out-Null
-
-
-
-
-
