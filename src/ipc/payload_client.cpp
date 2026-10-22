@@ -36,6 +36,16 @@
 #define KDU_HAVE_PAYLOAD_BLOB 0
 #endif
 
+// When the build is supposed to carry the drv-lite payload (xmake sets
+// KDU_EXPECT_PAYLOAD on kdu_ipc), a missing blob header means the payload
+// was not built before this translation unit - fail the build instead of
+// producing a CLI whose `payload` commands only answer "this build has no
+// payload backend".
+#if defined(KDU_EXPECT_PAYLOAD) && !KDU_HAVE_PAYLOAD_BLOB
+#error \
+    "payload_blob.h is missing: kdu_payload must be built before kdu_ipc (drop build/ and rebuild)"
+#endif
+
 namespace blook::kdu::ipc {
 namespace {
 
