@@ -1,0 +1,12 @@
+# vm-lab raw: winring0
+# at: 2026-10-22T09:49:01.1922742+08:00
+# command: C:\byovd\run-test.cmd winring0
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL winring0         cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

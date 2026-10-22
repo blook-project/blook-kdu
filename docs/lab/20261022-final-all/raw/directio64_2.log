@@ -1,0 +1,10 @@
+# vm-lab raw: directio64_2
+# at: 2026-10-22T09:18:26.9441652+08:00
+# command: C:\byovd\run-test.cmd directio64_2
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS directio64_2     ntoskrnl=0xfffff807d4200000 backend=driver
+

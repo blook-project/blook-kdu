@@ -1,0 +1,10 @@
+# vm-lab raw: k7rkscan1516
+# at: 2026-10-22T09:26:03.1582387+08:00
+# command: C:\byovd\run-test.cmd k7rkscan1516
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP k7rkscan1516     kill-only driver (no memory primitive; self-test N/A)
+

@@ -33,7 +33,7 @@ add_rules("plugin.compile_commands.autoupdate", {outputdir = "build"})
 set_encodings("utf-8")
 set_warnings("more")
 set_languages("cxx20")
-set_version("1.0.2")  -- keep in sync with version.txt / include/blook/kdu/version.h
+set_version("1.1.0")  -- keep in sync with version.txt / include/blook/kdu/version.h
 
 option("kchannel_dir")
     set_showmenu(true)
@@ -187,6 +187,14 @@ target("kdu_exploits")
         add_deps("kdu_exploit_" .. name)
     end
     add_packages("fmt", "spdlog")
+    -- Keep the generated registry in sync with the exploit directories at build
+    -- time (adding src/exploits/<name>/ is enough to register an exploit).
+    before_build(function (target)
+        local script = path.join(os.projectdir(), "scripts",
+                                 "gen-exploit-registry.ps1")
+        os.exec('pwsh -NoProfile -ExecutionPolicy Bypass -File "' ..
+                script .. '"')
+    end)
 
 -- ---------------------------------------------------------------------------
 -- kernel stage image (tiny WDK driver mapped into a victim driver's .text)

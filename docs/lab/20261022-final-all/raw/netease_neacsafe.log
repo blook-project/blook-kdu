@@ -1,0 +1,12 @@
+# vm-lab raw: netease_neacsafe
+# at: 2026-10-22T09:37:27.1877287+08:00
+# command: C:\byovd\run-test.cmd netease_neacsafe
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: fail-other
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL netease_neacsafe netease_neacsafe: NeacSafe64 service did not start (state=1, exit=2, start error=系统找不到指定的文件。 (0x00000002))
+--- stderr ---
+error exploit self-test failed
+

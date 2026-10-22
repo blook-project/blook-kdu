@@ -1,0 +1,12 @@
+# vm-lab raw: chr34x05
+# at: 2026-10-22T07:16:34.6261607+08:00
+# command: C:\byovd\run-test.cmd chr34x05
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL chr34x05         chr34x05: cannot open device '\\.\CHR34205-A;\\.\GLOBALROOT\Device\CHR34205-A': device \\.\GLOBALROOT\Device\CHR34205-A did not appear
+--- stderr ---
+error exploit self-test failed
+

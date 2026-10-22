@@ -1,0 +1,12 @@
+# vm-lab raw: gmer
+# at: 2026-10-22T07:36:49.1330066+08:00
+# command: C:\byovd\run-test.cmd gmer
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: blocked-revoked
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL gmer             gmer: cannot start service 'gmerdrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+--- stderr ---
+error exploit self-test failed
+

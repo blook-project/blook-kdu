@@ -1,0 +1,12 @@
+# vm-lab raw: kph
+# at: 2026-10-22T07:40:28.0530890+08:00
+# command: C:\byovd\run-test.cmd kph
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: fail-other
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL kph              kph: kph supports Windows build 19044 at most (current 26200)
+--- stderr ---
+error exploit self-test failed
+

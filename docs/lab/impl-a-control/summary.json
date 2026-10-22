@@ -1,0 +1,85 @@
+{
+  "schema": "blook-kdu.vmlab.matrix.v1",
+  "vm": "vm-byovd",
+  "guest_build": "10.0.26200 build 26200",
+  "testsigning": false,
+  "unsafe_physical": false,
+  "timeout_seconds": 90,
+  "generated": "2026-10-22T07:22:48.7795658+08:00",
+  "build": {
+    "kdu_sha256": "68875b40ec4ab8657a504a10cd178c7a623fa4c9b14ae80f137e22fd17244234",
+    "kdu_version": "1.1.0",
+    "bvmenv_sha256": "0ab3c34bfdfbdd30a18e784985ce30f96758c3ba0669954696654d00bb05da5a",
+    "bvmenv_version": "bvmenv 0.1.0"
+  },
+  "totals": {
+    "total": 2,
+    "PASS": 0,
+    "FAIL": 2,
+    "CRASH": 0,
+    "TIMEOUT": 0,
+    "SKIP": 0
+  },
+  "by_classification": {
+    "primitive-failed": 2
+  },
+  "crashes": [],
+  "signed_drivers": [
+    {
+      "id": "asrdrv107",
+      "driver_file": "AsrDrv107.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\asrdrv107\\data\\AsrDrv107.sys.bin",
+      "source_sha256": "be131e30464c7be03bd2d16f99ea2b04c106b482cc5c52be659e4c0301206348",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\AsrDrv107.sys",
+      "output_sha256": "93ef23b36532fce25be5cfb54c417d7ca30f7da9c0f8c26ef08a124269c6153b",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T07:20:40.6902930+08:00"
+    },
+    {
+      "id": "axtudrv",
+      "driver_file": "AxtuDrv.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\axtudrv\\data\\AxtuDrv.sys.bin",
+      "source_sha256": "2470fd1b733314c9b0afa19fd39c5d19aa1b36db598b5ebbe93445caa545da5f",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\AxtuDrv.sys",
+      "output_sha256": "4e4064d29720b3ef846443f46616be52aacd029b442157e18e7803a5d73954ff",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T07:20:40.7061921+08:00"
+    }
+  ],
+  "rows": [
+    {
+      "id": "asrdrv107",
+      "status": "FAIL",
+      "classification": "primitive-failed",
+      "likely_cause": "driver loaded but the kernel memory primitive failed (ioctl/translation)",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "AsrDrv107.sys",
+      "exit": 1,
+      "guest_exit": 1,
+      "duration_ms": 17059,
+      "detail": "FAIL asrdrv107 cannot read ntoskrnl image header",
+      "raw": "docs\\lab\\impl-a-control\\raw\\asrdrv107.log",
+      "at": "2026-10-22T07:22:31.9539120+08:00",
+      "crash_stop_code": ""
+    },
+    {
+      "id": "axtudrv",
+      "status": "FAIL",
+      "classification": "primitive-failed",
+      "likely_cause": "driver loaded but the kernel memory primitive failed (ioctl/translation)",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "AxtuDrv.sys",
+      "exit": 1,
+      "guest_exit": 1,
+      "duration_ms": 16809,
+      "detail": "FAIL axtudrv cannot read ntoskrnl image header",
+      "raw": "docs\\lab\\impl-a-control\\raw\\axtudrv.log",
+      "at": "2026-10-22T07:22:48.7656155+08:00",
+      "crash_stop_code": ""
+    }
+  ]
+}

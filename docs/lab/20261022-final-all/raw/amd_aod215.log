@@ -1,0 +1,12 @@
+# vm-lab raw: amd_aod215
+# at: 2026-10-22T09:06:09.7493156+08:00
+# command: C:\byovd\run-test.cmd amd_aod215
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL amd_aod215       cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

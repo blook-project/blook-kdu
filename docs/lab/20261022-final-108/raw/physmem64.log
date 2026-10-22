@@ -1,0 +1,10 @@
+# vm-lab raw: physmem64
+# at: 2026-10-22T07:50:39.9678858+08:00
+# command: C:\byovd\run-test.cmd physmem64
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS physmem64        ntoskrnl=0xfffff804ed800000 backend=driver
+

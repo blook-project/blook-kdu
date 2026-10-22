@@ -1,0 +1,67 @@
+{
+  "schema": "blook-kdu.vmlab.matrix.v1",
+  "vm": "vm-byovd",
+  "guest_build": "",
+  "testsigning": false,
+  "unsafe_physical": false,
+  "timeout_seconds": 90,
+  "generated": "2026-10-22T08:41:40.7756351+08:00",
+  "build": {
+    "kdu_sha256": "0ba102832b7ac3ae6f512f194cfc6798f02410a66168872a0341755686d8b09e",
+    "kdu_version": "1.1.0",
+    "bvmenv_sha256": "0ab3c34bfdfbdd30a18e784985ce30f96758c3ba0669954696654d00bb05da5a",
+    "bvmenv_version": "bvmenv 0.1.0"
+  },
+  "totals": {
+    "total": 2,
+    "PASS": 1,
+    "FAIL": 1,
+    "CRASH": 0,
+    "TIMEOUT": 0,
+    "SKIP": 0
+  },
+  "by_classification": {
+    "kdu-crashed": 1,
+    "pass": 1
+  },
+  "crashes": [],
+  "signed_drivers": [],
+  "rows": [
+    {
+      "id": "astra64",
+      "status": "FAIL",
+      "classification": "kdu-crashed",
+      "likely_cause": "kdu.exe terminated with exception 0xc0000005; exploit ioctl path crashed user mode",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "ASTRA64.sys",
+      "exit": 1,
+      "guest_exit": -1073741819,
+      "duration_ms": 16937,
+      "detail": "guest exit 0xc0000005",
+      "raw": "docs\\lab\\20261022-harness-verify\\raw\\astra64.log",
+      "at": "2026-10-22T08:41:23.9083771+08:00",
+      "crash_stop_code": "",
+      "retried": false
+    },
+    {
+      "id": "ktapi",
+      "status": "PASS",
+      "classification": "",
+      "likely_cause": "",
+      "host_blocked": false,
+      "backend": "driver",
+      "ntoskrnl": "0xfffff807d4200000",
+      "driver_file": "ktapi.sys",
+      "exit": 0,
+      "guest_exit": 0,
+      "duration_ms": 16809,
+      "detail": "ntoskrnl=0xfffff807d4200000 backend=driver",
+      "raw": "docs\\lab\\20261022-harness-verify\\raw\\ktapi.log",
+      "at": "2026-10-22T08:41:40.7454519+08:00",
+      "crash_stop_code": "",
+      "retried": false
+    }
+  ]
+}

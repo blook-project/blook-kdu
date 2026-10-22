@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL amd_aod215       cannot read ntoskrnl image header
+
+--- stderr ---
+error exploit self-test failed
+
+

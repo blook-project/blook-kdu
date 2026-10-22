@@ -1,0 +1,10 @@
+# vm-lab raw: adlice_rootlaser
+# at: 2026-10-22T07:08:56.6151319+08:00
+# command: C:\byovd\run-test.cmd adlice_rootlaser
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS adlice_rootlaser ntoskrnl=0xfffff800c8800000 backend=driver
+

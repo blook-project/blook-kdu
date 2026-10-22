@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL netease_neacsafe netease_neacsafe: NeacSafe64 service did not start (state=1, exit=2, start error=系统找不到指定的文件。 (0x00000002))
+
+--- stderr ---
+error exploit self-test failed
+
+

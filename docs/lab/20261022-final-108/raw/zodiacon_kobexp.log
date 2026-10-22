@@ -1,0 +1,12 @@
+# vm-lab raw: zodiacon_kobexp
+# at: 2026-10-22T08:00:27.1233807+08:00
+# command: C:\byovd\run-test.cmd zodiacon_kobexp
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL zodiacon_kobexp  zodiacon_kobexp: cannot open device '\\.\KObjExp': CreateFile(\\.\KObjExp) failed: 拒绝访问。 (0x00000005)
+--- stderr ---
+error exploit self-test failed
+

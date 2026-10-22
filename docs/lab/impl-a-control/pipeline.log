@@ -1,0 +1,15 @@
+[07:20:23] vm lab start: vm=vm-byovd out=docs\lab\impl-a-control all=False ids=axtudrv,asrdrv107 testsigning=False unsafe=False
+[07:20:23] kdu.exe reports 108 exploit(s); selected 2
+[07:20:40] vm vm-byovd is running and answering
+[07:20:40] signing 2 driver(s) with the XINDA test certificate
+[07:20:40] signing step completed
+[07:20:46] pushed prepare assets (certs + guest-prepare.ps1)
+[07:20:56] guest prepare: exit=0 status=ok/warn reboot_required=False
+[07:21:03] pushed kdu.exe
+[07:22:12] pushed signed drivers (99 files)
+[07:22:14] pushed run-test.cmd
+[07:22:14] [1/2] test asrdrv107 (AsrDrv107.sys)
+[07:22:31]   -> FAIL [primitive-failed] FAIL asrdrv107 cannot read ntoskrnl image header (17059ms)
+[07:22:31] [2/2] test axtudrv (AxtuDrv.sys)
+[07:22:48]   -> FAIL [primitive-failed] FAIL axtudrv cannot read ntoskrnl image header (16809ms)
+[07:22:48] matrix done: 2 rows, 0 PASS, 2 FAIL, 0 CRASH -> docs\lab\impl-a-control\matrix.json

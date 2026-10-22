@@ -1,0 +1,12 @@
+# vm-lab raw: appshopdrv103
+# at: 2026-10-22T07:27:09.9488070+08:00
+# command: C:\byovd\run-test.cmd appshopdrv103
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL appshopdrv103    cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

@@ -30,15 +30,24 @@ Result<std::uint64_t> find_pml4_from_low_stub(const PhysicalReadFn& read) {
                                            "no physical read callback");
     }
     std::uint8_t block[0x1000];
+    std::uint8_t probe[sizeof(std::uint64_t)];
     for (std::uint64_t offset = kScanStart; offset < kScanEnd;
          offset += sizeof(block)) {
-        auto result = read(offset, block, sizeof(block));
-        if (!result) {
+        // Byte-granular drivers (TPwSav, some I/O-port drivers) turn one block
+        // read into 4096 IOCTLs, which made the full 1 MiB scan take millions
+        // of round trips. Probe the 8-byte jump signature first and only fetch
+        // the whole page once it matches.
+        auto probe_result = read(offset, probe, sizeof(probe));
+        if (!probe_result) {
             continue;
         }
         std::uint64_t jmp = 0;
-        std::memcpy(&jmp, block, sizeof(jmp));
+        std::memcpy(&jmp, probe, sizeof(jmp));
         if ((jmp & kStartBlockJmpMask) != kStartBlockJmpSignature) {
+            continue;
+        }
+        auto result = read(offset, block, sizeof(block));
+        if (!result) {
             continue;
         }
         std::uint64_t lm_target = 0;

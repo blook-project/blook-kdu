@@ -1,0 +1,175 @@
+{
+  "schema": "blook-kdu.vmlab.matrix.v1",
+  "vm": "vm-byovd",
+  "guest_build": "10.0.26200 build 26200",
+  "testsigning": true,
+  "unsafe_physical": true,
+  "timeout_seconds": 90,
+  "generated": "2026-10-22T10:20:27.2169292+08:00",
+  "build": {
+    "kdu_sha256": "34cecd98c67b934acd1e7110bcb2dccbbd582638ac333fd9793ccbf5c4a74a99",
+    "kdu_version": "1.1.0",
+    "bvmenv_sha256": "0ab3c34bfdfbdd30a18e784985ce30f96758c3ba0669954696654d00bb05da5a",
+    "bvmenv_version": "bvmenv 0.1.0"
+  },
+  "totals": {
+    "total": 4,
+    "PASS": 0,
+    "FAIL": 1,
+    "CRASH": 3,
+    "TIMEOUT": 0,
+    "SKIP": 0
+  },
+  "by_classification": {
+    "bugcheck": 3,
+    "primitive-failed": 1
+  },
+  "crashes": [
+    {
+      "id": "lha",
+      "at": "2026-10-22T10:06:22.0674382+08:00",
+      "reason": "power=",
+      "stop_code": "",
+      "screen": "",
+      "power": "",
+      "screenshot": "",
+      "recovered": true
+    },
+    {
+      "id": "winiodrv_b",
+      "at": "2026-10-22T10:12:05.6132465+08:00",
+      "reason": "power=",
+      "stop_code": "",
+      "screen": "",
+      "power": "",
+      "screenshot": "",
+      "recovered": true
+    },
+    {
+      "id": "winring0_v2",
+      "at": "2026-10-22T10:17:10.6610269+08:00",
+      "reason": "power=",
+      "stop_code": "",
+      "screen": "",
+      "power": "",
+      "screenshot": "",
+      "recovered": true
+    }
+  ],
+  "signed_drivers": [
+    {
+      "id": "lha",
+      "driver_file": "lha.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\lha\\data\\lha.bin",
+      "source_sha256": "23ba19352b1e71a965260bf4d5120f0200709ee8657ed381043bec9a938a1ade",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\lha.sys",
+      "output_sha256": "7b37bc22effcb4c596a1c49aae4c7ffbbe50b5f00ca85df23c4d717b511ca8ae",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T10:02:32.4185623+08:00"
+    },
+    {
+      "id": "phydmacc",
+      "driver_file": "PhyDMACC.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\phydmacc\\data\\PhyDMACC.sys.bin",
+      "source_sha256": "f7b3112b9745b766c8359d25e315975d3159935a8ddb3e3035d21ed124a9013f",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\PhyDMACC.sys",
+      "output_sha256": "fdb4770ea3990a70d264226af8280f0aacfa06ca3817fe6b575fa5761c994a34",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T10:02:32.4312407+08:00"
+    },
+    {
+      "id": "winiodrv_b",
+      "driver_file": "WinRing0x64.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\winiodrv_b\\data\\WinRing0x64.sys.bin",
+      "source_sha256": "a7b000abbcc344444a9b00cfade7aa22ab92ce0cadec196c30eb1851ae4fa062",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\WinRing0x64.sys",
+      "output_sha256": "d822355d47c7eda4edbb36994e3fbba17cd1b1b851c5ac31bc5d23763f6775bd",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T10:02:32.4381239+08:00"
+    },
+    {
+      "id": "winring0_v2",
+      "driver_file": "WinRing0_2.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\winring0_v2\\data\\WinRing0_2.sys.bin",
+      "source_sha256": "112ee87cfefad8b06d0aa3375d01551823e212bffa7a9f5c8dd16c46f5347155",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\WinRing0_2.sys",
+      "output_sha256": "aa8a6d2ebb58fe954c0fa1b6716c77c29f16edae43d1f980a189d4cdf6bb64ce",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T10:02:32.4447995+08:00"
+    }
+  ],
+  "rows": [
+    {
+      "id": "lha",
+      "status": "CRASH",
+      "classification": "bugcheck",
+      "likely_cause": "guest crashed/hung: power=",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "lha.sys",
+      "exit": 2,
+      "guest_exit": null,
+      "duration_ms": 124360,
+      "detail": "bvmenv: error: guest script failed (timeout):",
+      "raw": "docs\\lab\\20261022-topup-unsafe\\raw\\lha.log",
+      "at": "2026-10-22T10:06:22.0818012+08:00",
+      "crash_stop_code": "",
+      "retried": false
+    },
+    {
+      "id": "phydmacc",
+      "status": "FAIL",
+      "classification": "primitive-failed",
+      "likely_cause": "driver loaded but the kernel memory primitive failed (ioctl/translation)",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "PhyDMACC.sys",
+      "exit": 1,
+      "guest_exit": 1,
+      "duration_ms": 16996,
+      "detail": "FAIL phydmacc cannot read ntoskrnl image header",
+      "raw": "docs\\lab\\20261022-topup-unsafe\\raw\\phydmacc.log",
+      "at": "2026-10-22T10:10:01.1506628+08:00",
+      "crash_stop_code": "",
+      "retried": false
+    },
+    {
+      "id": "winiodrv_b",
+      "status": "CRASH",
+      "classification": "bugcheck",
+      "likely_cause": "guest crashed/hung: power=",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "WinRing0x64.sys",
+      "exit": 2,
+      "guest_exit": null,
+      "duration_ms": 124462,
+      "detail": "bvmenv: error: guest script failed (timeout):",
+      "raw": "docs\\lab\\20261022-topup-unsafe\\raw\\winiodrv_b.log",
+      "at": "2026-10-22T10:12:05.6145001+08:00",
+      "crash_stop_code": "",
+      "retried": false
+    },
+    {
+      "id": "winring0_v2",
+      "status": "CRASH",
+      "classification": "bugcheck",
+      "likely_cause": "guest crashed/hung: power=",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "WinRing0_2.sys",
+      "exit": 2,
+      "guest_exit": null,
+      "duration_ms": 124531,
+      "detail": "bvmenv: error: guest script failed (timeout):",
+      "raw": "docs\\lab\\20261022-topup-unsafe\\raw\\winring0_v2.log",
+      "at": "2026-10-22T10:17:10.6620434+08:00",
+      "crash_stop_code": "",
+      "retried": false
+    }
+  ]
+}

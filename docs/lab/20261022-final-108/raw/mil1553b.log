@@ -1,0 +1,12 @@
+# vm-lab raw: mil1553b
+# at: 2026-10-22T07:48:03.5830663+08:00
+# command: C:\byovd\run-test.cmd mil1553b
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL mil1553b         mil1553b: cannot open device '\\.\CHR31X1X-A;\\.\GLOBALROOT\Device\CHR31X1X-A': device \\.\GLOBALROOT\Device\CHR31X1X-A did not appear
+--- stderr ---
+error exploit self-test failed
+

@@ -1,0 +1,12 @@
+[07:17:54] vm lab start: vm=vm-byovd out=docs\lab\impl-a-asr-autochkupd all=False ids=asr_autochkupd testsigning=False unsafe=False
+[07:17:54] kdu.exe reports 104 exploit(s); selected 1
+[07:18:11] vm vm-byovd is running and answering
+[07:18:11] all drivers already signed (cache hit)
+[07:18:17] pushed prepare assets (certs + guest-prepare.ps1)
+[07:18:26] guest prepare: exit=0 status=ok/warn reboot_required=False
+[07:18:34] pushed kdu.exe
+[07:19:58] pushed signed drivers (99 files)
+[07:20:00] pushed run-test.cmd
+[07:20:00] [1/1] test asr_autochkupd (AsrAutoChkUpdDrv.sys)
+[07:20:17]   -> FAIL [primitive-failed] FAIL asr_autochkupd cannot read ntoskrnl image header (16971ms)
+[07:20:17] matrix done: 1 rows, 0 PASS, 1 FAIL, 0 CRASH -> docs\lab\impl-a-asr-autochkupd\matrix.json

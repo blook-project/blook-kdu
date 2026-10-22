@@ -1,0 +1,12 @@
+# vm-lab raw: rzpnk
+# at: 2026-10-22T07:53:07.0148546+08:00
+# command: C:\byovd\run-test.cmd rzpnk
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL rzpnk            rzpnk: the System process has no \Device\PhysicalMemory section handle
+--- stderr ---
+error exploit self-test failed
+

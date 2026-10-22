@@ -1,0 +1,10 @@
+# vm-lab raw: ksapi64
+# at: 2026-10-22T07:40:44.7516059+08:00
+# command: C:\byovd\run-test.cmd ksapi64
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP ksapi64          kill-only driver (no memory primitive; self-test N/A)
+

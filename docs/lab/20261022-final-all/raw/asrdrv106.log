@@ -1,0 +1,12 @@
+# vm-lab raw: asrdrv106
+# at: 2026-10-22T09:08:42.2751114+08:00
+# command: C:\byovd\run-test.cmd asrdrv106
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL asrdrv106        cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

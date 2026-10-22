@@ -1,0 +1,12 @@
+# vm-lab raw: ser15x
+# at: 2026-10-22T09:43:15.9648929+08:00
+# command: C:\byovd\run-test.cmd ser15x
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: service-create-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL ser15x           ser15x: cannot create service 'ser15x': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+--- stderr ---
+error exploit self-test failed
+

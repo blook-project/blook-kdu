@@ -1,0 +1,12 @@
+# vm-lab raw: procexp
+# at: 2026-10-22T09:39:25.7040372+08:00
+# command: C:\byovd\run-test.cmd procexp
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL procexp          procexp: no \Device\PhysicalMemory section handle found (handles=43510, candidates=4679, duplicate_failures=590, name_misses=4089)
+--- stderr ---
+error exploit self-test failed
+

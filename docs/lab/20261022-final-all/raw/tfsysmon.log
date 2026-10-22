@@ -1,0 +1,10 @@
+# vm-lab raw: tfsysmon
+# at: 2026-10-22T09:45:38.0140502+08:00
+# command: C:\byovd\run-test.cmd tfsysmon
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP tfsysmon         kill-only driver (no memory primitive; self-test N/A)
+

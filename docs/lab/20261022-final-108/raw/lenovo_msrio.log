@@ -1,0 +1,12 @@
+# vm-lab raw: lenovo_msrio
+# at: 2026-10-22T07:41:52.9096307+08:00
+# command: C:\byovd\run-test.cmd lenovo_msrio
+# bvmenv exit: 2 guest exit: 
+# status: CRASH classification: bugcheck
+# vm: power=unknown screen= stop_code=
+
+
+
+--- stderr ---
+bvmenv: error: guest script failed (timeout): 
+

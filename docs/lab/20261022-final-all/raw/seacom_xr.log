@@ -1,0 +1,12 @@
+# vm-lab raw: seacom_xr
+# at: 2026-10-22T09:42:23.5489151+08:00
+# command: C:\byovd\run-test.cmd seacom_xr
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: service-create-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL seacom_xr        seacom_xr: cannot create service 'SeaCOM-XR': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+--- stderr ---
+error exploit self-test failed
+

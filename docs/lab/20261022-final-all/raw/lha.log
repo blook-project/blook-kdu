@@ -1,0 +1,12 @@
+# vm-lab raw: lha
+# at: 2026-10-22T09:34:18.5083253+08:00
+# command: C:\byovd\run-test.cmd lha
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL lha              cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

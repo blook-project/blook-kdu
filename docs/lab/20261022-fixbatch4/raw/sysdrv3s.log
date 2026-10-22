@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL sysdrv3s         sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+
+--- stderr ---
+error exploit self-test failed
+
+

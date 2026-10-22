@@ -1,0 +1,10 @@
+# vm-lab raw: appremover
+# at: 2026-10-22T07:26:53.0521465+08:00
+# command: C:\byovd\run-test.cmd appremover
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP appremover       kill-only driver (no memory primitive; self-test N/A)
+

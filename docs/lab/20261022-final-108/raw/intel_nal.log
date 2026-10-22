@@ -1,0 +1,12 @@
+# vm-lab raw: intel_nal
+# at: 2026-10-22T07:39:03.7799206+08:00
+# command: C:\byovd\run-test.cmd intel_nal
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL intel_nal        cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

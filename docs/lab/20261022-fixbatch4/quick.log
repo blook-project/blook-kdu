@@ -1,0 +1,32 @@
+[08:35:28] FAIL sysdrv3s FAIL sysdrv3s         sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[08:35:37] FAIL hwrwdrv FAIL hwrwdrv          cannot read ntoskrnl image header
+[08:35:45] FAIL winhwdrv FAIL winhwdrv         cannot read ntoskrnl image header
+[08:35:53] FAIL mimidrv FAIL mimidrv          mimidrv: cannot start service 'mimidrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+[08:36:02] FAIL intel_nal FAIL intel_nal        cannot read ntoskrnl image header
+[08:36:10] PASS intel_pmxdrv PASS intel_pmxdrv     ntoskrnl=0xfffff807d4200000 backend=driver
+[08:36:19] FAIL amd_affdriver FAIL amd_affdriver    cannot read ntoskrnl image header
+[08:36:27] FAIL amd_aod215 FAIL amd_aod215       cannot read ntoskrnl image header
+[08:36:35] FAIL dbk64 FAIL dbk64            dbk64: cannot start service 'CEDRIVER73': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+[08:36:44] PASS directio64_2 PASS directio64_2     ntoskrnl=0xfffff807d4200000 backend=driver
+[08:36:52] PASS dbutil23 PASS dbutil23         ntoskrnl=0xfffff807d4200000 backend=driver
+[08:37:03] FAIL chr34x05 FAIL chr34x05         chr34x05: cannot open device '\\.\CHR34205-A;\\.\GLOBALROOT\Device\CHR34205-A': device \\.\GLOBALROOT\Device\CHR34205-A did not appear
+[08:37:11] FAIL kph FAIL kph              kph: cannot open device '\?\GLOBALROOT\Device\KProcessHacker2': CreateFile(\?\GLOBALROOT\Device\KProcessHacker2) failed: 文件名、目录名或卷标语法不正确。 (0x0000007B)
+[08:37:19] PASS binalyze_irec PASS binalyze_irec    ntoskrnl=0xfffff807d4200000 backend=driver
+[08:37:28] FAIL nvidia_nvoclock FAIL nvidia_nvoclock  cannot read ntoskrnl image header
+[08:37:36] FAIL tpup_throttlestop FAIL tpup_throttlestop cannot read ntoskrnl image header
+[08:37:59] FAIL procexp FAIL procexp          procexp: no \Device\PhysicalMemory section handle found (handles=42253, candidates=4563, duplicate_failures=592, name_misses=3971)
+[08:38:21] FAIL procexp1702 FAIL procexp1702      procexp1702: the System process has no \Device\PhysicalMemory section handle
+[08:38:44] FAIL rzpnk FAIL rzpnk            rzpnk: no \Device\PhysicalMemory section handle found in the System process (handles=42348, candidates=4539, duplicate_failures=261, name_misses=4278)
+[08:39:15] FAIL sivx64 FAIL sivx64           sivx64: cannot open device '\\.\Global\SIVDRIVER;\\.\SIVDRIVER;\\.\GLOBALROOT\Device\SIVDRIVER': CreateFile(\\.\GLOBALROOT\Device\SIVDRIVER) failed: 拒绝访问。 (0x00000005); fallback: SIVDRIVER is present but not accessible with any access mask (create/start succeeded)
+[08:39:24] FAIL netease_neacsafe FAIL netease_neacsafe netease_neacsafe: NeacSafe64 service did not start (state=1, exit=2, start error=系统找不到指定的文件。 (0x00000002))
+[08:39:33] FAIL aida64 FAIL aida64           cannot read ntoskrnl image header
+[08:39:41] FAIL leco FAIL leco             cannot read ntoskrnl image header
+[08:39:50] FAIL ipctype FAIL ipctype          cannot read ntoskrnl image header
+[08:39:58] FAIL appshopdrv103 FAIL appshopdrv103    cannot read ntoskrnl image header
+[08:40:07] FAIL cormem_v1 error no matching exploit
+[08:40:16] FAIL cormem_v2 error no matching exploit
+[08:40:24] FAIL cormem_v3 error no matching exploit
+[08:40:32] FAIL cormem_v4 error no matching exploit
+[08:40:41] FAIL directio64_v1 error no matching exploit
+[08:40:49] FAIL directio_v2 error no matching exploit
+[08:40:49] done: 31 ids, 4 PASS -> docs/lab/20261022-fixbatch4

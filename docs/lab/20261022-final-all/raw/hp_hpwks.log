@@ -1,0 +1,12 @@
+# vm-lab raw: hp_hpwks
+# at: 2026-10-22T09:24:04.7088206+08:00
+# command: C:\byovd\run-test.cmd hp_hpwks
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL hp_hpwks         cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

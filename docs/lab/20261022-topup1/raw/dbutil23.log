@@ -1,0 +1,10 @@
+# vm-lab raw: dbutil23
+# at: 2026-10-22T09:53:26.9959068+08:00
+# command: C:\byovd\run-test.cmd dbutil23
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS dbutil23         ntoskrnl=0xfffff801a1200000 backend=driver
+

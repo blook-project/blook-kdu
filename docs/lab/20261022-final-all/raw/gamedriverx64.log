@@ -1,0 +1,10 @@
+# vm-lab raw: gamedriverx64
+# at: 2026-10-22T09:22:05.6936443+08:00
+# command: C:\byovd\run-test.cmd gamedriverx64
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP gamedriverx64    kill-only driver (no memory primitive; self-test N/A)
+

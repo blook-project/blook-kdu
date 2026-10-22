@@ -1,0 +1,18 @@
+[09:58:51] vm lab start: vm=vm-byovd out=docs/lab/20261022-topup2 all=False ids=kph,chr34x05 testsigning=True unsafe=False
+[09:58:51] kdu.exe reports 121 exploit(s); selected 2
+[09:59:08] vm vm-byovd is running and answering
+[09:59:08] signing 1 driver(s) with the XINDA test certificate
+[09:59:08] signing step completed
+[09:59:15] pushed prepare assets (certs + guest-prepare.ps1)
+[09:59:25] guest prepare: exit=0 status=ok/warn reboot_required=False
+[09:59:33] pushed kdu.exe
+[10:00:51] pushed signed drivers (114 files)
+[10:00:53] pushed run-test.cmd
+[10:00:53] [1/2] test chr34x05 (CHR34X05.sys)
+[10:01:12]   -> transient failure (device-open-failed): FAIL chr34x05 chr34x05: cannot open device '\\.\CHR34205-A;\\.\GLOBALROOT\Device\CHR34205-A': device \\.\GLOBALROOT\Device\CHR34205-A did not appear
+[10:01:12]      cleaning service 'CHR34X05' and retrying the id once
+[10:01:56]   -> retry: FAIL [service-create-failed] FAIL chr34x05 chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[10:01:56]   -> FAIL [service-create-failed] FAIL chr34x05 chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430) (62984ms)
+[10:01:56] [2/2] test kph (KProcessHacker.sys)
+[10:02:14]   -> FAIL [primitive-failed] FAIL kph cannot read ntoskrnl image header (17709ms)
+[10:02:14] matrix done: 2 rows, 0 PASS, 2 FAIL, 0 CRASH -> docs\lab\20261022-topup2\matrix.json

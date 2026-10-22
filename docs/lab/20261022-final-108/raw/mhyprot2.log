@@ -1,0 +1,12 @@
+# vm-lab raw: mhyprot2
+# at: 2026-10-22T07:47:46.3506137+08:00
+# command: C:\byovd\run-test.cmd mhyprot2
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: blocked-revoked
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL mhyprot2         mhyprot2: cannot start service 'mhyprot2': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+--- stderr ---
+error exploit self-test failed
+

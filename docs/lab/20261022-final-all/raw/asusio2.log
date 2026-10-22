@@ -1,0 +1,12 @@
+# vm-lab raw: asusio2
+# at: 2026-10-22T09:10:06.9899999+08:00
+# command: C:\byovd\run-test.cmd asusio2
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL asusio2          asusio2: cannot open device '\\.\Asusgio2': CreateFile(\\.\Asusgio2) failed: 拒绝访问。 (0x00000005)
+--- stderr ---
+error exploit self-test failed
+

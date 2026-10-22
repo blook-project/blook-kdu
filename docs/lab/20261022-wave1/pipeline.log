@@ -1,0 +1,25 @@
+[12:22:29] vm lab start: vm=vm-byovd out=docs/lab/20261022-wave1 all=False ids=glckio2_v1,physmem_v2,winio_64a,winio_64b,winio_a_nz,winio_b,winio_edr,winio_elan,winio_ew1,winio_ew2,winio_heaven,winio_tk,winio_ufu,winio_w,wnbios_v1,wnbios_v2 testsigning=True unsafe=False
+[12:22:29] kdu.exe reports 137 exploit(s); selected 16
+[12:22:47] vm vm-byovd is running and answering
+[12:22:47] signing 16 driver(s) with the XINDA test certificate
+[12:22:49] signing step completed
+[12:22:55] pushed prepare assets (certs + guest-prepare.ps1)
+[12:23:05] guest prepare: exit=0 status=ok/warn reboot_required=False
+[12:23:13] pushed kdu.exe
+[12:24:44] pushed signed drivers (126 files)
+[12:24:46] pushed run-test.cmd
+[12:24:46] [1/16] test glckio2_v1 (GLCKIO2.sys)
+[12:25:02]   -> PASS [] ntoskrnl=0xfffff80199a00000 backend=driver (16266ms)
+[12:25:02] [2/16] test physmem_v2 (phymemx64.sys)
+[12:25:18]   -> FAIL [blocked-revoked] FAIL physmem_v2 physmem_v2: cannot start service 'physmem_v2': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C) (16026ms)
+[12:25:18] [3/16] test winio_64a (WinIo64.sys)
+[12:25:34]   -> PASS [] ntoskrnl=0xfffff80199a00000 backend=driver (15707ms)
+[12:25:34] [4/16] test winio_64b (WinIo64.sys)
+[12:25:50]   -> PASS [] ntoskrnl=0xfffff80199a00000 backend=driver (15801ms)
+[12:25:50] [5/16] test winio_a_nz (WINIODrv_c9b49b52b493b53cd49c12c3fa9553e57c5394555b64e32d1208f5b96a5b8c6e.sys)
+[12:26:06]   -> FAIL [blocked-revoked] FAIL winio_a_nz winio_a_nz: cannot start service 'winio_a_nz': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C) (15939ms)
+[12:26:06] [6/16] test winio_b (WINIODrv_7cfa5e10dff8a99a5d544b011f676bc383991274c693e21e3af40cf6982adb8c.sys)
+[12:26:22]   -> FAIL [blocked-revoked] FAIL winio_b winio_b: cannot start service 'winio_b': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C) (15801ms)
+[12:26:22] [7/16] test winio_edr (poc_edr-callbacks_winio64_winio64.sys)
+[12:26:37]   -> PASS [] ntoskrnl=0xfffff80199a00000 backend=driver (15763ms)
+[12:26:37] [8/16] test winio_elan (ELANWinIo64.sys)

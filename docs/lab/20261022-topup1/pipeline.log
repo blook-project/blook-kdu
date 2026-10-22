@@ -1,0 +1,33 @@
+[09:51:07] vm lab start: vm=vm-byovd out=docs/lab/20261022-topup1 all=False ids=hp_etdsupp_v1,hp_etdsupp_v2,directio64_v1,directio_v2,kph,mimidrv,cormem_v4,dbutil23 testsigning=True unsafe=False
+[09:51:07] kdu.exe reports 120 exploit(s); selected 8
+[09:51:24] vm vm-byovd is running and answering
+[09:51:25] signing 2 driver(s) with the XINDA test certificate
+[09:51:25] signing step completed
+[09:51:31] pushed prepare assets (certs + guest-prepare.ps1)
+[09:51:41] guest prepare: exit=0 status=ok/warn reboot_required=False
+[09:51:49] pushed kdu.exe
+[09:53:08] pushed signed drivers (114 files)
+[09:53:10] pushed run-test.cmd
+[09:53:10] [1/8] test cormem_v4 (CorMem_4.sys)
+[09:53:26]   -> FAIL [primitive-failed] FAIL cormem_v4 cannot read ntoskrnl image header (16628ms)
+[09:53:26] [2/8] test dbutil23 (DBUtil_2_3.sys)
+[09:53:43]   -> PASS [] ntoskrnl=0xfffff801a1200000 backend=driver (16809ms)
+[09:53:43] [3/8] test directio_v2 (DirectIo.sys)
+[09:54:02]   -> transient failure (device-open-failed): FAIL directio_v2 directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[09:54:03]      cleaning service 'DirectIo' and retrying the id once
+[09:54:36]   -> retry: FAIL [device-open-failed] FAIL directio_v2 directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[09:54:36]   -> FAIL [device-open-failed] FAIL directio_v2 directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear (52947ms)
+[09:54:36] [4/8] test directio64_v1 (DirectIo64_1.sys)
+[09:54:53]   -> transient failure (device-open-failed): FAIL directio64_v1 directio64_v1: cannot open device '\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[09:54:53]      cleaning service 'DirectIo64_1' and retrying the id once
+[09:55:25]   -> retry: FAIL [device-open-failed] FAIL directio64_v1 directio64_v1: cannot open device '\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[09:55:25]   -> FAIL [device-open-failed] FAIL directio64_v1 directio64_v1: cannot open device '\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear (48369ms)
+[09:55:25] [5/8] test hp_etdsupp_v1 (etdsupp_1.sys)
+[09:55:42]   -> PASS [] ntoskrnl=0xfffff801a1200000 backend=driver (17051ms)
+[09:55:42] [6/8] test hp_etdsupp_v2 (etdsupp_2.sys)
+[09:55:59]   -> FAIL [primitive-failed] FAIL hp_etdsupp_v2 cannot read ntoskrnl image header (17012ms)
+[09:55:59] [7/8] test kph (KProcessHacker.sys)
+[09:56:16]   -> FAIL [device-open-failed] FAIL kph kph: cannot open device '\?\GLOBALROOT\Device\KProcessHacker2': CreateFile(\?\GLOBALROOT\Device\KProcessHacker2) failed: 文件名、目录名或卷标语法不正确。 (0x0000007B) (16871ms)
+[09:56:16] [8/8] test mimidrv (mimidrv.sys)
+[09:56:32]   -> FAIL [blocked-revoked] FAIL mimidrv mimidrv: cannot start service 'mimidrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C) (16684ms)
+[09:56:32] matrix done: 8 rows, 2 PASS, 6 FAIL, 0 CRASH -> docs\lab\20261022-topup1\matrix.json

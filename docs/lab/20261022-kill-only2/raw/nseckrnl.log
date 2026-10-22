@@ -1,0 +1,5 @@
+exit_code    : 10
+--- stderr ---
+error DeviceIoControl(0x2246880) failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+
+

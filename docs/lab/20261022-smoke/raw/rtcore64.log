@@ -1,0 +1,2 @@
+exit_code    : 0
+PASS rtcore64         ntoskrnl=0xfffff803cf200000 backend=driver

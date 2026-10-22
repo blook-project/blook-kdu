@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL sivx64           sivx64: cannot open device '\\.\Global\SIVDRIVER;\\.\SIVDRIVER;\\.\GLOBALROOT\Device\SIVDRIVER': CreateFile(\\.\GLOBALROOT\Device\SIVDRIVER) failed: 拒绝访问。 (0x00000005); fallback: SIVDRIVER is present but not accessible with any access mask (create/start succeeded)
+
+--- stderr ---
+error exploit self-test failed
+
+

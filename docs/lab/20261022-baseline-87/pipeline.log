@@ -1,0 +1,9 @@
+[07:03:58] vm lab start: vm=vm-byovd out=docs/lab/20261022-baseline-87 all=True ids= testsigning=True unsafe=False
+[07:03:58] kdu.exe reports 87 exploit(s); selected 87
+[07:03:59] vm power=off; starting vm-byovd
+[07:04:43] vm vm-byovd is running and answering
+[07:04:45] signing 27 driver(s) with the XINDA test certificate
+[07:04:48] signing step completed
+[07:04:55] pushed prepare assets (certs + guest-prepare.ps1)
+[07:05:07] guest prepare: exit=0 status=ok/warn reboot_required=False
+[07:05:14] pushed kdu.exe

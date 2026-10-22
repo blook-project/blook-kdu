@@ -1,0 +1,4 @@
+[08:56:25] vm lab start: vm=vm-byovd out=docs/lab/20261022-fixbatch6 all=False ids=hp_etdsupp_v1,hp_etdsupp_v2,cormem_v4,wnbios_2,winio_a,kph,mimidrv,directio64_v1,directio_v2,sysdrv3s testsigning=True unsafe=False
+[08:56:25] kdu.exe reports 120 exploit(s); selected 10
+[08:56:42] vm vm-byovd is running and answering
+[08:56:42] signing 2 driver(s) with the XINDA test certificate

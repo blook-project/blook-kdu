@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL ipctype          cannot read ntoskrnl image header
+
+--- stderr ---
+error exploit self-test failed
+
+

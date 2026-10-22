@@ -1,0 +1,10 @@
+# vm-lab raw: appremover
+# at: 2026-10-22T07:11:09.0466689+08:00
+# command: C:\byovd\run-test.cmd appremover
+# bvmenv exit: 0 guest exit: 0
+# status: FAIL classification: unparsed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP appremover       kill-only driver (no memory primitive; self-test N/A)
+

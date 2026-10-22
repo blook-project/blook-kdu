@@ -1,0 +1,16 @@
+[05:46:01] vm lab start: vm=vm-byovd out=docs/lab/20261022-smoke all=False ids=rtcore64,ktapi,truesight,winring0,tpw
+[05:46:10] vm vm-byovd is running
+[05:46:10] all drivers already signed
+[05:46:16] push kdu.exe: 0
+[05:46:29] push signed drivers: 0
+[05:46:33] push certs: 0
+[05:46:35] push guest-prepare: 0
+[05:46:37] push run-test.cmd: 0
+[05:46:48] guest prepare: exit=0 status=ok/warn
+[05:46:57] guest already has testsigning enabled
+[05:46:57] [1/5] test ktapi ()
+[05:47:05] [2/5] test rtcore64 ()
+[05:47:14] [3/5] test tpw ()
+[05:47:22] [4/5] test truesight ()
+[05:47:31] [5/5] test winring0 ()
+[05:48:34] matrix done: 5 total, 3 PASS -> docs\lab\20261022-smoke\matrix.json

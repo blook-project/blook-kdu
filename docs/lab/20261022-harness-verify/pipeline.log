@@ -1,0 +1,9 @@
+[08:40:49] vm lab start: vm=vm-byovd out=docs\lab\20261022-harness-verify all=False ids=ktapi,astra64 testsigning=False unsafe=False
+[08:40:49] kdu.exe reports 112 exploit(s); selected 2
+[08:41:06] vm vm-byovd is running and answering
+[08:41:06] signing skipped (-NoSign)
+[08:41:06] [1/2] test astra64 (ASTRA64.sys)
+[08:41:23]   -> FAIL [kdu-crashed] guest exit 0xc0000005 (16937ms)
+[08:41:23] [2/2] test ktapi (ktapi.sys)
+[08:41:40]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (16809ms)
+[08:41:40] matrix done: 2 rows, 1 PASS, 1 FAIL, 0 CRASH -> docs\lab\20261022-harness-verify\matrix.json

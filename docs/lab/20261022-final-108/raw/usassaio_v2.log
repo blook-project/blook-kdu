@@ -1,0 +1,12 @@
+# vm-lab raw: usassaio_v2
+# at: 2026-10-22T07:57:21.8542480+08:00
+# command: C:\byovd\run-test.cmd usassaio_v2
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL usassaio_v2      cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

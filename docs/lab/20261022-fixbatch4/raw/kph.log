@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL kph              kph: cannot open device '\?\GLOBALROOT\Device\KProcessHacker2': CreateFile(\?\GLOBALROOT\Device\KProcessHacker2) failed: 文件名、目录名或卷标语法不正确。 (0x0000007B)
+
+--- stderr ---
+error exploit self-test failed
+
+

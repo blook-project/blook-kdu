@@ -1,0 +1,22 @@
+[05:54:40] vm lab start: vm=vm-byovd out=docs\lab\20261022-harness-smoke all=False ids=rtcore64,ktapi testsigning=True unsafe=False
+[05:54:40] kdu.exe reports 60 exploit(s); selected 2
+[05:55:00] vm vm-byovd is running and answering
+[05:55:00] signing 2 driver(s) with the XINDA test certificate
+[05:55:10] vm lab start: vm=vm-byovd out=docs\lab\20261022-harness-smoke all=False ids=rtcore64,ktapi testsigning=True unsafe=False
+[05:55:10] kdu.exe reports 60 exploit(s); selected 2
+[05:55:28] vm vm-byovd is running and answering
+[05:55:28] signing 2 driver(s) with the XINDA test certificate
+[05:55:29] signing step completed
+[05:55:36] pushed prepare assets (certs + guest-prepare.ps1)
+[05:55:50] guest prepare: exit=0 status=ok/warn reboot_required=True
+[05:55:50] rebooting guest so testsigning / blocklist settings take effect
+[05:56:29] guest reboot requested: 0
+[05:56:51] guest is ready after the lab-config reboot; re-running prepare
+[05:57:11] pushed kdu.exe
+[05:57:26] pushed signed drivers (17 files)
+[05:57:29] pushed run-test.cmd
+[05:57:29] [1/2] test ktapi (ktapi.sys)
+[05:57:48]   -> PASS [] ntoskrnl=0xfffff803a2400000 backend=driver (19580ms)
+[05:57:48] [2/2] test rtcore64 (RTCore64.sys)
+[05:58:06]   -> PASS [] ntoskrnl=0xfffff803a2400000 backend=driver (18260ms)
+[05:58:06] matrix done: 2 rows, 2 PASS, 0 FAIL, 0 CRASH -> docs\lab\20261022-harness-smoke\matrix.json

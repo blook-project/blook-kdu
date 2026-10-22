@@ -41,6 +41,11 @@ Result<std::unique_ptr<DeviceIo>> open_device(const std::string& device_name,
                                               DWORD desired_access, int retries,
                                               int delay_ms) {
     const std::wstring path = to_utf16(device_name);
+    // Some OEM device DACLs grant only the explicit data rights (AsIO2/AsIO3
+    // and similar). A GENERIC_READ|GENERIC_WRITE request then fails the generic
+    // mapping check with ERROR_ACCESS_DENIED even though the data access itself
+    // is allowed, so retry once with the explicit rights before giving up.
+    constexpr DWORD kExplicitDataAccess = FILE_READ_DATA | FILE_WRITE_DATA;
     for (int attempt = 0; attempt < retries; ++attempt) {
         HANDLE handle = ::CreateFileW(path.c_str(), desired_access,
                                       FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -49,7 +54,18 @@ Result<std::unique_ptr<DeviceIo>> open_device(const std::string& device_name,
             return Result<std::unique_ptr<DeviceIo>>::ok(
                 std::make_unique<DeviceIo>(handle));
         }
-        const DWORD error = ::GetLastError();
+        DWORD error = ::GetLastError();
+        if (error == ERROR_ACCESS_DENIED &&
+            desired_access != kExplicitDataAccess) {
+            handle = ::CreateFileW(path.c_str(), kExplicitDataAccess,
+                                   FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
+                                   OPEN_EXISTING, 0, nullptr);
+            if (handle != INVALID_HANDLE_VALUE) {
+                return Result<std::unique_ptr<DeviceIo>>::ok(
+                    std::make_unique<DeviceIo>(handle));
+            }
+            error = ::GetLastError();
+        }
         if (error != ERROR_FILE_NOT_FOUND && error != ERROR_PATH_NOT_FOUND) {
             return Result<std::unique_ptr<DeviceIo>>::fail(
                 win32_status(error),

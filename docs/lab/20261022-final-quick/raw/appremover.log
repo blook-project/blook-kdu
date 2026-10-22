@@ -1,0 +1,4 @@
+exit_code    : 0
+SKIP appremover       kill-only driver (no memory primitive; self-test N/A)
+
+

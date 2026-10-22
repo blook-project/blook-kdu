@@ -1,0 +1,85 @@
+{
+  "schema": "blook-kdu.vmlab.matrix.v1",
+  "vm": "vm-byovd",
+  "guest_build": "10.0.26200 build 26200",
+  "testsigning": true,
+  "unsafe_physical": false,
+  "timeout_seconds": 90,
+  "generated": "2026-10-22T05:58:06.9670211+08:00",
+  "build": {
+    "kdu_sha256": "538548fe1464f19fa48b62347f69e4a21fea0178570f5286eccf7a1b8c04fc40",
+    "kdu_version": "1.0.2",
+    "bvmenv_sha256": "0ab3c34bfdfbdd30a18e784985ce30f96758c3ba0669954696654d00bb05da5a",
+    "bvmenv_version": "bvmenv 0.1.0"
+  },
+  "totals": {
+    "total": 2,
+    "PASS": 2,
+    "FAIL": 0,
+    "CRASH": 0,
+    "TIMEOUT": 0,
+    "SKIP": 0
+  },
+  "by_classification": {
+    "pass": 2
+  },
+  "crashes": [],
+  "signed_drivers": [
+    {
+      "id": "ktapi",
+      "driver_file": "ktapi.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\ktapi\\data\\ktapi.sys.bin",
+      "source_sha256": "7ee17efef04bb7c9de90d5210263ed6993f867e5a11f86e65e3bb1362c7de237",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\ktapi.sys",
+      "output_sha256": "8be3dab6562d8c45c1f147d1b66753b866943eafaa277e089bdc1862fffe3620",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T05:55:29.3203175+08:00"
+    },
+    {
+      "id": "rtcore64",
+      "driver_file": "RTCore64.sys",
+      "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\rtcore64\\data\\RTCore64.sys.bin",
+      "source_sha256": "01aa278b07b58dc46c84bd0b1b5c8e9ee4e62ea0bf7a695862444af32e87f1fd",
+      "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\RTCore64.sys",
+      "output_sha256": "eb6d07ce21de7a628b5b3da1d99ea5123a98f92ece040968f7de1a8a56080311",
+      "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+      "signed_at": "2026-10-22T05:55:29.3382164+08:00"
+    }
+  ],
+  "rows": [
+    {
+      "id": "ktapi",
+      "status": "PASS",
+      "classification": "",
+      "likely_cause": "",
+      "host_blocked": false,
+      "backend": "driver",
+      "ntoskrnl": "0xfffff803a2400000",
+      "driver_file": "ktapi.sys",
+      "exit": 0,
+      "guest_exit": 0,
+      "duration_ms": 19580,
+      "detail": "ntoskrnl=0xfffff803a2400000 backend=driver",
+      "raw": "docs\\lab\\20261022-harness-smoke\\raw\\ktapi.log",
+      "at": "2026-10-22T05:57:48.6852496+08:00",
+      "crash_stop_code": ""
+    },
+    {
+      "id": "rtcore64",
+      "status": "PASS",
+      "classification": "",
+      "likely_cause": "",
+      "host_blocked": false,
+      "backend": "driver",
+      "ntoskrnl": "0xfffff803a2400000",
+      "driver_file": "RTCore64.sys",
+      "exit": 0,
+      "guest_exit": 0,
+      "duration_ms": 18260,
+      "detail": "ntoskrnl=0xfffff803a2400000 backend=driver",
+      "raw": "docs\\lab\\20261022-harness-smoke\\raw\\rtcore64.log",
+      "at": "2026-10-22T05:58:06.9518347+08:00",
+      "crash_stop_code": ""
+    }
+  ]
+}

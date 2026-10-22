@@ -1,0 +1,105 @@
+----- prepare 2026-10-22T10:02:48.1676796+08:00 (exit=0) -----
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 0)
+PREP ok lab/testsigning already testsigning+nointegritychecks
+PREP reboot_required=0
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+
+----- prepare 2026-10-22T10:07:03.9855558+08:00 (exit=0) -----
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 1)
+PREP ok lab/testsigning �����ɹ���ɡ�
+�����ɹ���ɡ�
+PREP reboot_required=1
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 0)
+PREP ok lab/testsigning already testsigning+nointegritychecks
+PREP reboot_required=0
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+
+----- prepare 2026-10-22T10:12:48.5550563+08:00 (exit=0) -----
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 1)
+PREP ok lab/testsigning �����ɹ���ɡ�
+�����ɹ���ɡ�
+PREP reboot_required=1
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 0)
+PREP ok lab/testsigning already testsigning+nointegritychecks
+PREP reboot_required=0
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+
+----- prepare 2026-10-22T10:17:53.7205702+08:00 (exit=0) -----
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 1)
+PREP ok lab/testsigning �����ɹ���ɡ�
+�����ɹ���ɡ�
+PREP reboot_required=1
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+
+exit_code    : 0
+PREP info guest os=10.0.26200 build=26200 host=BLOOK-BASE
+PREP ok elevated administrator token
+PREP fail defender realtime protection still enabled (tamper protection?); IOAV protection still enabled (tamper protection?)
+PREP ok trust/root/tsa-root.cer thumbprint=2CF499850E6AC1D98D1CFCF0B5A0FA94C16E2546
+PREP ok trust/CA/verisign-cscs-2010.cer thumbprint=495847A93187CFB8C71F840CB7B41497AD95C64F
+PREP ok trust/CA/verisign-g5-mcvr.cer thumbprint=57534CCC33914C41F70E2CBB2103A1DB18817D8B
+PREP ok trust/trustedpublisher/xinda-leaf.cer thumbprint=87D60F58BCA95BCBFB4BF08B709A697EA70B5D24
+PREP ok lab/blocklist VulnerableDriverBlocklistEnable=0 (was 0)
+PREP ok lab/testsigning already testsigning+nointegritychecks
+PREP reboot_required=0
+PREP ok bcdedit/nx unchanged (pass -SetNxAlwaysOff if a test needs executable pool)
+PREP status=warn
+

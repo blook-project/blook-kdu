@@ -1,0 +1,154 @@
+[
+  {
+    "id": "appremover",
+    "status": "PASS",
+    "detail": "terminated pid 7416 via appremover (ardrv.sys)",
+    "pid": 7416,
+    "raw": "raw/appremover.log"
+  },
+  {
+    "id": "bdapiutil",
+    "status": "PASS",
+    "detail": "terminated pid 5640 via bdapiutil (BdApiUtil64.sys)",
+    "pid": 5640,
+    "raw": "raw/bdapiutil.log"
+  },
+  {
+    "id": "ccprotect",
+    "status": "FAIL",
+    "detail": "error ccprotect: cannot create service 'CcProtect': CreateService failed: 指定的服务已标记为删除。 (0x00000430)",
+    "pid": 1760,
+    "raw": "raw/ccprotect.log"
+  },
+  {
+    "id": "enportv",
+    "status": "FAIL",
+    "detail": "error enportv: cannot open device '\\\\.\\EnPortv': device \\\\.\\EnPortv did not appear",
+    "pid": 1760,
+    "raw": "raw/enportv.log"
+  },
+  {
+    "id": "gamedriverx64",
+    "status": "FAIL",
+    "detail": "error gamedriverx64: cannot start service 'GameDriverX64': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)",
+    "pid": 1760,
+    "raw": "raw/gamedriverx64.log"
+  },
+  {
+    "id": "goflydrv",
+    "status": "PASS",
+    "detail": "terminated pid 1760 via goflydrv (GoFly64.sys)",
+    "pid": 1760,
+    "raw": "raw/goflydrv.log"
+  },
+  {
+    "id": "honos2ec",
+    "status": "FAIL",
+    "detail": "error honos2ec: cannot open device '\\\\.\\HNOs2EcX64': CreateFile(\\\\.\\HNOs2EcX64) failed: 应用程序验证程序在当前进程中发现错误。 (0x00000219)",
+    "pid": 7564,
+    "raw": "raw/honos2ec.log"
+  },
+  {
+    "id": "hwaudioos2ec",
+    "status": "PASS",
+    "detail": "terminated pid 7564 via hwaudioos2ec (HWAudioOs2Ec.sys)",
+    "pid": 7564,
+    "raw": "raw/hwaudioos2ec.log"
+  },
+  {
+    "id": "k7rkscan1516",
+    "status": "PASS",
+    "detail": "terminated pid 4940 via k7rkscan1516 (K7RKScan.sys)",
+    "pid": 4940,
+    "raw": "raw/k7rkscan1516.log"
+  },
+  {
+    "id": "k7rkscan2310",
+    "status": "FAIL",
+    "detail": "error DeviceIoControl(0x2236440) failed: 目标进程或目标线程的包含进程是受保护的进程。 (0x0000050D)",
+    "pid": 5372,
+    "raw": "raw/k7rkscan2310.log"
+  },
+  {
+    "id": "ksapi64",
+    "status": "FAIL",
+    "detail": "error ksapi64: cannot start service 'ksapi64': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)",
+    "pid": 5372,
+    "raw": "raw/ksapi64.log"
+  },
+  {
+    "id": "libwasys",
+    "status": "PASS",
+    "detail": "terminated pid 5372 via libwasys (libwasys.sys)",
+    "pid": 5372,
+    "raw": "raw/libwasys.log"
+  },
+  {
+    "id": "monprocessex",
+    "status": "PASS",
+    "detail": "terminated pid 3408 via monprocessex (MonProcessEX.sys)",
+    "pid": 3408,
+    "raw": "raw/monprocessex.log"
+  },
+  {
+    "id": "nseckrnl",
+    "status": "FAIL",
+    "detail": "error DeviceIoControl(0x2246880) failed: 连到系统上的设备没有发挥作用。 (0x0000001F)",
+    "pid": 7428,
+    "raw": "raw/nseckrnl.log"
+  },
+  {
+    "id": "pctcore64",
+    "status": "PASS",
+    "detail": "terminated pid 1728 via pctcore64 (PCTCore64.sys)",
+    "pid": 1728,
+    "raw": "raw/pctcore64.log"
+  },
+  {
+    "id": "stprocessmonitor114",
+    "status": "PASS",
+    "detail": "terminated pid 7488 via stprocessmonitor114 (STProcessMonitor_v114.sys)",
+    "pid": 7488,
+    "raw": "raw/stprocessmonitor114.log"
+  },
+  {
+    "id": "stprocessmonitor2618",
+    "status": "PASS",
+    "detail": "terminated pid 5116 via stprocessmonitor2618 (STProcessMonitor_v2618.sys)",
+    "pid": 5116,
+    "raw": "raw/stprocessmonitor2618.log"
+  },
+  {
+    "id": "tfsysmon",
+    "status": "PASS",
+    "detail": "terminated pid 7604 via tfsysmon (sysmon.sys)",
+    "pid": 7604,
+    "raw": "raw/tfsysmon.log"
+  },
+  {
+    "id": "unknown_eb",
+    "status": "PASS",
+    "detail": "terminated pid 2596 via unknown_eb (unknown.sys)",
+    "pid": 2596,
+    "raw": "raw/unknown_eb.log"
+  },
+  {
+    "id": "viragt64",
+    "status": "CRASH",
+    "detail": "guest crashed"
+  },
+  {
+    "id": "wsftprm",
+    "status": "PASS",
+    "detail": "terminated pid 3068 via wsftprm (wsftprm.sys)",
+    "pid": 3068,
+    "raw": "raw/wsftprm.log"
+  },
+  {
+    "id": "xkpsm",
+    "status": "PASS",
+    "detail": "terminated pid 8128 via xkpsm (xkpsm.sys)",
+    "pid": 8128,
+    "raw": "raw/xkpsm.log"
+  }
+]

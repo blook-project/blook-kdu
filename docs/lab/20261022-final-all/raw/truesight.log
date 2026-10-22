@@ -1,0 +1,10 @@
+# vm-lab raw: truesight
+# at: 2026-10-22T09:46:28.8214356+08:00
+# command: C:\byovd\run-test.cmd truesight
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS truesight        ntoskrnl=0xfffff801a1200000 backend=driver
+

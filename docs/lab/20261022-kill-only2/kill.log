@@ -1,0 +1,24 @@
+[10:30:37] PASS appremover pid=7416 terminated pid 7416 via appremover (ardrv.sys)
+[10:32:03] PASS bdapiutil pid=5640 terminated pid 5640 via bdapiutil (BdApiUtil64.sys)
+[10:33:31] FAIL ccprotect pid=1760 error ccprotect: cannot create service 'CcProtect': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[10:33:56] FAIL enportv pid=1760 error enportv: cannot open device '\\.\EnPortv': device \\.\EnPortv did not appear
+[10:34:21] FAIL gamedriverx64 pid=1760 error gamedriverx64: cannot start service 'GameDriverX64': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+[10:34:46] PASS goflydrv pid=1760 terminated pid 1760 via goflydrv (GoFly64.sys)
+[10:37:12] FAIL honos2ec pid=7564 error honos2ec: cannot open device '\\.\HNOs2EcX64': CreateFile(\\.\HNOs2EcX64) failed: 应用程序验证程序在当前进程中发现错误。 (0x00000219)
+[10:37:29] PASS hwaudioos2ec pid=7564 terminated pid 7564 via hwaudioos2ec (HWAudioOs2Ec.sys)
+[10:39:55] PASS k7rkscan1516 pid=4940 terminated pid 4940 via k7rkscan1516 (K7RKScan.sys)
+[10:42:20] FAIL k7rkscan2310 pid=5372 error DeviceIoControl(0x2236440) failed: 目标进程或目标线程的包含进程是受保护的进程。 (0x0000050D)
+[10:42:37] FAIL ksapi64 pid=5372 error ksapi64: cannot start service 'ksapi64': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+[10:42:54] PASS libwasys pid=5372 terminated pid 5372 via libwasys (libwasys.sys)
+[10:45:20] PASS monprocessex pid=3408 terminated pid 3408 via monprocessex (MonProcessEX.sys)
+[10:47:46] FAIL nseckrnl pid=7428 error DeviceIoControl(0x2246880) failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+[10:50:12] PASS pctcore64 pid=1728 terminated pid 1728 via pctcore64 (PCTCore64.sys)
+[10:52:37] PASS stprocessmonitor114 pid=7488 terminated pid 7488 via stprocessmonitor114 (STProcessMonitor_v114.sys)
+[10:55:02] PASS stprocessmonitor2618 pid=5116 terminated pid 5116 via stprocessmonitor2618 (STProcessMonitor_v2618.sys)
+[10:57:28] PASS tfsysmon pid=7604 terminated pid 7604 via tfsysmon (sysmon.sys)
+[10:59:54] PASS unknown_eb pid=2596 terminated pid 2596 via unknown_eb (unknown.sys)
+[11:03:15] viragt64 CRASH
+[11:03:15] guest crashed/hung: resetting and re-preparing
+[11:05:50] PASS wsftprm pid=3068 terminated pid 3068 via wsftprm (wsftprm.sys)
+[11:06:15] PASS xkpsm pid=8128 terminated pid 8128 via xkpsm (xkpsm.sys)
+[11:06:15] kill-only done: 22 ids, 14 PASS

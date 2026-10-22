@@ -1,0 +1,10 @@
+# vm-lab raw: hp_etdsupport
+# at: 2026-10-22T09:23:47.8856704+08:00
+# command: C:\byovd\run-test.cmd hp_etdsupport
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS hp_etdsupport    ntoskrnl=0xfffff807d4200000 backend=driver
+

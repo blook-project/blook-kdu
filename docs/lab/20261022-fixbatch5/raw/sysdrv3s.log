@@ -1,0 +1,12 @@
+# vm-lab raw: sysdrv3s
+# at: 2026-10-22T08:54:25.3053965+08:00
+# command: C:\byovd\run-test.cmd sysdrv3s
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: service-create-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL sysdrv3s         sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+--- stderr ---
+error exploit self-test failed
+

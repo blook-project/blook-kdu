@@ -1,0 +1,2 @@
+exit_code    : 0
+PASS truesight        ntoskrnl=0xfffff803cf200000 backend=driver

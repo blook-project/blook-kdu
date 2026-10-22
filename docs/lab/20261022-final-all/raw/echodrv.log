@@ -1,0 +1,10 @@
+# vm-lab raw: echodrv
+# at: 2026-10-22T09:19:32.0886550+08:00
+# command: C:\byovd\run-test.cmd echodrv
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS echodrv          ntoskrnl=0xfffff807d4200000 backend=driver
+

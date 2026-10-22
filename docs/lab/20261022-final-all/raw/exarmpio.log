@@ -1,0 +1,12 @@
+# vm-lab raw: exarmpio
+# at: 2026-10-22T09:21:13.1144378+08:00
+# command: C:\byovd\run-test.cmd exarmpio
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: service-create-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL exarmpio         exarmpio: cannot create service 'exarmpio': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+--- stderr ---
+error exploit self-test failed
+

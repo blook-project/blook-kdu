@@ -1,0 +1,12 @@
+# vm-lab raw: leco
+# at: 2026-10-22T08:50:48.7154888+08:00
+# command: C:\byovd\run-test.cmd leco
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL leco             cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

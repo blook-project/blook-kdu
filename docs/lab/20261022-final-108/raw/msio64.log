@@ -1,0 +1,10 @@
+# vm-lab raw: msio64
+# at: 2026-10-22T07:48:56.8104210+08:00
+# command: C:\byovd\run-test.cmd msio64
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS msio64           ntoskrnl=0xfffff804ed800000 backend=driver
+

@@ -1,0 +1,10 @@
+# vm-lab raw: atszio64
+# at: 2026-10-22T09:10:40.7084983+08:00
+# command: C:\byovd\run-test.cmd atszio64
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS atszio64         ntoskrnl=0xfffff807d4200000 backend=driver
+

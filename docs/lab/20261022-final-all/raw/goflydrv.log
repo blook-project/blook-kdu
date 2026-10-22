@@ -1,0 +1,10 @@
+# vm-lab raw: goflydrv
+# at: 2026-10-22T09:23:13.7137303+08:00
+# command: C:\byovd\run-test.cmd goflydrv
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP goflydrv         kill-only driver (no memory primitive; self-test N/A)
+

@@ -1,0 +1,12 @@
+# vm-lab raw: kph
+# at: 2026-10-22T09:55:59.1929754+08:00
+# command: C:\byovd\run-test.cmd kph
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL kph              kph: cannot open device '\?\GLOBALROOT\Device\KProcessHacker2': CreateFile(\?\GLOBALROOT\Device\KProcessHacker2) failed: 文件名、目录名或卷标语法不正确。 (0x0000007B)
+--- stderr ---
+error exploit self-test failed
+

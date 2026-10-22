@@ -1,0 +1,3 @@
+[10:24:44] PASS appremover pid=2880 terminated pid 2880 via appremover (ardrv.sys)
+[10:26:03] PASS bdapiutil pid=3484 terminated pid 3484 via bdapiutil (BdApiUtil64.sys)
+[10:29:09] ccprotect SKIP target MsMpEng.exe not present

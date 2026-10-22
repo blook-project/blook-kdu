@@ -1,0 +1,12 @@
+# vm-lab raw: asr_omgdrv
+# at: 2026-10-22T07:28:00.6847958+08:00
+# command: C:\byovd\run-test.cmd asr_omgdrv
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL asr_omgdrv       cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

@@ -1,0 +1,12 @@
+# vm-lab raw: ipctype
+# at: 2026-10-22T08:49:57.8813528+08:00
+# command: C:\byovd\run-test.cmd ipctype
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL ipctype          cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

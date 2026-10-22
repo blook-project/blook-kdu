@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL rzpnk            rzpnk: no \Device\PhysicalMemory section handle found in the System process (handles=42348, candidates=4539, duplicate_failures=261, name_misses=4278)
+
+--- stderr ---
+error exploit self-test failed
+
+

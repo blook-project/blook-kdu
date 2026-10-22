@@ -1,0 +1,10 @@
+# vm-lab raw: winio_a
+# at: 2026-10-22T08:55:51.4700559+08:00
+# command: C:\byovd\run-test.cmd winio_a
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS winio_a          ntoskrnl=0xfffff807d4200000 backend=driver
+

@@ -1,0 +1,9 @@
+# vm-lab raw: astra64
+# at: 2026-10-22T09:09:50.1505086+08:00
+# command: C:\byovd\run-test.cmd astra64
+# bvmenv exit: 1 guest exit: -1073741819
+# status: FAIL classification: kdu-crashed
+# vm: power=on screen=login stop_code=
+
+exit_code    : -1073741819
+

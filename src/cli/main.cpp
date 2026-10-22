@@ -102,6 +102,7 @@ int main(int argc, char** argv) {
             "  kdu --exploit gdrv info\n"
             "  kdu mem virt read 0xfffff80000000000 64\n"
             "  kdu mem process read --pid 1234 0x7ff7a0000000 32\n"
+            "  kdu process kill --pid 1234 --exploit nseckrnl\n"
             "  kdu dse status | kdu map --payload | kdu modules\n"
             "  kdu --json modules > modules.json\n"
             "  kdu batch ops.json\n"
@@ -138,6 +139,7 @@ int main(int argc, char** argv) {
         blook::kdu::cli::add_batch_command(app, context);
         blook::kdu::cli::add_assets_command(app, context);
         blook::kdu::cli::add_payload_command(app, context);
+        blook::kdu::cli::add_process_command(app, context);
 
         // Allow the global switches before or after the subcommand: strip them
         // from argv and apply them ourselves so `kdu doctor --json` works too.

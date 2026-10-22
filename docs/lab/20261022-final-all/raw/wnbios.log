@@ -1,0 +1,10 @@
+# vm-lab raw: wnbios
+# at: 2026-10-22T09:49:17.9309247+08:00
+# command: C:\byovd\run-test.cmd wnbios
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS wnbios           ntoskrnl=0xfffff801a1200000 backend=driver
+

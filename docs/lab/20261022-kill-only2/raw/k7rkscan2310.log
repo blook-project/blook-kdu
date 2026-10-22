@@ -1,0 +1,5 @@
+exit_code    : 10
+--- stderr ---
+error DeviceIoControl(0x2236440) failed: 目标进程或目标线程的包含进程是受保护的进程。 (0x0000050D)
+
+

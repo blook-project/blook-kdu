@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL amd              amd: cannot start service 'AMDRyzenMasterDriver': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+
+--- stderr ---
+error exploit self-test failed
+
+

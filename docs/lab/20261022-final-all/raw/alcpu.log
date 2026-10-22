@@ -1,0 +1,12 @@
+# vm-lab raw: alcpu
+# at: 2026-10-22T09:05:19.4036325+08:00
+# command: C:\byovd\run-test.cmd alcpu
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL alcpu            cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

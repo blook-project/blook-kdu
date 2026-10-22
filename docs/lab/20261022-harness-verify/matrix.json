@@ -1,0 +1,38 @@
+[
+  {
+    "id": "astra64",
+    "status": "FAIL",
+    "classification": "kdu-crashed",
+    "likely_cause": "kdu.exe terminated with exception 0xc0000005; exploit ioctl path crashed user mode",
+    "host_blocked": false,
+    "backend": "",
+    "ntoskrnl": "",
+    "driver_file": "ASTRA64.sys",
+    "exit": 1,
+    "guest_exit": -1073741819,
+    "duration_ms": 16937,
+    "detail": "guest exit 0xc0000005",
+    "raw": "docs\\lab\\20261022-harness-verify\\raw\\astra64.log",
+    "at": "2026-10-22T08:41:23.9083771+08:00",
+    "crash_stop_code": "",
+    "retried": false
+  },
+  {
+    "id": "ktapi",
+    "status": "PASS",
+    "classification": "",
+    "likely_cause": "",
+    "host_blocked": false,
+    "backend": "driver",
+    "ntoskrnl": "0xfffff807d4200000",
+    "driver_file": "ktapi.sys",
+    "exit": 0,
+    "guest_exit": 0,
+    "duration_ms": 16809,
+    "detail": "ntoskrnl=0xfffff807d4200000 backend=driver",
+    "raw": "docs\\lab\\20261022-harness-verify\\raw\\ktapi.log",
+    "at": "2026-10-22T08:41:40.7454519+08:00",
+    "crash_stop_code": "",
+    "retried": false
+  }
+]

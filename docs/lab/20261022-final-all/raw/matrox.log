@@ -1,0 +1,10 @@
+# vm-lab raw: matrox
+# at: 2026-10-22T09:35:10.2766304+08:00
+# command: C:\byovd\run-test.cmd matrox
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS matrox           ntoskrnl=0xfffff801a1200000 backend=driver
+

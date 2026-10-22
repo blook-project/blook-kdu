@@ -11,11 +11,28 @@ SDK, a manual mapper, an embedded kernel payload and a modern CLI.
 
 ## What it does
 
-- **Exploits**: bundled vulnerable-driver exploits, one independent module and
-  one independent CI test job each. Every exploit is compiled into its own
-  static library, exposes a metadata record (target driver, CVE, service/device
-  names, required OS builds, capabilities) and talks to its driver only through
-  the abstract `IDeviceIo`/`IDriverInterface` interfaces.
+- **Exploits**: **140 bundled vulnerable-driver exploits** (118 memory
+  primitives + 22 kill-only process terminators), one independent module and one
+  independent CI test job each. Every exploit is compiled into its own static
+  library, exposes a metadata record (target driver, CVE, service/device names,
+  required OS builds, capabilities) and talks to its driver only through the
+  abstract `IDeviceIo`/`IDriverInterface` interfaces. The catalogue spans
+  classic KDU-era hardware-access drivers, recent BYOVD CVEs (2023-2026) and
+  undocumented drivers (`ktapi`, `truesight`, `astra64`, `winhwdrv`, ...).
+- **Kill-only drivers**: 22 exploits expose only a process-termination
+  primitive (`Capability::process_kill`, e.g. recent PPL/EDR killers). They are
+  driven by `kdu process kill --pid <pid> --exploit <id>` and are reported as
+  `SKIP` by `kdu exploits test` (the memory self-test does not apply).
+- **Verified usable**: **50 of the 140 exploits are verified usable in the
+  signed VMware lab guest** (Windows 11 build 26200, test signing on, blocklist
+  off): 36 memory-primitive drivers pass `kdu exploits test` and 14 kill-only
+  drivers terminated a PPL-protected process through `kdu process kill`. The
+  per-id PASS lists, environment and the documented not-usable-in-this-guest
+  drivers (unsafe-physical, RWE, driver access checks, revoked originals,
+  hardware-gated PnP) are in
+  [docs/lab/RELEASE-VERIFICATION.md](docs/lab/RELEASE-VERIFICATION.md); the 19
+  variants added after the lab matrix are unit-tested against mock devices but
+  not yet lab-verified.
 - **Kernel memory**: physical read/write, kernel virtual read/write, arbitrary
   process read/write (CR3 page-table walk + physical copy, the `mref.cc`
   technique) with best-effort handling of swapped/decoy CR3s.
@@ -60,6 +77,12 @@ kdu.exe exploits list
 kdu.exe info
 kdu.exe exploits test gdrv
 
+# self-test every memory exploit in one go (kill-only drivers report SKIP)
+kdu.exe exploits test
+
+# use a kill-only exploit (recent PPL/EDR terminators, no memory primitive)
+kdu.exe process kill --pid 4242 --exploit pctcore64
+
 # kernel memory
 kdu.exe mem virt read 0xFFFFF80000000000 64
 kdu.exe mem phys dump 0x1000 4096 -o page.bin
@@ -79,6 +102,37 @@ kdu.exe traces
 Without an explicit `--exploit <id>` the SDK probes the compiled-in exploits in
 order and uses the first one that can load its driver. `--driver-only` skips the
 payload and uses a user-mode page-table-walk backend.
+
+## Exploit catalogue and verification
+
+`kdu exploits list` prints the full catalogue with driver file, vendor, CVE and
+capabilities. `kdu exploits test [id]` loads each memory exploit's driver,
+opens its device, reads the `ntoskrnl` image header through the driver and
+unloads everything again. When a driver exposes only a process-termination
+primitive the command prints `SKIP <id> kill-only driver (no memory primitive;
+self-test N/A)` and does not count it as a failure.
+
+The repository ships a VM lab that rebuilds this matrix against real drivers in
+a disposable VMware guest (`bvmenv`):
+
+```powershell
+pwsh scripts/vm-lab.ps1 -All -TestSigning -Out docs/lab/<date>
+# -> matrix.json / matrix.md / raw/<id>.log, per-id PASS/FAIL/CRASH
+```
+
+The lab re-signs driver copies for test signing and drives them through
+`BLOOK_KDU_DRIVER_DIR`; the committed evidence under `docs/lab/` is produced by
+that script. `docs/adding-exploits.md` documents how to add a driver, and
+`tools/driver-intel` statically recovers device names, IRP dispatch and IOCTL
+codes from a binary (pefile + capstone, no IDA) including a corpus ranking.
+
+Environment overrides:
+
+| Variable | Meaning |
+| --- | --- |
+| `BLOOK_KDU_DRIVER_DIR` | load `<dir>\<driver_file>` instead of the embedded RCDATA image (lab / newer vendor build) |
+| `BLOOK_KDU_ALLOW_UNSAFE_PHYSICAL=1` | enable page-table based VA/process access for WinRing0-family drivers whose failed `MmMapIoSpace` is dereferenced (may bugcheck; disposable VMs only) |
+
 
 ## Repository layout
 
@@ -143,9 +197,18 @@ reboot.
 - Host-side unit tests only exercise pure user-mode logic (page tables, PE
   parsing, IOCTL encoding, mocks) and never load a driver.
 - The committed e2e evidence is produced through `bvmenv` (see
-  `docs/e2e.md`); `scripts/e2e.ps1` takes `-Vm <name>` and every `bvmenv` call
-  has a hard timeout. That harness choice does not gate the SDK.
+  `docs/e2e.md` and `docs/lab/`); `scripts/e2e.ps1` takes `-Vm <name>` and every
+  `bvmenv` call has a hard timeout. That harness choice does not gate the SDK.
 - `kdu doctor` reports the detected hypervisor for information only.
+- WinRing0-family drivers (`winring0`, `winhwdrv`, `hwrwdrv`, ...) keep their
+  native physical read/write primitive, but page-table based VA/process access is
+  opt-in with `BLOOK_KDU_ALLOW_UNSAFE_PHYSICAL=1` because that family dereferences
+  a failed `MmMapIoSpace` and can hang or bugcheck the machine. Use it only on a
+  disposable VM.
+- The VM lab (`scripts/vm-lab.ps1`) re-signs driver copies with the bundled test
+  certificate and enables guest test signing: that is a lab-only configuration
+  for verifying primitives, not a production signing recommendation. The
+  committed embedded drivers are the vendor images, byte-for-byte.
 ## Safety / legal
 
 - Loads known-vulnerable signed drivers that may be blocked by HVCI, Memory

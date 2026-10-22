@@ -1,0 +1,12 @@
+# vm-lab raw: dbk64
+# at: 2026-10-22T07:32:49.0854387+08:00
+# command: C:\byovd\run-test.cmd dbk64
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: driver-start-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL dbk64            dbk64: cannot start service 'CEDRIVER73': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+--- stderr ---
+error exploit self-test failed
+

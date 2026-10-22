@@ -1,0 +1,12 @@
+# vm-lab raw: lha
+# at: 2026-10-22T10:04:17.7161713+08:00
+# command: C:\byovd\run-test.cmd lha
+# bvmenv exit: 2 guest exit: 
+# status: CRASH classification: bugcheck
+# vm: power= screen= stop_code=
+
+
+
+--- stderr ---
+bvmenv: error: guest script failed (timeout): 
+

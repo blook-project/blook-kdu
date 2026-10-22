@@ -1,0 +1,54 @@
+[08:23:15] vm lab start: vm=vm-byovd out=docs/lab/20261022-final-106 all=True ids= testsigning=True unsafe=False
+[08:23:15] kdu.exe reports 106 exploit(s); selected 106
+[08:23:33] vm vm-byovd is running and answering
+[08:23:33] signing 76 driver(s) with the XINDA test certificate
+[08:23:42] signing step completed
+[08:23:49] pushed prepare assets (certs + guest-prepare.ps1)
+[08:23:58] guest prepare: exit=0 status=ok/warn reboot_required=False
+[08:24:06] pushed kdu.exe
+[08:25:18] pushed signed drivers (103 files)
+[08:25:20] pushed run-test.cmd
+[08:25:20] [1/106] test adlice_rootlaser (RootLaser.sys)
+[08:25:37] single-test done: id=adlice_rootlaser type=OrderedDictionary status=PASS class=
+[08:25:37] debug-after-call: type=String status=''
+[08:25:37] harness warning: Invoke-SingleTest returned no usable result for adlice_rootlaser
+[08:25:37] debug-defensive-after: type=String
+[08:25:37] debug: resultType=String status='' class='' execNull=True keys=n/a raw='System.Collections.Specialized.OrderedDictionary'
+[08:25:37]   -> FAIL []  (16963ms)
+[08:25:37] [2/106] test aida64 (kerneld-x64c.sys)
+[08:25:54] single-test done: id=aida64 type=OrderedDictionary status=FAIL class=primitive-failed
+[08:25:54] debug-after-call: type=String status=''
+[08:25:54] harness warning: Invoke-SingleTest returned no usable result for aida64
+[08:25:54] debug-defensive-after: type=String
+[08:25:54] debug: resultType=String status='' class='' execNull=True keys=n/a raw='System.Collections.Specialized.OrderedDictionary'
+[08:25:54]   -> FAIL []  (16832ms)
+[08:25:54] [3/106] test alcpu (ALSysIO64.sys)
+[08:26:11] single-test done: id=alcpu type=OrderedDictionary status=FAIL class=primitive-failed
+[08:26:11] debug-after-call: type=String status=''
+[08:26:11] harness warning: Invoke-SingleTest returned no usable result for alcpu
+[08:26:11] debug-defensive-after: type=String
+[08:26:11] debug: resultType=String status='' class='' execNull=True keys=n/a raw='System.Collections.Specialized.OrderedDictionary'
+[08:26:11]   -> FAIL []  (17006ms)
+[08:26:11] [4/106] test amd (AMDRyzenMasterDriver.sys)
+[08:26:28] single-test done: id=amd type=OrderedDictionary status=FAIL class=driver-start-failed
+[08:26:28] debug-after-call: type=String status=''
+[08:26:28] harness warning: Invoke-SingleTest returned no usable result for amd
+[08:26:28] debug-defensive-after: type=String
+[08:26:28] debug: resultType=String status='' class='' execNull=True keys=n/a raw='System.Collections.Specialized.OrderedDictionary'
+[08:26:28]   -> FAIL []  (17076ms)
+[08:26:28] [5/106] test amd_affdriver (affdriver.sys)
+[08:26:45] single-test done: id=amd_affdriver type=OrderedDictionary status=FAIL class=primitive-failed
+[08:26:45] debug-after-call: type=String status=''
+[08:26:45] harness warning: Invoke-SingleTest returned no usable result for amd_affdriver
+[08:26:45] debug-defensive-after: type=String
+[08:26:45] debug: resultType=String status='' class='' execNull=True keys=n/a raw='System.Collections.Specialized.OrderedDictionary'
+[08:26:45]   -> FAIL []  (17002ms)
+[08:26:45] checkpoint: matrix.json written after 5 id(s)
+[08:26:45] [6/106] test amd_aod215 (AODDriver215.sys)
+[08:27:02] single-test done: id=amd_aod215 type=OrderedDictionary status=FAIL class=primitive-failed
+[08:27:02] debug-after-call: type=String status=''
+[08:27:02] harness warning: Invoke-SingleTest returned no usable result for amd_aod215
+[08:27:02] debug-defensive-after: type=String
+[08:27:02] debug: resultType=String status='' class='' execNull=True keys=n/a raw='System.Collections.Specialized.OrderedDictionary'
+[08:27:02]   -> FAIL []  (17086ms)
+[08:27:02] [7/106] test amd_pdfwkrnl (PdFwKrnl.sys)

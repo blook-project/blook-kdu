@@ -1,0 +1,12 @@
+# vm-lab raw: nvidia_nvoclock
+# at: 2026-10-22T07:49:49.1138206+08:00
+# command: C:\byovd\run-test.cmd nvidia_nvoclock
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL nvidia_nvoclock  cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

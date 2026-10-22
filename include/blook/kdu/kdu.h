@@ -218,6 +218,16 @@ class Session {
                                      std::span<const std::uint8_t> bytes);
 
     // ------------------------------------------------------------------
+    // Process termination (kill-only drivers)
+    // ------------------------------------------------------------------
+
+    // Terminate a process through the loaded vulnerable driver. Only exploits
+    // advertising Capability::process_kill implement this; every other driver
+    // returns Status::not_supported. Works without the kernel payload, because
+    // kill-only drivers expose no memory primitive to map one with.
+    Result<void> terminate_process(std::uint32_t pid);
+
+    // ------------------------------------------------------------------
     // Process memory (CR3-based page-table walk)
     // ------------------------------------------------------------------
 
@@ -296,6 +306,8 @@ Result<std::size_t> kdu_write_virtual(Session& session, std::uint64_t address,
                                       const void* buffer, std::size_t size);
 Result<std::uint64_t> kdu_translate_virtual(Session& session,
                                             std::uint64_t address);
+
+Result<void> kdu_terminate_process(Session& session, std::uint32_t pid);
 
 Result<std::size_t> kdu_read_process(Session& session, std::uint32_t pid,
                                      std::uint64_t address, void* buffer,

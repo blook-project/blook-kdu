@@ -1,0 +1,12 @@
+# vm-lab raw: asr_rapidstart
+# at: 2026-10-22T09:08:08.4355895+08:00
+# command: C:\byovd\run-test.cmd asr_rapidstart
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL asr_rapidstart   cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

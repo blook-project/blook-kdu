@@ -1,0 +1,12 @@
+# vm-lab raw: ser15x
+# at: 2026-10-22T07:53:57.3113056+08:00
+# command: C:\byovd\run-test.cmd ser15x
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL ser15x           ser15x: cannot open device '\\.\ser15x;\\.\GLOBALROOT\Device\ser15x': device \\.\GLOBALROOT\Device\ser15x did not appear
+--- stderr ---
+error exploit self-test failed
+

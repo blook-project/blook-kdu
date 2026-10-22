@@ -1,0 +1,12 @@
+# vm-lab raw: hwrwdrv
+# at: 2026-10-22T07:38:30.0856409+08:00
+# command: C:\byovd\run-test.cmd hwrwdrv
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL hwrwdrv          cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

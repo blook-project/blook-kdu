@@ -1,0 +1,5 @@
+exit_code    : 13
+--- stderr ---
+error honos2ec: cannot open device '\\.\HNOs2EcX64': CreateFile(\\.\HNOs2EcX64) failed: 应用程序验证程序在当前进程中发现错误。 (0x00000219)
+
+

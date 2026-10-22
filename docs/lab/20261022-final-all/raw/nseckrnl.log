@@ -1,0 +1,10 @@
+# vm-lab raw: nseckrnl
+# at: 2026-10-22T09:37:44.0761526+08:00
+# command: C:\byovd\run-test.cmd nseckrnl
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP nseckrnl         kill-only driver (no memory primitive; self-test N/A)
+

@@ -1,0 +1,12 @@
+# vm-lab raw: directio_v2
+# at: 2026-10-22T09:17:17.3978863+08:00
+# command: C:\byovd\run-test.cmd directio_v2
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL directio_v2      directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+--- stderr ---
+error exploit self-test failed
+

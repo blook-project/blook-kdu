@@ -38,13 +38,14 @@ TEST_CASE("every exploit has complete metadata") {
         CHECK(info.image_resource_id != 0);
         CHECK(static_cast<std::uint64_t>(info.capabilities) != 0);
         CHECK(info.min_build <= info.max_build);
-        // Exploits must provide at least one memory primitive.
-        const bool memory_primitive =
-            has_capability(info.capabilities, Capability::physical_read) ||
-            has_capability(info.capabilities, Capability::physical_write) ||
-            has_capability(info.capabilities, Capability::virtual_read) ||
-            has_capability(info.capabilities, Capability::virtual_write);
-        CHECK(memory_primitive);
+        // Every exploit must expose at least one usable primitive: a kernel
+        // memory primitive, or process termination for the kill-only drivers
+        // (which have no memory primitive by contract).
+        const bool memory_primitive = has_memory_capability(info.capabilities);
+        const bool process_kill =
+            has_capability(info.capabilities, Capability::process_kill);
+        const bool usable_primitive = memory_primitive || process_kill;
+        CHECK(usable_primitive);
     }
 }
 

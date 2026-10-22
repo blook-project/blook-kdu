@@ -1,0 +1,17 @@
+{
+  "id": "asr_autochkupd",
+  "status": "FAIL",
+  "classification": "primitive-failed",
+  "likely_cause": "driver loaded but the kernel memory primitive failed (ioctl/translation)",
+  "host_blocked": false,
+  "backend": "",
+  "ntoskrnl": "",
+  "driver_file": "AsrAutoChkUpdDrv.sys",
+  "exit": 1,
+  "guest_exit": 1,
+  "duration_ms": 16971,
+  "detail": "FAIL asr_autochkupd cannot read ntoskrnl image header",
+  "raw": "docs\\lab\\impl-a-asr-autochkupd\\raw\\asr_autochkupd.log",
+  "at": "2026-10-22T07:20:17.4406597+08:00",
+  "crash_stop_code": ""
+}

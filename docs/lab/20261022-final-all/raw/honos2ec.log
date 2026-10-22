@@ -1,0 +1,10 @@
+# vm-lab raw: honos2ec
+# at: 2026-10-22T09:23:30.8517165+08:00
+# command: C:\byovd\run-test.cmd honos2ec
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP honos2ec         kill-only driver (no memory primitive; self-test N/A)
+

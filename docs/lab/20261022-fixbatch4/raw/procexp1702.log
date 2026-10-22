@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL procexp1702      procexp1702: the System process has no \Device\PhysicalMemory section handle
+
+--- stderr ---
+error exploit self-test failed
+
+

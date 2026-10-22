@@ -1,0 +1,12 @@
+# vm-lab raw: asrdrv107
+# at: 2026-10-22T07:13:28.0585358+08:00
+# command: C:\byovd\run-test.cmd asrdrv107
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL asrdrv107        asrdrv107: cannot open device '\.AsrDrv107': device \.AsrDrv107 did not appear
+--- stderr ---
+error exploit self-test failed
+

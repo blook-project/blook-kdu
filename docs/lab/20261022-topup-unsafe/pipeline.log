@@ -1,0 +1,58 @@
+[10:02:14] vm lab start: vm=vm-byovd out=docs/lab/20261022-topup-unsafe all=False ids=lha,winiodrv_b,winring0_v2,phydmacc testsigning=True unsafe=True
+[10:02:14] kdu.exe reports 121 exploit(s); selected 4
+[10:02:31] vm vm-byovd is running and answering
+[10:02:31] signing 4 driver(s) with the XINDA test certificate
+[10:02:32] signing step completed
+[10:02:38] pushed prepare assets (certs + guest-prepare.ps1)
+[10:02:48] guest prepare: exit=0 status=ok/warn reboot_required=False
+[10:02:55] pushed kdu.exe
+[10:04:15] pushed signed drivers (115 files)
+[10:04:17] pushed run-test.cmd (unsafe-physical enabled)
+[10:04:17] [1/4] test lha (lha.sys)
+[10:06:22]   -> CRASH [bugcheck] bvmenv: error: guest script failed (timeout): (124360ms)
+[10:06:22] recovering the VM after the crash
+[10:06:22] resetting vm-byovd to the clean snapshot
+[10:06:25] reset exit=0
+[10:06:39] start exit=0
+[10:06:45] wait-ready exit=0
+[10:06:52] pushed prepare assets (certs + guest-prepare.ps1)
+[10:07:03] guest prepare: exit=0 status=ok/warn reboot_required=True
+[10:07:03] rebooting guest so testsigning / blocklist settings take effect
+[10:07:40] guest reboot requested: 0
+[10:08:02] guest is ready after the lab-config reboot; re-running prepare
+[10:08:21] pushed kdu.exe
+[10:09:41] pushed signed drivers (115 files)
+[10:09:44] pushed run-test.cmd (unsafe-physical enabled)
+[10:09:44] [2/4] test phydmacc (PhyDMACC.sys)
+[10:10:01]   -> FAIL [primitive-failed] FAIL phydmacc cannot read ntoskrnl image header (16996ms)
+[10:10:01] [3/4] test winiodrv_b (WinRing0x64.sys)
+[10:12:05]   -> CRASH [bugcheck] bvmenv: error: guest script failed (timeout): (124462ms)
+[10:12:05] recovering the VM after the crash
+[10:12:05] resetting vm-byovd to the clean snapshot
+[10:12:09] reset exit=0
+[10:12:22] start exit=0
+[10:12:29] wait-ready exit=0
+[10:12:35] pushed prepare assets (certs + guest-prepare.ps1)
+[10:12:48] guest prepare: exit=0 status=ok/warn reboot_required=True
+[10:12:48] rebooting guest so testsigning / blocklist settings take effect
+[10:12:57] guest reboot requested: 0
+[10:13:22] guest is ready after the lab-config reboot; re-running prepare
+[10:13:43] pushed kdu.exe
+[10:15:03] pushed signed drivers (115 files)
+[10:15:06] pushed run-test.cmd (unsafe-physical enabled)
+[10:15:06] [4/4] test winring0_v2 (WinRing0_2.sys)
+[10:17:10]   -> CRASH [bugcheck] bvmenv: error: guest script failed (timeout): (124531ms)
+[10:17:10] recovering the VM after the crash
+[10:17:10] resetting vm-byovd to the clean snapshot
+[10:17:14] reset exit=0
+[10:17:27] start exit=0
+[10:17:34] wait-ready exit=0
+[10:17:40] pushed prepare assets (certs + guest-prepare.ps1)
+[10:17:53] guest prepare: exit=0 status=ok/warn reboot_required=True
+[10:17:53] rebooting guest so testsigning / blocklist settings take effect
+[10:18:30] guest reboot requested: 0
+[10:18:52] guest is ready after the lab-config reboot; re-running prepare
+[10:19:11] pushed kdu.exe
+[10:20:25] pushed signed drivers (115 files)
+[10:20:27] pushed run-test.cmd (unsafe-physical enabled)
+[10:20:27] matrix done: 4 rows, 0 PASS, 1 FAIL, 3 CRASH -> docs\lab\20261022-topup-unsafe\matrix.json

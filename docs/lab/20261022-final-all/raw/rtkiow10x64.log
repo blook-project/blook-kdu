@@ -1,0 +1,12 @@
+# vm-lab raw: rtkiow10x64
+# at: 2026-10-22T09:41:18.4686720+08:00
+# command: C:\byovd\run-test.cmd rtkiow10x64
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL rtkiow10x64      cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

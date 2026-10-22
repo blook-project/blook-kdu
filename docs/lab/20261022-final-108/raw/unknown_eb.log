@@ -1,0 +1,10 @@
+# vm-lab raw: unknown_eb
+# at: 2026-10-22T07:56:31.4534637+08:00
+# command: C:\byovd\run-test.cmd unknown_eb
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP unknown_eb       kill-only driver (no memory primitive; self-test N/A)
+

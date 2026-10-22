@@ -1,0 +1,5 @@
+exit_code    : 13
+--- stderr ---
+error ksapi64: cannot start service 'ksapi64': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)
+
+

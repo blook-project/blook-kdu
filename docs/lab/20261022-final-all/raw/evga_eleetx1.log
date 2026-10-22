@@ -1,0 +1,12 @@
+# vm-lab raw: evga_eleetx1
+# at: 2026-10-22T09:20:56.3016481+08:00
+# command: C:\byovd\run-test.cmd evga_eleetx1
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL evga_eleetx1     cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

@@ -2,6 +2,7 @@
 #include "core/service_host.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <mutex>
 #include <span>
 #include <string>
@@ -54,6 +55,25 @@ std::string default_device_name(const exploits::ExploitInfo& info) {
     return "\\\\.\\" + std::string(info.service_name);
 }
 
+// Lab/testing override: when BLOOK_KDU_DRIVER_DIR is set, a driver image named
+// after info.driver_file is loaded from that directory instead of the embedded
+// RCDATA resource. The VM lab uses this to exercise re-signed (test-signed)
+// copies of the bundled drivers without changing the shipped binary; it is also
+// handy when a vendor ships a fixed/newer build. The override is opt-in and the
+// embedded resource remains the default.
+std::string override_driver_path(const exploits::ExploitInfo& info) {
+    const char* dir = std::getenv("BLOOK_KDU_DRIVER_DIR");
+    if (dir == nullptr || dir[0] == '\0') {
+        return {};
+    }
+    std::string path(dir);
+    if (!path.empty() && path.back() != '\\' && path.back() != '/') {
+        path.push_back('\\');
+    }
+    path += std::string(info.driver_file);
+    return path;
+}
+
 }  // namespace
 
 ServiceHost::ServiceHost() = default;
@@ -77,10 +97,6 @@ Result<ServiceControl*> ServiceHost::scm() {
 
 Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
     const exploits::ExploitInfo& info) {
-    if (info.image_resource_id == 0) {
-        return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
-            Status::invalid_argument, "exploit has no embedded driver image");
-    }
     auto manager_result = scm();
     if (!manager_result) {
         return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
@@ -88,12 +104,30 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
     }
     ServiceControl* manager = manager_result.value();
 
-    auto image = load_embedded_resource(info.image_resource_id);
-    if (!image) {
-        return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
-            image.error().code, image.error().message);
+    std::vector<std::uint8_t> image_bytes;
+    const std::string override_path = override_driver_path(info);
+    if (!override_path.empty() && file_exists(override_path)) {
+        auto loaded = read_file(override_path);
+        if (!loaded) {
+            return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
+                loaded.error().code, loaded.error().message);
+        }
+        image_bytes = std::move(loaded.value());
+        KDU_LOG_INFO("driver override for '{}': {}", info.id, override_path);
+    } else {
+        if (info.image_resource_id == 0) {
+            return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
+                Status::invalid_argument,
+                "exploit has no embedded driver image");
+        }
+        auto image = load_embedded_resource(info.image_resource_id);
+        if (!image) {
+            return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
+                image.error().code, image.error().message);
+        }
+        image_bytes.assign(image->begin(), image->end());
     }
-    auto valid = validate_driver_image(image.value(), info);
+    auto valid = validate_driver_image(image_bytes, info);
     if (!valid) {
         return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
             valid.error().code, valid.error().message);
@@ -101,7 +135,8 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
 
     const std::string driver_path = make_staging_path(
         ("kdu_" + std::string(info.service_name) + "_").c_str(), ".sys");
-    auto written = write_file(driver_path, image->data(), image->size());
+    auto written =
+        write_file(driver_path, image_bytes.data(), image_bytes.size());
     if (!written) {
         return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
             written.error().code, written.error().message);
@@ -129,15 +164,44 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
                                       "': " + started.error().message);
     }
 
-    const std::string device_name = default_device_name(info);
-    auto device = open_device(device_name);
+    const std::string device_list = default_device_name(info);
+    std::unique_ptr<exploits::IDeviceIo> device;
+    std::string device_name;
+    std::string last_device_error = "no device name configured";
+    std::size_t begin = 0;
+    while (begin <= device_list.size()) {
+        auto end = device_list.find(';', begin);
+        if (end == std::string::npos) {
+            end = device_list.size();
+        }
+        std::string candidate = device_list.substr(begin, end - begin);
+        // trim surrounding whitespace
+        const auto first = candidate.find_first_not_of(" \t");
+        const auto last = candidate.find_last_not_of(" \t");
+        candidate = first == std::string::npos
+                        ? std::string()
+                        : candidate.substr(first, last - first + 1);
+        if (!candidate.empty()) {
+            auto opened_device = open_device(candidate);
+            if (opened_device) {
+                device = std::move(opened_device.value());
+                device_name = candidate;
+                break;
+            }
+            last_device_error = opened_device.error().message;
+        }
+        if (end >= device_list.size()) {
+            break;
+        }
+        begin = end + 1;
+    }
     if (!device) {
         (void)manager->stop(service);
         (void)manager->remove(service);
         (void)remove_file(driver_path);
         return Result<std::unique_ptr<exploits::IDeviceIo>>::fail(
-            device.error().code, "cannot open device '" + device_name +
-                                     "': " + device.error().message);
+            Status::not_found,
+            "cannot open device '" + device_list + "': " + last_device_error);
     }
 
     {
@@ -150,8 +214,7 @@ Result<std::unique_ptr<exploits::IDeviceIo>> ServiceHost::start(
     remember_staged_driver(info.service_name, driver_path);
     KDU_LOG_INFO("exploit driver '{}' running as service '{}'", info.id,
                  info.service_name);
-    return Result<std::unique_ptr<exploits::IDeviceIo>>::ok(
-        std::unique_ptr<exploits::IDeviceIo>(std::move(device.value())));
+    return Result<std::unique_ptr<exploits::IDeviceIo>>::ok(std::move(device));
 }
 
 Result<void> ServiceHost::stop(const exploits::ExploitInfo& info) {

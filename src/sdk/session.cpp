@@ -318,6 +318,29 @@ Result<std::uint64_t> Session::translate_virtual(std::uint64_t address) {
     return impl_->access->translate(address);
 }
 
+// ---------------------------------------------------------------------------
+// Process termination (kill-only drivers)
+// ---------------------------------------------------------------------------
+Result<void> Session::terminate_process(std::uint32_t pid) {
+    if (!impl_ || impl_->closed || !impl_->driver) {
+        return Result<void>::fail(Status::invalid_argument,
+                                  "session is not open");
+    }
+    if (pid == 0) {
+        return Result<void>::fail(Status::invalid_argument,
+                                  "pid must not be zero");
+    }
+    if (!exploits::has_capability(impl_->driver->capabilities(),
+                                  exploits::Capability::process_kill)) {
+        return Result<void>::fail(
+            Status::not_supported,
+            "exploit '" + impl_->info.exploit +
+                "' has no process termination primitive (kill-only drivers "
+                "only)");
+    }
+    return impl_->driver->terminate_process(pid);
+}
+
 Result<std::vector<std::uint8_t>> Session::read_physical_bytes(
     std::uint64_t address, std::size_t size) {
     std::vector<std::uint8_t> bytes(size);
@@ -864,6 +887,10 @@ Result<std::size_t> kdu_write_virtual(Session& session, std::uint64_t address,
 Result<std::uint64_t> kdu_translate_virtual(Session& session,
                                             std::uint64_t address) {
     return session.translate_virtual(address);
+}
+
+Result<void> kdu_terminate_process(Session& session, std::uint32_t pid) {
+    return session.terminate_process(pid);
 }
 
 Result<std::size_t> kdu_read_process(Session& session, std::uint32_t pid,

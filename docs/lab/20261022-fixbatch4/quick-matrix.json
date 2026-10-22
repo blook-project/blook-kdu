@@ -1,0 +1,188 @@
+[
+  {
+    "id": "sysdrv3s",
+    "status": "FAIL",
+    "detail": "FAIL sysdrv3s         sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430)",
+    "raw": "raw/sysdrv3s.log"
+  },
+  {
+    "id": "hwrwdrv",
+    "status": "FAIL",
+    "detail": "FAIL hwrwdrv          cannot read ntoskrnl image header",
+    "raw": "raw/hwrwdrv.log"
+  },
+  {
+    "id": "winhwdrv",
+    "status": "FAIL",
+    "detail": "FAIL winhwdrv         cannot read ntoskrnl image header",
+    "raw": "raw/winhwdrv.log"
+  },
+  {
+    "id": "mimidrv",
+    "status": "FAIL",
+    "detail": "FAIL mimidrv          mimidrv: cannot start service 'mimidrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)",
+    "raw": "raw/mimidrv.log"
+  },
+  {
+    "id": "intel_nal",
+    "status": "FAIL",
+    "detail": "FAIL intel_nal        cannot read ntoskrnl image header",
+    "raw": "raw/intel_nal.log"
+  },
+  {
+    "id": "intel_pmxdrv",
+    "status": "PASS",
+    "detail": "PASS intel_pmxdrv     ntoskrnl=0xfffff807d4200000 backend=driver",
+    "raw": "raw/intel_pmxdrv.log"
+  },
+  {
+    "id": "amd_affdriver",
+    "status": "FAIL",
+    "detail": "FAIL amd_affdriver    cannot read ntoskrnl image header",
+    "raw": "raw/amd_affdriver.log"
+  },
+  {
+    "id": "amd_aod215",
+    "status": "FAIL",
+    "detail": "FAIL amd_aod215       cannot read ntoskrnl image header",
+    "raw": "raw/amd_aod215.log"
+  },
+  {
+    "id": "dbk64",
+    "status": "FAIL",
+    "detail": "FAIL dbk64            dbk64: cannot start service 'CEDRIVER73': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F)",
+    "raw": "raw/dbk64.log"
+  },
+  {
+    "id": "directio64_2",
+    "status": "PASS",
+    "detail": "PASS directio64_2     ntoskrnl=0xfffff807d4200000 backend=driver",
+    "raw": "raw/directio64_2.log"
+  },
+  {
+    "id": "dbutil23",
+    "status": "PASS",
+    "detail": "PASS dbutil23         ntoskrnl=0xfffff807d4200000 backend=driver",
+    "raw": "raw/dbutil23.log"
+  },
+  {
+    "id": "chr34x05",
+    "status": "FAIL",
+    "detail": "FAIL chr34x05         chr34x05: cannot open device '\\\\.\\CHR34205-A;\\\\.\\GLOBALROOT\\Device\\CHR34205-A': device \\\\.\\GLOBALROOT\\Device\\CHR34205-A did not appear",
+    "raw": "raw/chr34x05.log"
+  },
+  {
+    "id": "kph",
+    "status": "FAIL",
+    "detail": "FAIL kph              kph: cannot open device '\\?\\GLOBALROOT\\Device\\KProcessHacker2': CreateFile(\\?\\GLOBALROOT\\Device\\KProcessHacker2) failed: 文件名、目录名或卷标语法不正确。 (0x0000007B)",
+    "raw": "raw/kph.log"
+  },
+  {
+    "id": "binalyze_irec",
+    "status": "PASS",
+    "detail": "PASS binalyze_irec    ntoskrnl=0xfffff807d4200000 backend=driver",
+    "raw": "raw/binalyze_irec.log"
+  },
+  {
+    "id": "nvidia_nvoclock",
+    "status": "FAIL",
+    "detail": "FAIL nvidia_nvoclock  cannot read ntoskrnl image header",
+    "raw": "raw/nvidia_nvoclock.log"
+  },
+  {
+    "id": "tpup_throttlestop",
+    "status": "FAIL",
+    "detail": "FAIL tpup_throttlestop cannot read ntoskrnl image header",
+    "raw": "raw/tpup_throttlestop.log"
+  },
+  {
+    "id": "procexp",
+    "status": "FAIL",
+    "detail": "FAIL procexp          procexp: no \\Device\\PhysicalMemory section handle found (handles=42253, candidates=4563, duplicate_failures=592, name_misses=3971)",
+    "raw": "raw/procexp.log"
+  },
+  {
+    "id": "procexp1702",
+    "status": "FAIL",
+    "detail": "FAIL procexp1702      procexp1702: the System process has no \\Device\\PhysicalMemory section handle",
+    "raw": "raw/procexp1702.log"
+  },
+  {
+    "id": "rzpnk",
+    "status": "FAIL",
+    "detail": "FAIL rzpnk            rzpnk: no \\Device\\PhysicalMemory section handle found in the System process (handles=42348, candidates=4539, duplicate_failures=261, name_misses=4278)",
+    "raw": "raw/rzpnk.log"
+  },
+  {
+    "id": "sivx64",
+    "status": "FAIL",
+    "detail": "FAIL sivx64           sivx64: cannot open device '\\\\.\\Global\\SIVDRIVER;\\\\.\\SIVDRIVER;\\\\.\\GLOBALROOT\\Device\\SIVDRIVER': CreateFile(\\\\.\\GLOBALROOT\\Device\\SIVDRIVER) failed: 拒绝访问。 (0x00000005); fallback: SIVDRIVER is present but not accessible with any access mask (create/start succeeded)",
+    "raw": "raw/sivx64.log"
+  },
+  {
+    "id": "netease_neacsafe",
+    "status": "FAIL",
+    "detail": "FAIL netease_neacsafe netease_neacsafe: NeacSafe64 service did not start (state=1, exit=2, start error=系统找不到指定的文件。 (0x00000002))",
+    "raw": "raw/netease_neacsafe.log"
+  },
+  {
+    "id": "aida64",
+    "status": "FAIL",
+    "detail": "FAIL aida64           cannot read ntoskrnl image header",
+    "raw": "raw/aida64.log"
+  },
+  {
+    "id": "leco",
+    "status": "FAIL",
+    "detail": "FAIL leco             cannot read ntoskrnl image header",
+    "raw": "raw/leco.log"
+  },
+  {
+    "id": "ipctype",
+    "status": "FAIL",
+    "detail": "FAIL ipctype          cannot read ntoskrnl image header",
+    "raw": "raw/ipctype.log"
+  },
+  {
+    "id": "appshopdrv103",
+    "status": "FAIL",
+    "detail": "FAIL appshopdrv103    cannot read ntoskrnl image header",
+    "raw": "raw/appshopdrv103.log"
+  },
+  {
+    "id": "cormem_v1",
+    "status": "FAIL",
+    "detail": "error no matching exploit",
+    "raw": "raw/cormem_v1.log"
+  },
+  {
+    "id": "cormem_v2",
+    "status": "FAIL",
+    "detail": "error no matching exploit",
+    "raw": "raw/cormem_v2.log"
+  },
+  {
+    "id": "cormem_v3",
+    "status": "FAIL",
+    "detail": "error no matching exploit",
+    "raw": "raw/cormem_v3.log"
+  },
+  {
+    "id": "cormem_v4",
+    "status": "FAIL",
+    "detail": "error no matching exploit",
+    "raw": "raw/cormem_v4.log"
+  },
+  {
+    "id": "directio64_v1",
+    "status": "FAIL",
+    "detail": "error no matching exploit",
+    "raw": "raw/directio64_v1.log"
+  },
+  {
+    "id": "directio_v2",
+    "status": "FAIL",
+    "detail": "error no matching exploit",
+    "raw": "raw/directio_v2.log"
+  }
+]

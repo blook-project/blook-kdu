@@ -1,0 +1,10 @@
+# vm-lab raw: hwaudioos2ec
+# at: 2026-10-22T07:38:13.1990671+08:00
+# command: C:\byovd\run-test.cmd hwaudioos2ec
+# bvmenv exit: 0 guest exit: 0
+# status: SKIP classification: skipped-no-primitive
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+SKIP hwaudioos2ec     kill-only driver (no memory primitive; self-test N/A)
+

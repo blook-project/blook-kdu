@@ -1,0 +1,12 @@
+# vm-lab raw: chr34x05
+# at: 2026-10-22T08:45:09.4872845+08:00
+# command: C:\byovd\run-test.cmd chr34x05
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: service-create-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL chr34x05         chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+--- stderr ---
+error exploit self-test failed
+

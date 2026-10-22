@@ -1,0 +1,12 @@
+# vm-lab raw: mimidrv
+# at: 2026-10-22T09:36:36.5758652+08:00
+# command: C:\byovd\run-test.cmd mimidrv
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: blocked-revoked
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL mimidrv          mimidrv: cannot start service 'mimidrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+--- stderr ---
+error exploit self-test failed
+

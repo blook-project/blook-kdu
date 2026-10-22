@@ -1,0 +1,32 @@
+[08:01:39] vm lab start: vm=vm-byovd out=docs/lab/20261022-fixretry all=False ids=asrock,asrdrv106,asrdrv107,asrdrv109,asr_autochkupd,asr_ibdrv,asr_omgdrv,asr_rapidstart,asrdrv10,axtudrv,appshopdrv103,hp_hpwks,alcpu,evga_eleetx1,binalyze_irec,lenovo_msrio,lenovo_ldd,leco,ipctype,aida64,kph,chr34x05,dbutil23,sivx64,netease_neacsafe,nvidia_nvoclock,procexp,procexp1702,rzpnk,tpup_throttlestop testsigning=True unsafe=False
+[08:01:39] kdu.exe reports 108 exploit(s); selected 30
+[08:01:56] vm vm-byovd is running and answering
+[08:01:57] all drivers already signed (cache hit)
+[08:02:03] pushed prepare assets (certs + guest-prepare.ps1)
+[08:02:14] guest prepare: exit=0 status=ok/warn reboot_required=False
+[08:02:22] pushed kdu.exe
+[08:03:33] pushed signed drivers (102 files)
+[08:03:35] pushed run-test.cmd
+[08:03:35] [1/30] test aida64 (kerneld-x64c.sys)
+[08:03:52]   -> FAIL []  (16949ms)
+[08:03:52] [2/30] test alcpu (ALSysIO64.sys)
+[08:04:09]   -> FAIL []  (16954ms)
+[08:04:09] [3/30] test appshopdrv103 (AppShopDrv103.sys)
+[08:04:26]   -> FAIL []  (17004ms)
+[08:04:26] [4/30] test asr_autochkupd (AsrAutoChkUpdDrv.sys)
+[08:04:42]   -> FAIL []  (16752ms)
+[08:04:42] [5/30] test asr_ibdrv (dataset_RwDrv.sys)
+[08:04:59]   -> FAIL []  (16714ms)
+[08:04:59] checkpoint: matrix.json written after 5 id(s)
+[08:04:59] [6/30] test asr_omgdrv (AsrOmgDrv.sys)
+[08:05:16]   -> FAIL []  (16893ms)
+[08:05:16] [7/30] test asr_rapidstart (AsrRapidStartDrv.sys)
+[08:05:33]   -> FAIL []  (16819ms)
+[08:05:33] [8/30] test asrdrv10 (AsrDrv10.sys)
+[08:05:50]   -> FAIL []  (16834ms)
+[08:05:50] [9/30] test asrdrv106 (AsrDrv106.sys)
+[08:06:07]   -> FAIL []  (16853ms)
+[08:06:07] [10/30] test asrdrv107 (AsrDrv107.sys)
+[08:06:23]   -> FAIL []  (16925ms)
+[08:06:23] checkpoint: matrix.json written after 10 id(s)
+[08:06:23] [11/30] test asrdrv109 (AsrDrv109.sys)

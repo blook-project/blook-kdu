@@ -1,0 +1,10 @@
+# vm-lab raw: sysdrv3s
+# at: 2026-10-22T09:45:21.1192745+08:00
+# command: C:\byovd\run-test.cmd sysdrv3s
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS sysdrv3s         ntoskrnl=0xfffff801a1200000 backend=driver
+

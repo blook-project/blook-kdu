@@ -1,0 +1,10 @@
+# vm-lab raw: pgrhostcontrol
+# at: 2026-10-22T07:50:22.8423940+08:00
+# command: C:\byovd\run-test.cmd pgrhostcontrol
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS pgrhostcontrol   ntoskrnl=0xfffff804ed800000 backend=driver
+

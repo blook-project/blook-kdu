@@ -1,0 +1,10 @@
+# vm-lab raw: glckio2_v1
+# at: 2026-10-22T12:24:46.5253107+08:00
+# command: C:\byovd\run-test.cmd glckio2_v1
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS glckio2_v1       ntoskrnl=0xfffff80199a00000 backend=driver
+

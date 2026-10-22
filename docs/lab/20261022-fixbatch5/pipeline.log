@@ -1,0 +1,92 @@
+[08:41:42] vm lab start: vm=vm-byovd out=docs/lab/20261022-fixbatch5 all=False ids=sysdrv3s,hwrwdrv,winhwdrv,mimidrv,intel_nal,amd_affdriver,amd_aod215,dbk64,chr34x05,kph,nvidia_nvoclock,tpup_throttlestop,procexp,procexp1702,rzpnk,sivx64,netease_neacsafe,aida64,leco,ipctype,appshopdrv103,cormem_v1,cormem_v2,cormem_v3,cormem_v4,directio64_v1,directio_v2,atszio64_v1,ktapi_v1,wnbios_2,phydmacc,ene2,winio_a testsigning=True unsafe=False
+[08:41:42] kdu.exe reports 118 exploit(s); selected 33
+[08:41:59] vm vm-byovd is running and answering
+[08:41:59] signing 12 driver(s) with the XINDA test certificate
+[08:42:01] signing step completed
+[08:42:07] pushed prepare assets (certs + guest-prepare.ps1)
+[08:42:17] guest prepare: exit=0 status=ok/warn reboot_required=False
+[08:42:25] pushed kdu.exe
+[08:43:42] pushed signed drivers (112 files)
+[08:43:44] pushed run-test.cmd
+[08:43:44] [1/33] test aida64 (kerneld-x64c.sys)
+[08:44:01]   -> FAIL [primitive-failed] FAIL aida64 cannot read ntoskrnl image header (16932ms)
+[08:44:01] [2/33] test amd_affdriver (affdriver.sys)
+[08:44:18]   -> FAIL [primitive-failed] FAIL amd_affdriver cannot read ntoskrnl image header (16822ms)
+[08:44:18] [3/33] test amd_aod215 (AODDriver215.sys)
+[08:44:35]   -> FAIL [primitive-failed] FAIL amd_aod215 cannot read ntoskrnl image header (16919ms)
+[08:44:35] [4/33] test appshopdrv103 (AppShopDrv103.sys)
+[08:44:52]   -> FAIL [primitive-failed] FAIL appshopdrv103 cannot read ntoskrnl image header (16823ms)
+[08:44:52] [5/33] test atszio64_v1 (ATSZIO64.sys)
+[08:45:09]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (17018ms)
+[08:45:09] [6/33] test chr34x05 (CHR34X05.sys)
+[08:45:28]   -> transient failure (service-create-failed): FAIL chr34x05 chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[08:45:28]      cleaning service 'CHR34X05' and retrying the id once
+[08:46:01]   -> retry: FAIL [service-create-failed] FAIL chr34x05 chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[08:46:01]   -> FAIL [service-create-failed] FAIL chr34x05 chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430) (52499ms)
+[08:46:01] [7/33] test cormem_v1 (CorMem_1.sys)
+[08:46:18]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (16945ms)
+[08:46:18] [8/33] test cormem_v2 (CorMem_2.sys)
+[08:46:36]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (17193ms)
+[08:46:36] [9/33] test cormem_v3 (CorMem_3.sys)
+[08:46:53]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (16879ms)
+[08:46:53] [10/33] test cormem_v4 (CorMem_4.sys)
+[08:47:09]   -> FAIL [primitive-failed] FAIL cormem_v4 cannot read ntoskrnl image header (16899ms)
+[08:47:09] checkpoint: matrix.json written after 10 id(s)
+[08:47:09] [11/33] test dbk64 (CEDRIVER73.sys)
+[08:47:26]   -> FAIL [driver-start-failed] FAIL dbk64 dbk64: cannot start service 'CEDRIVER73': StartService failed: 连到系统上的设备没有发挥作用。 (0x0000001F) (DBK registry-parameter fallback: device \\.\CEDRIVER73 did not appear) (16804ms)
+[08:47:26] [12/33] test directio_v2 (DirectIo.sys)
+[08:47:45]   -> transient failure (device-open-failed): FAIL directio_v2 directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[08:47:45]      cleaning service 'DirectIo' and retrying the id once
+[08:48:19]   -> retry: FAIL [device-open-failed] FAIL directio_v2 directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[08:48:19]   -> FAIL [device-open-failed] FAIL directio_v2 directio_v2: cannot open device '\\.\LoopLpt;\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear (52585ms)
+[08:48:19] [13/33] test directio64_v1 (DirectIo64_1.sys)
+[08:48:36]   -> transient failure (device-open-failed): FAIL directio64_v1 directio64_v1: cannot open device '\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[08:48:36]      cleaning service 'DirectIo64_1' and retrying the id once
+[08:49:07]   -> retry: FAIL [device-open-failed] FAIL directio64_v1 directio64_v1: cannot open device '\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear
+[08:49:07]   -> FAIL [device-open-failed] FAIL directio64_v1 directio64_v1: cannot open device '\\.\DIRECTIO64': device \\.\DIRECTIO64 did not appear (48055ms)
+[08:49:07] [14/33] test ene2 (ene2.sys)
+[08:49:24]   -> FAIL [device-open-failed] FAIL ene2 ene2: cannot open device '\\.\EneTechIo': CreateFile(\\.\EneTechIo) failed: 拒绝访问。 (0x00000005) (16970ms)
+[08:49:24] [15/33] test hwrwdrv (HwRwDrv.x64.sys)
+[08:49:41]   -> FAIL [primitive-failed] FAIL hwrwdrv cannot read ntoskrnl image header (16724ms)
+[08:49:41] [16/33] test intel_nal (iQVM64.sys)
+[08:49:57]   -> FAIL [primitive-failed] FAIL intel_nal cannot read ntoskrnl image header (16816ms)
+[08:49:57] [17/33] test ipctype (ipctype.sys)
+[08:50:14]   -> FAIL [primitive-failed] FAIL ipctype cannot read ntoskrnl image header (16956ms)
+[08:50:14] [18/33] test kph (KProcessHacker.sys)
+[08:50:31]   -> FAIL [device-open-failed] FAIL kph kph: cannot open device '\?\GLOBALROOT\Device\KProcessHacker2': CreateFile(\?\GLOBALROOT\Device\KProcessHacker2) failed: 文件名、目录名或卷标语法不正确。 (0x0000007B) (16977ms)
+[08:50:31] [19/33] test ktapi_v1 (ktapi.sys)
+[08:50:48]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (16898ms)
+[08:50:48] [20/33] test leco (LECOMAx.sys)
+[08:51:05]   -> FAIL [primitive-failed] FAIL leco cannot read ntoskrnl image header (17036ms)
+[08:51:05] checkpoint: matrix.json written after 20 id(s)
+[08:51:05] [21/33] test mimidrv (mimidrv.sys)
+[08:51:22]   -> FAIL [blocked-revoked] FAIL mimidrv mimidrv: cannot start service 'mimidrv': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C) (17037ms)
+[08:51:22] [22/33] test netease_neacsafe (NeacSafe64.sys)
+[08:51:39]   -> FAIL [fail-other] FAIL netease_neacsafe netease_neacsafe: NeacSafe64 service did not start (state=1, exit=2, start error=系统找不到指定的文件。 (0x00000002)) (16853ms)
+[08:51:39] [23/33] test nvidia_nvoclock (nvoclock.sys)
+[08:51:56]   -> FAIL [primitive-failed] FAIL nvidia_nvoclock cannot read ntoskrnl image header (17136ms)
+[08:51:56] [24/33] test phydmacc (PhyDMACC.sys)
+[08:52:13]   -> FAIL [primitive-failed] FAIL phydmacc cannot read ntoskrnl image header (16795ms)
+[08:52:13] [25/33] test procexp (procexp1627.sys)
+[08:52:44]   -> FAIL [primitive-failed] FAIL procexp procexp: no \Device\PhysicalMemory section handle found (handles=41552, candidates=4501, duplicate_failures=590, name_misses=3911) (31062ms)
+[08:52:44] [26/33] test procexp1702 (procexp1702.sys)
+[08:53:15]   -> FAIL [primitive-failed] FAIL procexp1702 procexp1702: the System process has no \Device\PhysicalMemory section handle (31130ms)
+[08:53:15] [27/33] test rzpnk (rzpnk.sys)
+[08:53:46]   -> FAIL [primitive-failed] FAIL rzpnk rzpnk: no \Device\PhysicalMemory section handle found in the System process (handles=41707, candidates=4543, duplicate_failures=261, name_misses=4282) (31020ms)
+[08:53:46] [28/33] test sivx64 (SIVX64.sys)
+[08:54:25]   -> FAIL [device-open-failed] FAIL sivx64 sivx64: cannot open device '\\.\Global\SIVDRIVER;\\.\SIVDRIVER;\\.\GLOBALROOT\Device\SIVDRIVER': CreateFile(\\.\GLOBALROOT\Device\SIVDRIVER) failed: 拒绝访问。 (0x00000005); fallback: SIVDRIVER is present but not accessible with any access mask (create/start succeeded) (38509ms)
+[08:54:25] [29/33] test sysdrv3s (SysDrv3S.sys)
+[08:54:44]   -> transient failure (service-create-failed): FAIL sysdrv3s sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[08:54:44]      cleaning service 'SysDrv3S' and retrying the id once
+[08:55:17]   -> retry: FAIL [service-create-failed] FAIL sysdrv3s sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+[08:55:17]   -> FAIL [service-create-failed] FAIL sysdrv3s sysdrv3s: cannot create service 'SysDrv3S': CreateService failed: 指定的服务已标记为删除。 (0x00000430) (52510ms)
+[08:55:17] [30/33] test tpup_throttlestop (ThrottleStop.sys)
+[08:55:34]   -> FAIL [primitive-failed] FAIL tpup_throttlestop cannot read ntoskrnl image header (16652ms)
+[08:55:34] checkpoint: matrix.json written after 30 id(s)
+[08:55:34] [31/33] test winhwdrv (WinHwDrv64.sys)
+[08:55:51]   -> FAIL [primitive-failed] FAIL winhwdrv cannot read ntoskrnl image header (16997ms)
+[08:55:51] [32/33] test winio_a (WinIo64.sys)
+[08:56:08]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (16989ms)
+[08:56:08] [33/33] test wnbios_2 (WNBIOS.sys)
+[08:56:25]   -> PASS [] ntoskrnl=0xfffff807d4200000 backend=driver (16697ms)
+[08:56:25] matrix done: 33 rows, 7 PASS, 26 FAIL, 0 CRASH -> docs\lab\20261022-fixbatch5\matrix.json

@@ -1,0 +1,12 @@
+# vm-lab raw: binalyze_irec
+# at: 2026-10-22T07:16:00.7353493+08:00
+# command: C:\byovd\run-test.cmd binalyze_irec
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: primitive-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL binalyze_irec    cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed
+

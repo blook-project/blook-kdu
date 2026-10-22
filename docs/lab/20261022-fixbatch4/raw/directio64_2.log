@@ -1,0 +1,4 @@
+exit_code    : 0
+PASS directio64_2     ntoskrnl=0xfffff807d4200000 backend=driver
+
+

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "ktapi",
+    "status": "PASS",
+    "backend": "driver",
+    "ntoskrnl": "0xfffff803cf200000",
+    "driver_file": null,
+    "exit": 0,
+    "detail": "PASS ktapi            ntoskrnl=0xfffff803cf200000 backend=driver",
+    "raw": "docs\\lab\\20261022-smoke\\raw\\ktapi.log",
+    "at": "2026-10-22T05:47:05.6564017+08:00"
+  },
+  {
+    "id": "rtcore64",
+    "status": "PASS",
+    "backend": "driver",
+    "ntoskrnl": "0xfffff803cf200000",
+    "driver_file": null,
+    "exit": 0,
+    "detail": "PASS rtcore64         ntoskrnl=0xfffff803cf200000 backend=driver",
+    "raw": "docs\\lab\\20261022-smoke\\raw\\rtcore64.log",
+    "at": "2026-10-22T05:47:14.4726711+08:00"
+  },
+  {
+    "id": "tpw",
+    "status": "FAIL",
+    "backend": "",
+    "ntoskrnl": "",
+    "driver_file": null,
+    "exit": 1,
+    "detail": "FAIL tpw              cannot read ntoskrnl image header\r\r | error exploit self-test failed",
+    "raw": "docs\\lab\\20261022-smoke\\raw\\tpw.log",
+    "at": "2026-10-22T05:47:22.9052742+08:00"
+  },
+  {
+    "id": "truesight",
+    "status": "PASS",
+    "backend": "driver",
+    "ntoskrnl": "0xfffff803cf200000",
+    "driver_file": null,
+    "exit": 0,
+    "detail": "PASS truesight        ntoskrnl=0xfffff803cf200000 backend=driver",
+    "raw": "docs\\lab\\20261022-smoke\\raw\\truesight.log",
+    "at": "2026-10-22T05:47:31.6467795+08:00"
+  },
+  {
+    "id": "winring0",
+    "status": "FAIL",
+    "backend": "",
+    "ntoskrnl": "",
+    "driver_file": null,
+    "exit": 2,
+    "detail": "bvmenv: error: guest script failed (timeout):",
+    "raw": "docs\\lab\\20261022-smoke\\raw\\winring0.log",
+    "at": "2026-10-22T05:48:34.6100530+08:00"
+  }
+]

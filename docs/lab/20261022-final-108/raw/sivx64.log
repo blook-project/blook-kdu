@@ -1,0 +1,12 @@
+# vm-lab raw: sivx64
+# at: 2026-10-22T07:54:16.4265742+08:00
+# command: C:\byovd\run-test.cmd sivx64
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL sivx64           sivx64: cannot open device '\\.\Global\SIVDRIVER;\\.\SIVDRIVER;\\.\GLOBALROOT\Device\SIVDRIVER': CreateFile(\\.\GLOBALROOT\Device\SIVDRIVER) failed: 拒绝访问。 (0x00000005)
+--- stderr ---
+error exploit self-test failed
+

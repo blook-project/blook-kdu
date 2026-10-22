@@ -1,0 +1,4 @@
+exit_code    : 0
+PASS amd_pdfwkrnl     ntoskrnl=0xfffff807d4200000 backend=driver
+
+

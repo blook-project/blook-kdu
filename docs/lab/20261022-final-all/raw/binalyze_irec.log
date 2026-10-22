@@ -1,0 +1,10 @@
+# vm-lab raw: binalyze_irec
+# at: 2026-10-22T09:11:53.2034853+08:00
+# command: C:\byovd\run-test.cmd binalyze_irec
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS binalyze_irec    ntoskrnl=0xfffff807d4200000 backend=driver
+

@@ -1,0 +1,12 @@
+# vm-lab raw: exarmpio
+# at: 2026-10-22T07:35:39.2456220+08:00
+# command: C:\byovd\run-test.cmd exarmpio
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL exarmpio         exarmpio: cannot open device '\\.\ComGPIO;\\.\GLOBALROOT\Device\ComGPIO': device \\.\GLOBALROOT\Device\ComGPIO did not appear
+--- stderr ---
+error exploit self-test failed
+

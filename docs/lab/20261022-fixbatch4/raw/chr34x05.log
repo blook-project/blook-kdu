@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL chr34x05         chr34x05: cannot open device '\\.\CHR34205-A;\\.\GLOBALROOT\Device\CHR34205-A': device \\.\GLOBALROOT\Device\CHR34205-A did not appear
+
+--- stderr ---
+error exploit self-test failed
+
+

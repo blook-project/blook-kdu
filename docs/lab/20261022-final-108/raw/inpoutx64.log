@@ -1,0 +1,10 @@
+# vm-lab raw: inpoutx64
+# at: 2026-10-22T07:38:47.0950755+08:00
+# command: C:\byovd\run-test.cmd inpoutx64
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS inpoutx64        ntoskrnl=0xfffff800c8800000 backend=driver
+

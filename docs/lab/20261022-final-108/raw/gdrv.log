@@ -1,0 +1,10 @@
+# vm-lab raw: gdrv
+# at: 2026-10-22T07:36:15.1908858+08:00
+# command: C:\byovd\run-test.cmd gdrv
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS gdrv             ntoskrnl=0xfffff800c8800000 backend=driver
+

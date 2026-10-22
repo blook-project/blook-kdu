@@ -1,0 +1,5 @@
+exit_code    : 13
+--- stderr ---
+error ccprotect: cannot create service 'CcProtect': CreateService failed: 指定的服务已标记为删除。 (0x00000430)
+
+

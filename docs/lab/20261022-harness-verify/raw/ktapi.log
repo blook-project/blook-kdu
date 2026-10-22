@@ -1,0 +1,10 @@
+# vm-lab raw: ktapi
+# at: 2026-10-22T08:41:23.9363368+08:00
+# command: C:\byovd\run-test.cmd ktapi
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS ktapi            ntoskrnl=0xfffff807d4200000 backend=driver
+

@@ -1,0 +1,12 @@
+# vm-lab raw: winio_a_nz
+# at: 2026-10-22T12:25:50.3447923+08:00
+# command: C:\byovd\run-test.cmd winio_a_nz
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: blocked-revoked
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL winio_a_nz       winio_a_nz: cannot start service 'winio_a_nz': StartService failed: 证书已被颁发者直接吊销。 (0x800B010C)
+--- stderr ---
+error exploit self-test failed
+

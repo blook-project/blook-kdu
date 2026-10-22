@@ -1,0 +1,56 @@
+{
+  "schema": "blook-kdu.vmlab.matrix.v1",
+  "vm": "vm-byovd",
+  "guest_build": "10.0.26200 build 26200",
+  "testsigning": false,
+  "unsafe_physical": false,
+  "timeout_seconds": 90,
+  "generated": "2026-10-22T07:20:17.4560325+08:00",
+  "build": {
+    "kdu_sha256": "7a6e4ee244fb5e32cfd2320fcfa87edfe4f884dae341c8d17b30b65c8d313b02",
+    "kdu_version": "1.1.0",
+    "bvmenv_sha256": "0ab3c34bfdfbdd30a18e784985ce30f96758c3ba0669954696654d00bb05da5a",
+    "bvmenv_version": "bvmenv 0.1.0"
+  },
+  "totals": {
+    "total": 1,
+    "PASS": 0,
+    "FAIL": 1,
+    "CRASH": 0,
+    "TIMEOUT": 0,
+    "SKIP": 0
+  },
+  "by_classification": {
+    "primitive-failed": 1
+  },
+  "crashes": [],
+  "signed_drivers": {
+    "id": "asr_autochkupd",
+    "driver_file": "AsrAutoChkUpdDrv.sys",
+    "source": "D:\\blook-kernel-project\\blook-kdu\\src\\exploits\\asr_autochkupd\\data\\AsrAutoChkUpdDrv.sys.bin",
+    "source_sha256": "2aa1b08f47fbb1e2bd2e4a492f5d616968e703e1359a921f62b38b8e4662f0c4",
+    "output": "D:\\blook-kernel-project\\blook-kdu\\build\\generated\\signed-drivers\\AsrAutoChkUpdDrv.sys",
+    "output_sha256": "8a6db2962139adfeb230a45350ee9e1aa354ace5b40553b1375394201720ca7e",
+    "signer": "CN=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", OU=Digital ID Class 3 - Microsoft Software Validation v2, O=\"BEIJING XINDA HUANYU NETWORK SECURITY TECHNOLOGY CO.,LTD\", L=\" Beijing\", S=Beijing, C=CN",
+    "signed_at": "2026-10-22T07:18:11.2227126+08:00"
+  },
+  "rows": [
+    {
+      "id": "asr_autochkupd",
+      "status": "FAIL",
+      "classification": "primitive-failed",
+      "likely_cause": "driver loaded but the kernel memory primitive failed (ioctl/translation)",
+      "host_blocked": false,
+      "backend": "",
+      "ntoskrnl": "",
+      "driver_file": "AsrAutoChkUpdDrv.sys",
+      "exit": 1,
+      "guest_exit": 1,
+      "duration_ms": 16971,
+      "detail": "FAIL asr_autochkupd cannot read ntoskrnl image header",
+      "raw": "docs\\lab\\impl-a-asr-autochkupd\\raw\\asr_autochkupd.log",
+      "at": "2026-10-22T07:20:17.4406597+08:00",
+      "crash_stop_code": ""
+    }
+  ]
+}

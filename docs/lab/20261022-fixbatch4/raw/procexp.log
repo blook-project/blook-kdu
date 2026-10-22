@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL procexp          procexp: no \Device\PhysicalMemory section handle found (handles=42253, candidates=4563, duplicate_failures=592, name_misses=3971)
+
+--- stderr ---
+error exploit self-test failed
+
+

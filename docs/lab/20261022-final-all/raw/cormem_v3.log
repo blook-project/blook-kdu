@@ -1,0 +1,10 @@
+# vm-lab raw: cormem_v3
+# at: 2026-10-22T09:14:10.1494973+08:00
+# command: C:\byovd\run-test.cmd cormem_v3
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS cormem_v3        ntoskrnl=0xfffff807d4200000 backend=driver
+

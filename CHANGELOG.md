@@ -4,6 +4,61 @@ All notable changes to blook-kdu are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-10-22
+
+- **Lab verification**: 50 of the 140 bundled exploits are verified usable in the signed VMware lab guest (Windows 11 build 26200): 36 memory-primitive drivers pass `kdu exploits test`, 14 kill-only drivers terminate a PPL-protected process through `kdu process kill`. Per-id lists, environment and documented not-usable drivers: `docs/lab/RELEASE-VERIFICATION.md`.
+
+The exploit catalogue was expanded from 16 to **140 exploits**, split into
+**118 memory-primitive drivers** (arbitrary physical or kernel-virtual
+read/write, or a physical map that the shared page-table walker turns into VA
+access) and **22 kill-only drivers** (PPL/EDR termination, no memory primitive).
+Every exploit is an independent module with a mock-device unit test, and the
+memory exploits are validated end-to-end against real drivers in a disposable
+VM (`docs/lab/`).
+
+- Exploit coverage: recent BYOVD CVEs from 2023-2026 (CVE-2023-20598,
+  CVE-2023-52271, CVE-2024-51324, CVE-2025-1055/52915/61155/70795, CVE-2026-8501,
+  ...), the classic KDU catalogue (ASRock/ASUS/AMD/Dell/HP/Lenovo/NVIDIA/
+  Realtek/MSI/Razer/... hardware-access drivers), and several undocumented
+  drivers turned into first-class exploits (`ktapi` fail-open HAL physical map,
+  `truesight` VA r/w, `astra64` physical map, `winhwdrv`, `asrdrv109`,
+  `sysdrv3s`, ...).
+- Catalogue top-up: 19 further WinIO/WNBIOS/GLCKIO2/physmem builds
+  (`winio_64a`, `winio_64b`, `winio_a_nz`, `winio_b`, `winio_w`, `winio_edr`,
+  `winio_elan`, `winio_ew1`, `winio_ew2`, `winio_heaven`, `winio_tk`,
+  `winio_ufu`, `wnbios_v1`, `wnbios_v2`, `physmem_v2`, `glckio2_v1`, `asmio`,
+  `winio_big1`, `winio_big2`) ship as independent modules with mock-device unit
+  tests and their own CI jobs. They were added after the lab matrix, so the 50
+  verified ids are the verified subset of the 140 bundled exploits.
+- New `Capability::process_kill` and `IDriverInterface::terminate_process()`:
+  kill-only drivers are honest about having no memory primitive, are skipped by
+  `kdu exploits test` (`SKIP`, not FAIL) and are driven by the new
+  `kdu process kill --pid <pid> [--exploit <id>]` command.
+- New `BLOOK_KDU_DRIVER_DIR` override: the service host loads
+  `<dir>\<driver_file>` instead of the embedded RCDATA image when set. The VM
+  lab re-signs drivers for test signing and uses this to exercise the bundled
+  binaries without changing the shipped bytes. `ExploitInfo::device_name` also
+  accepts ';'-separated alternatives now.
+- New tooling: `scripts/new-exploit.ps1` (scaffold + resource id allocation),
+  `scripts/clone-exploit.ps1` (driver variants), `scripts/dev-build.ps1`
+  (parallel-safe serialized build), `scripts/vm-lab.ps1` (VM matrix over a
+  bvmenv guest: sign, stage, run `kdu exploits test`, matrix.json/matrix.md,
+  crash reset, resumable), `tools/driver-intel` (pefile+capstone static
+  recovery of devices/IRP dispatch/IOCTLs/primitives plus a corpus ranking) and
+  `docs/adding-exploits.md` (the exploit contract).
+- Corrected four 1.0.x exploits whose IOCTL translation did not match the
+  shipped binaries: `physmem64` (WinIO-style map/unmap), `directio64`,
+  `dbk64` and `gmer`.
+- Safety: WinRing0-family drivers (`winring0`, `hwrwdrv`, `winhwdrv`, and other
+  `unsafe_physical_holes` modules) keep physical read/write but page-table based
+  VA/process access is opt-in (`BLOOK_KDU_ALLOW_UNSAFE_PHYSICAL=1`) because a
+  failed `MmMapIoSpace` in that family is dereferenced and can hang/bugcheck the
+  machine. Low-stub PML4 discovery now probes the 8-byte jump signature before
+  reading a full page, making byte-granular physical drivers ~500x cheaper.
+- `docs/exploits-rejected.md` records drivers that the static analyzer
+  initially flagged but that turned out to have no memory primitive; they are
+  intentionally not shipped as fabricated exploits.
+
 ## [1.0.2] - 2026-10-21
 
 - Payload backend replaced with **blook-drv-lite** (pinned source drop): kernel

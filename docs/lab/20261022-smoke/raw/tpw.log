@@ -1,0 +1,4 @@
+exit_code    : 1
+FAIL tpw              cannot read ntoskrnl image header
+--- stderr ---
+error exploit self-test failed

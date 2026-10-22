@@ -1,0 +1,38 @@
+[
+  {
+    "id": "chr34x05",
+    "status": "FAIL",
+    "classification": "service-create-failed",
+    "likely_cause": "SCM refused the service; stale service or path problem",
+    "host_blocked": false,
+    "backend": "",
+    "ntoskrnl": "",
+    "driver_file": "CHR34X05.sys",
+    "exit": 1,
+    "guest_exit": 1,
+    "duration_ms": 62984,
+    "detail": "FAIL chr34x05 chr34x05: cannot create service 'CHR34X05': CreateService failed: 指定的服务已标记为删除。 (0x00000430)",
+    "raw": "docs\\lab\\20261022-topup2\\raw\\chr34x05.log",
+    "at": "2026-10-22T10:01:56.4834690+08:00",
+    "crash_stop_code": "",
+    "retried": true
+  },
+  {
+    "id": "kph",
+    "status": "FAIL",
+    "classification": "primitive-failed",
+    "likely_cause": "driver loaded but the kernel memory primitive failed (ioctl/translation)",
+    "host_blocked": false,
+    "backend": "",
+    "ntoskrnl": "",
+    "driver_file": "KProcessHacker.sys",
+    "exit": 1,
+    "guest_exit": 1,
+    "duration_ms": 17709,
+    "detail": "FAIL kph cannot read ntoskrnl image header",
+    "raw": "docs\\lab\\20261022-topup2\\raw\\kph.log",
+    "at": "2026-10-22T10:02:14.2095451+08:00",
+    "crash_stop_code": "",
+    "retried": false
+  }
+]

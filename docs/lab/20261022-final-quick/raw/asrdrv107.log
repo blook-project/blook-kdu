@@ -1,0 +1,7 @@
+exit_code    : 1
+FAIL asrdrv107        cannot read ntoskrnl image header
+
+--- stderr ---
+error exploit self-test failed
+
+

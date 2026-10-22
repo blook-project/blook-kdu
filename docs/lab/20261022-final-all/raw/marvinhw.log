@@ -1,0 +1,10 @@
+# vm-lab raw: marvinhw
+# at: 2026-10-22T09:34:53.4074888+08:00
+# command: C:\byovd\run-test.cmd marvinhw
+# bvmenv exit: 0 guest exit: 0
+# status: PASS classification: 
+# vm: power=on screen=login stop_code=
+
+exit_code    : 0
+PASS marvinhw         ntoskrnl=0xfffff801a1200000 backend=driver
+

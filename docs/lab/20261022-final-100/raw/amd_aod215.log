@@ -1,0 +1,12 @@
+# vm-lab raw: amd_aod215
+# at: 2026-10-22T07:10:35.5397912+08:00
+# command: C:\byovd\run-test.cmd amd_aod215
+# bvmenv exit: 1 guest exit: 1
+# status: FAIL classification: device-open-failed
+# vm: power=on screen=login stop_code=
+
+exit_code    : 1
+FAIL amd_aod215       amd_aod215: cannot open device '\.AODDriver': device \.AODDriver did not appear
+--- stderr ---
+error exploit self-test failed
+
